@@ -1,27 +1,33 @@
-<template>
-  <img alt="Vue logo" src="./assets/logo.png" />
-  <HelloWorld msg="Welcome to Your Vue.js + TypeScript App" />
-</template>
+<script setup lang="ts">
+import { SidebarMenu } from "vue-sidebar-menu";
+import "vue-sidebar-menu/dist/vue-sidebar-menu.css";
+import { exampleWorlds, IWorld } from "./ts/worlds";
+import { ref } from "vue";
 
-<script lang="ts">
-import { defineComponent } from "vue";
-import HelloWorld from "./components/HelloWorld.vue";
+const worlds: IWorld[] = exampleWorlds();
 
-export default defineComponent({
-  name: "App",
-  components: {
-    HelloWorld,
+const menu = [
+  {
+    header: "Main Navigation",
+    hiddenOnCollapse: true,
   },
+];
+worlds.forEach((world) => {
+  console.log("World");
+  menu.push({
+    href: "/worlds/" + world.id,
+    title: world.name,
+    icon: "fa-user",
+  });
 });
 </script>
 
-<style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
-}
-</style>
+<template>
+  <sidebar-menu :menu="menu" />
+
+  <!-- route outlet -->
+  <!-- component matched by the route will render here -->
+  <router-view></router-view>
+</template>
+
+<style></style>
