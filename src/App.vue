@@ -13,7 +13,6 @@ const menu = [
   },
 ];
 worlds.forEach((world) => {
-  console.log("World");
   menu.push({
     href: "/worlds/" + world.id,
     title: world.name,

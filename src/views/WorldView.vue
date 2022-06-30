@@ -7,9 +7,6 @@ import AreaBox from "../components/AreaBox.vue";
 const worlds: IWorld[] = exampleWorlds();
 const availableMinigames = Object.values(Minigame);
 
-console.log("Worldview:");
-console.log(worlds);
-
 const route = useRoute();
 const id = route.params.id;
 const world = ref();
