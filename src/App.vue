@@ -9,7 +9,7 @@ const worlds: IWorld[] = exampleWorlds();
 const menu = [
   {
     header: "Main Navigation",
-    hiddenOnCollapse: true,
+    hiddenOnCollapse: false,
   },
 ];
 worlds.forEach((world) => {
@@ -22,11 +22,30 @@ worlds.forEach((world) => {
 </script>
 
 <template>
-  <sidebar-menu :menu="menu" />
-
-  <!-- route outlet -->
-  <!-- component matched by the route will render here -->
-  <router-view></router-view>
+  <div class="app-wrapper">
+    <sidebar-menu :menu="menu" :relative="true" />
+    <!-- route outlet -->
+    <!-- component matched by the route will render here -->
+    <div class="router-view-wrapper">
+      <router-view></router-view>
+    </div>
+  </div>
 </template>
 
-<style></style>
+<style>
+body {
+  height: 100vh;
+}
+
+.app-wrapper {
+  display: flex;
+}
+
+.app-wrapper .v-sidebar-menu {
+  height: 100vh;
+}
+
+.router-view-wrapper {
+  overflow: scroll;
+}
+</style>
