@@ -33,20 +33,15 @@ function startEditMinigame(task: ITask) {
           ></VueMultiselect>
         </div>
         <div class="col-sm-4">
-          <button type="button" class="btn btn-info btn-sm">
+          <button
+            type="button"
+            class="btn btn-info btn-sm"
+            @click="startEditMinigame(task)"
+          >
             <i class="bi bi-pencil-square"></i>
             Edit
           </button>
         </div>
-      </div>
-      <div class="col-sm-4">
-        <button
-          type="button"
-          class="btn btn-info btn-sm"
-          @click="startEditMinigame(task)"
-        >
-          Edit
-        </button>
       </div>
     </div>
   </b-td>
