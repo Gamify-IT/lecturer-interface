@@ -129,7 +129,7 @@ export function exampleWorlds(): IWorld[] {
       "Kapitel 2",
       true,
       [
-        new Dungeon(1, "Dungeon 1", "Absatz 1", true, [
+        new Dungeon(1, "Dungeon 1", "Absatz 1", false, [
           new Task(3, "Super finder v2", Minigame.BUGFINDER, "w2-d1-t1"),
         ]),
         new Dungeon(2, "Dungeon 2", "Absatz 2", true, [

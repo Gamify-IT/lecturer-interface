@@ -1,12 +1,22 @@
 <script setup lang="ts">
-import { defineProps, defineEmits, ref } from "vue";
+import { defineProps, defineEmits, ref, watch } from "vue";
 import { IArea, ITask } from "@/ts/worlds";
 import VueMultiselect from "vue-multiselect";
 
-defineProps<{
+const props = defineProps<{
   area: IArea;
   availableMinigames: [];
 }>();
+
+const area = ref(props.area);
+
+watch(
+  () => props.area,
+  (newArea) => {
+    area.value = newArea;
+  },
+  { deep: true }
+);
 
 const emit = defineEmits<{
   (e: "editMinigameConfiguration", minigame: ITask): void;
@@ -18,7 +28,10 @@ function startEditMinigame(task: ITask) {
 </script>
 
 <template>
-  <b-td><input type="checkbox" checked data-toggle="toggle" /></b-td>
+  <b-td>
+    <b-form-checkbox v-model="area.active" name="check-button" switch>
+    </b-form-checkbox>
+  </b-td>
   <b-td>
     <span>{{ area.name }}</span>
   </b-td>
