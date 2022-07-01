@@ -42,13 +42,25 @@ watch(
       <b-table-simple>
         <b-tbody>
           <b-tr>
-            <AreaBox :area="world" :availableMinigames="availableMinigames" />
+            <AreaBox
+              :area="world"
+              :availableMinigames="availableMinigames"
+              @editMinigameConfiguration="editMinigameConfiguration"
+            />
           </b-tr>
           <b-tr v-for="dungeon in world.dungeons" :key="dungeon.id">
-            <AreaBox :area="dungeon" :availableMinigames="availableMinigames" />
+            <AreaBox
+              :area="dungeon"
+              :availableMinigames="availableMinigames"
+              @editMinigameConfiguration="editMinigameConfiguration"
+            />
           </b-tr>
         </b-tbody>
       </b-table-simple>
+      <EditMinigameConfigurationModal
+        v-if="editedMinigame != undefined"
+        :minigame="editedMinigame"
+      />
     </div>
   </div>
 </template>
