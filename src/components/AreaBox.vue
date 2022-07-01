@@ -25,7 +25,7 @@ function startEditMinigame(task: ITask) {
   <b-td>
     <div v-for="task in area.tasks" :key="task.id">
       <div class="row">
-        <div class="col-sm-4">Minigame</div>
+        <div class="col-sm-4">{{ task.lectureName }}</div>
         <div class="col-sm-4">
           <VueMultiselect
             v-model="task.game"
@@ -37,6 +37,7 @@ function startEditMinigame(task: ITask) {
             type="button"
             class="btn btn-info btn-sm"
             @click="startEditMinigame(task)"
+            v-b-modal.edit-minigameconfiguration
           >
             <i class="bi bi-pencil-square"></i>
             Edit

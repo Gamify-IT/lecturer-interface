@@ -25,6 +25,10 @@ function editMinigameConfiguration(task: ITask) {
   console.log("Want to edit minigame " + task.lectureName);
 }
 
+function updateMinigame(task: ITask) {
+  console.log("Pressed submit button in configuration modal");
+}
+
 watch(
   () => route.params.id,
   (newId) => {
@@ -58,8 +62,8 @@ watch(
         </b-tbody>
       </b-table-simple>
       <EditMinigameConfigurationModal
-        v-if="editedMinigame != undefined"
         :minigame="editedMinigame"
+        @updateMinigame="updateMinigame"
       />
     </div>
   </div>
