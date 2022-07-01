@@ -46,6 +46,7 @@ body {
 }
 
 .router-view-wrapper {
+  width: 100%;
   overflow: scroll;
 }
 </style>

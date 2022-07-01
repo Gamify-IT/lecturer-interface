@@ -28,13 +28,19 @@ watch(
 
 <template>
   <div class="container mt-5">
-    <h1>Configure {{ world.name }}</h1>
+    <h2>Configure {{ world.name }}</h2>
 
     <div>
-      <AreaBox :area="world" :availableMinigames="availableMinigames" />
-      <div class="mt-5" v-for="dungeon in world.dungeons" :key="dungeon.id">
-        <AreaBox :area="dungeon" :availableMinigames="availableMinigames" />
-      </div>
+      <b-table-simple>
+        <b-tbody>
+          <b-tr>
+            <AreaBox :area="world" :availableMinigames="availableMinigames" />
+          </b-tr>
+          <b-tr v-for="dungeon in world.dungeons" :key="dungeon.id">
+            <AreaBox :area="dungeon" :availableMinigames="availableMinigames" />
+          </b-tr>
+        </b-tbody>
+      </b-table-simple>
     </div>
   </div>
 </template>
