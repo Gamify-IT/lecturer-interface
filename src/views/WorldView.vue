@@ -1,8 +1,9 @@
 <script setup lang="ts">
-import { exampleWorlds, IWorld, Minigame } from "@/ts/worlds";
+import { exampleWorlds, ITask, IWorld, Minigame } from "@/ts/worlds";
 import { ref, watch } from "vue";
 import { useRoute } from "vue-router";
 import AreaBox from "../components/AreaBox.vue";
+import EditMinigameConfigurationModal from "@/components/EditMinigameConfigurationModal.vue";
 
 const worlds: IWorld[] = exampleWorlds();
 const availableMinigames = Object.values(Minigame);
@@ -11,10 +12,17 @@ const route = useRoute();
 const id = route.params.id;
 const world = ref();
 
+const editedMinigame = ref();
+
 updateSelectedWorld(id);
 
 function updateSelectedWorld(id: number) {
   world.value = worlds.find((world) => world.id == id);
+}
+
+function editMinigameConfiguration(task: ITask) {
+  editedMinigame.value = task;
+  console.log("Want to edit minigame " + task.lectureName);
 }
 
 watch(
@@ -45,5 +53,4 @@ watch(
   </div>
 </template>
 
-<style src="vue-multiselect/dist/vue-multiselect.css"></style>
 <style scoped></style>

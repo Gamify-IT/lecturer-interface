@@ -1,12 +1,20 @@
 <script setup lang="ts">
-import { defineProps } from "vue";
-import { IArea } from "@/ts/worlds";
+import { defineProps, defineEmits, ref } from "vue";
+import { IArea, ITask } from "@/ts/worlds";
 import VueMultiselect from "vue-multiselect";
 
 defineProps<{
   area: IArea;
   availableMinigames: [];
 }>();
+
+const emit = defineEmits<{
+  (e: "editMinigameConfiguration", minigame: ITask): void;
+}>();
+
+function startEditMinigame(task: ITask) {
+  emit("editMinigameConfiguration", task);
+}
 </script>
 
 <template>
@@ -30,6 +38,15 @@ defineProps<{
             Edit
           </button>
         </div>
+      </div>
+      <div class="col-sm-4">
+        <button
+          type="button"
+          class="btn btn-info btn-sm"
+          @click="startEditMinigame(task)"
+        >
+          Edit
+        </button>
       </div>
     </div>
   </b-td>

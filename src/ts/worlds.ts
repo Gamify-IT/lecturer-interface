@@ -121,7 +121,7 @@ export function exampleWorlds(): IWorld[] {
           new Task(1, "Super finder", Minigame.BUGFINDER, "w1-d1-t1"),
         ]),
       ],
-      [new Task(2, "Moorhuhn vernichter", Minigame.MOORHUHN, "w1-t1")]
+      [new Task(2, "Moorhuhn nicht vernichter", Minigame.REGEX_GAME, "w1-t1")]
     ),
     new World(
       2,
@@ -130,19 +130,19 @@ export function exampleWorlds(): IWorld[] {
       true,
       [
         new Dungeon(1, "Dungeon 1", "Absatz 1", true, [
-          new Task(1, "Super finder v2", Minigame.BUGFINDER, "w2-d1-t1"),
+          new Task(3, "Super finder v2", Minigame.BUGFINDER, "w2-d1-t1"),
         ]),
         new Dungeon(2, "Dungeon 2", "Absatz 2", true, [
           new Task(
-            1,
+            4,
             "Super crosswordpuzzle",
             Minigame.CROSSWORDPUZZLE,
             "w2-d2-t1"
           ),
-          new Task(2, "Super regex game", Minigame.REGEX_GAME, "w2-d2-t2"),
+          new Task(5, "Super regex game", Minigame.REGEX_GAME, "w2-d2-t2"),
         ]),
       ],
-      [new Task(2, "Moorhuhn vernichter v2", Minigame.MOORHUHN, "w2-t1")]
+      [new Task(6, "Git-Card-Game lol", Minigame.GIT_CARD_GAME, "w2-t1")]
     ),
   ];
 }

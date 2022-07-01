@@ -2,7 +2,6 @@
 import { SidebarMenu } from "vue-sidebar-menu";
 import "vue-sidebar-menu/dist/vue-sidebar-menu.css";
 import { exampleWorlds, IWorld } from "./ts/worlds";
-import { ref } from "vue";
 
 const worlds: IWorld[] = exampleWorlds();
 
