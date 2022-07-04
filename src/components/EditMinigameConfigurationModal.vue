@@ -1,14 +1,22 @@
 <script setup lang="ts">
-import { defineProps, defineEmits, ref, watch } from "vue";
+import { defineProps, defineEmits, ref, watch, onMounted } from "vue";
 import { ITask } from "@/ts/worlds";
+import { BModal } from "bootstrap-vue-3";
 
 const props = defineProps<{
   minigame: ITask;
+  showModal: boolean;
 }>();
 
 const minigame = ref();
-const modal = ref();
 const form = ref();
+const showModal = ref(props.showModal);
+const editingModal = ref();
+
+onMounted(() => {
+  const modal = editingModal.value;
+  console.log(modal);
+});
 
 watch(
   () => props.minigame,
@@ -18,8 +26,17 @@ watch(
   { deep: true }
 );
 
+watch(
+  () => props.showModal,
+  (newBoolean) => {
+    showModal.value = newBoolean;
+  },
+  { deep: true }
+);
+
 const emit = defineEmits<{
-  (e: "updateMinigame", minigame: ITask): void;
+  (e: "updateMinigameConfiguration", minigame: ITask): void;
+  (e: "closedModal"): void;
 }>();
 
 function checkFormValidity(): boolean {
@@ -36,22 +53,28 @@ function handleOk() {
   handleSubmit();
 }
 
+function hiddenModal() {
+  console.log("Modal hidden");
+  emit("closedModal");
+}
+
 function handleSubmit() {
   // Exit when the form isn't valid
   if (!checkFormValidity()) {
     return;
   }
-  emit("updateMinigame", minigame.value);
+  emit("updateMinigameConfiguration", minigame.value);
 }
 </script>
 
 <template>
   <b-modal
-    id="edit-minigameconfiguration"
-    ref="modal"
+    ref="editingModal"
+    id="editingModal"
     title="Edit game configuration"
+    v-model="showModal"
     @show="resetModal"
-    @hidden="resetModal"
+    @hidden="hiddenModal"
     @ok="handleOk"
   >
     <form
@@ -60,11 +83,7 @@ function handleSubmit() {
       v-if="minigame != undefined"
     >
       <b-form-group label="Name" label-for="name-input">
-        <b-form-input
-          id="name-input"
-          v-model="minigame.lectureName"
-          required
-        ></b-form-input>
+        <b-form-input id="name-input" v-model="minigame.lectureName" required />
       </b-form-group>
     </form>
   </b-modal>

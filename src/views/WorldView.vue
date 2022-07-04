@@ -13,6 +13,7 @@ const id = route.params.id;
 const world = ref();
 
 const editedMinigame = ref();
+const showEditModal = ref(false);
 
 updateSelectedWorld(id);
 
@@ -23,10 +24,16 @@ function updateSelectedWorld(id: number) {
 function editMinigameConfiguration(task: ITask) {
   editedMinigame.value = task;
   console.log("Want to edit minigame " + task.lectureName);
+  showEditModal.value = true;
 }
 
-function updateMinigame(task: ITask) {
+function updateMinigameConfiguration(task: ITask) {
   console.log("Pressed submit button in configuration modal");
+}
+
+function closedEditModal() {
+  console.log("Parent got info that modal was closed");
+  showEditModal.value = false;
 }
 
 watch(
@@ -62,8 +69,10 @@ watch(
         </b-tbody>
       </b-table-simple>
       <EditMinigameConfigurationModal
+        :showModal="showEditModal"
         :minigame="editedMinigame"
-        @updateMinigame="updateMinigame"
+        @updateMinigameConfiguration="updateMinigameConfiguration"
+        @closedModal="closedEditModal"
       />
     </div>
   </div>

@@ -50,7 +50,6 @@ function startEditMinigame(task: ITask) {
             type="button"
             class="btn btn-info btn-sm"
             @click="startEditMinigame(task)"
-            v-b-modal.edit-minigameconfiguration
           >
             <i class="bi bi-pencil-square"></i>
             Edit
