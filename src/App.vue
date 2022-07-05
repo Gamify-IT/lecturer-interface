@@ -15,7 +15,7 @@ worlds.forEach((world) => {
   menu.push({
     href: "/worlds/" + world.id,
     title: world.name,
-    icon: "fa-user",
+    icon: "bi-map-fill",
   });
 });
 </script>
