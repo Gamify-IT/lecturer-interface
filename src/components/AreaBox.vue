@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { defineProps, defineEmits, ref, watch } from "vue";
-import { IArea, ITask } from "@/ts/worlds";
+import { IArea, ITask, Minigame } from "@/ts/worlds";
 import VueMultiselect from "vue-multiselect";
 import { useToast } from "vue-toastification";
 
@@ -60,6 +60,9 @@ function toggledAreaSwitch(area: IArea) {
 }
 
 function changedMinigame(task: ITask) {
+  if (task.game == null) {
+    task.game = Minigame.NONE;
+  }
   toast.success(
     "Minigame in Task " +
       task.lectureName +
