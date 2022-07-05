@@ -20,7 +20,6 @@ watch(
   () => props.area,
   (newArea) => {
     area.value = newArea;
-    collapse.value = [];
   },
   { deep: true }
 );
