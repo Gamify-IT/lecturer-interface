@@ -14,6 +14,9 @@ const toast = useToast();
 const area = ref(props.area);
 const collapse = ref(Array<boolean>());
 
+const editingAreaLecturerName = ref();
+const editingAreaLectureNameValue = ref();
+
 watch(
   () => props.area,
   (newArea) => {
@@ -28,6 +31,20 @@ const emit = defineEmits<{
 
 function startEditMinigame(task: ITask) {
   emit("editMinigameConfiguration", task);
+}
+
+function startEditAreaLecturerName(area: IArea) {
+  editingAreaLecturerName.value = area;
+  editingAreaLectureNameValue.value = area.lectureName;
+}
+
+function saveEditAreaLecturerName(area: IArea) {
+  editingAreaLecturerName.value = null;
+  area.lectureName = editingAreaLectureNameValue.value;
+  toast.success(
+    "Lecturename of " + area.name + " was updated to " + area.lectureName + "!"
+  );
+  editingAreaLectureNameValue.value = null;
 }
 
 function toggledAreaSwitch(area: IArea) {
@@ -55,7 +72,33 @@ function toggledAreaSwitch(area: IArea) {
       </button>
     </b-col>
     <b-col>
-      <span>{{ area.name }}</span>
+      <h6>{{ area.name }}</h6>
+      <div v-if="editingAreaLecturerName != area">
+        {{ area.lectureName }}
+        <button
+          type="button"
+          class="btn btn-light btn-sm"
+          @click="startEditAreaLecturerName(area)"
+        >
+          <i class="bi bi-pencil-square"></i>
+        </button>
+      </div>
+      <div v-else>
+        <b-row>
+          <b-col>
+            <b-form-input v-model="editingAreaLectureNameValue"></b-form-input>
+          </b-col>
+          <b-col>
+            <button
+              type="button"
+              class="btn btn-success btn-sm"
+              @click="saveEditAreaLecturerName(area)"
+            >
+              <i class="bi bi-journal-check"></i>
+            </button>
+          </b-col>
+        </b-row>
+      </div>
     </b-col>
     <b-col>
       <b-form-checkbox
