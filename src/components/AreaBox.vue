@@ -9,6 +9,7 @@ const props = defineProps<{
 }>();
 
 const area = ref(props.area);
+const collapse = ref(Array<boolean>());
 
 watch(
   () => props.area,
@@ -28,36 +29,51 @@ function startEditMinigame(task: ITask) {
 </script>
 
 <template>
-  <b-td>
-    <b-form-checkbox v-model="area.active" name="check-button" switch>
-    </b-form-checkbox>
-  </b-td>
-  <b-td>
-    <span>{{ area.name }}</span>
-  </b-td>
-  <b-td>
-    <div v-for="task in area.tasks" :key="task.id">
-      <div class="row">
-        <div class="col-sm-4">{{ task.lectureName }}</div>
-        <div class="col-sm-4">
-          <VueMultiselect
-            v-model="task.game"
-            :options="availableMinigames"
-          ></VueMultiselect>
-        </div>
-        <div class="col-sm-4">
-          <button
-            type="button"
-            class="btn btn-info btn-sm"
-            @click="startEditMinigame(task)"
-          >
-            <i class="bi bi-pencil-square"></i>
-            Edit
-          </button>
-        </div>
-      </div>
-    </div>
-  </b-td>
+  <b-row>
+    <b-col>
+      <button
+        type="button"
+        class="btn btn-secondary btn-sm"
+        @click="collapse[area.id] = !collapse[area.id]"
+      >
+        <i v-if="!collapse[area.id]" class="bi bi-box-arrow-in-down"></i>
+        <i v-else class="bi bi-box-arrow-in-up"></i>
+        Collapse
+      </button>
+    </b-col>
+    <b-col>
+      <span>{{ area.name }}</span>
+    </b-col>
+    <b-col>
+      <b-form-checkbox v-model="area.active" name="check-button" switch>
+      </b-form-checkbox>
+    </b-col>
+  </b-row>
+  <b-row>
+    <b-collapse id="collapse-4" v-model="collapse[area.id]">
+      <b-card v-for="task in area.tasks" :key="task.id" class="mt-1">
+        <b-row>
+          <b-col>{{ task.lectureName }}</b-col>
+          <b-col>
+            <VueMultiselect
+              v-model="task.game"
+              :options="availableMinigames"
+            ></VueMultiselect>
+          </b-col>
+          <b-col>
+            <button
+              type="button"
+              class="btn btn-info btn-sm"
+              @click="startEditMinigame(task)"
+            >
+              <i class="bi bi-pencil-square"></i>
+              Edit
+            </button>
+          </b-col>
+        </b-row>
+      </b-card>
+    </b-collapse>
+  </b-row>
 </template>
 
 <style src="vue-multiselect/dist/vue-multiselect.css"></style>

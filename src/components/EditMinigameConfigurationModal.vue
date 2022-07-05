@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { defineProps, defineEmits, ref, watch, onMounted } from "vue";
+import { defineProps, defineEmits, ref, watch } from "vue";
 import { ITask } from "@/ts/worlds";
 import { BModal } from "bootstrap-vue-3";
 
