@@ -77,27 +77,27 @@ function changedMinigame(task: ITask) {
 <template>
   <b-row>
     <b-col>
-      <button
-        type="button"
-        class="btn btn-secondary btn-sm"
+      <b-button
+        variant="secondary"
+        size="small"
         @click="collapse[area.id] = !collapse[area.id]"
       >
         <i v-if="!collapse[area.id]" class="bi bi-box-arrow-in-down"></i>
         <i v-else class="bi bi-box-arrow-in-up"></i>
         Collapse
-      </button>
+      </b-button>
     </b-col>
     <b-col>
       <div v-if="editingAreaLecturerName == null">
         <h4>
           {{ area.lectureName }}
-          <button
-            type="button"
-            class="btn btn-light btn-sm"
+          <b-button
+            variant="light"
+            size="small"
             @click="startEditAreaLecturerName(area)"
           >
             <i class="bi bi-pencil-square"></i>
-          </button>
+          </b-button>
         </h4>
       </div>
       <div v-else>
@@ -150,14 +150,14 @@ function changedMinigame(task: ITask) {
             ></VueMultiselect>
           </b-col>
           <b-col>
-            <button
-              type="button"
-              class="btn btn-info btn-sm"
+            <b-button
+              variant="info"
+              size="small"
               @click="startEditMinigame(task)"
             >
               <i class="bi bi-pencil-square"></i>
               Edit
-            </button>
+            </b-button>
           </b-col>
         </b-row>
       </b-card>
