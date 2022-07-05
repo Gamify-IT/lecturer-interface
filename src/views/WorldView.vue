@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { exampleWorlds, ITask, IWorld, Minigame } from "@/ts/worlds";
+import { exampleWorlds, ITask, IWorld, Minigame } from "@/ts/models";
 import { ref, watch } from "vue";
 import { useRoute } from "vue-router";
 import AreaBox from "../components/AreaBox.vue";

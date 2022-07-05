@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { defineProps, defineEmits, ref, watch } from "vue";
-import { IArea, ITask, Minigame } from "@/ts/worlds";
+import { IArea, ITask, Minigame } from "@/ts/models";
 import VueMultiselect from "vue-multiselect";
 import { useToast } from "vue-toastification";
 

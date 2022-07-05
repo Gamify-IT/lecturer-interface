@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { defineProps, defineEmits, ref, watch } from "vue";
-import { ITask } from "@/ts/worlds";
+import { ITask } from "@/ts/models";
 import { BModal } from "bootstrap-vue-3";
 
 const props = defineProps<{
