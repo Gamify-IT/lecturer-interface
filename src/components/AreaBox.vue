@@ -20,6 +20,7 @@ watch(
   () => props.area,
   (newArea) => {
     area.value = newArea;
+    collapse.value = [];
   },
   { deep: true }
 );
@@ -85,16 +86,17 @@ function changedMinigame(task: ITask) {
       </button>
     </b-col>
     <b-col>
-      <h6>{{ area.name }}</h6>
       <div v-if="editingAreaLecturerName == null">
-        {{ area.lectureName }}
-        <button
-          type="button"
-          class="btn btn-light btn-sm"
-          @click="startEditAreaLecturerName(area)"
-        >
-          <i class="bi bi-pencil-square"></i>
-        </button>
+        <h4>
+          {{ area.lectureName }}
+          <button
+            type="button"
+            class="btn btn-light btn-sm"
+            @click="startEditAreaLecturerName(area)"
+          >
+            <i class="bi bi-pencil-square"></i>
+          </button>
+        </h4>
       </div>
       <div v-else>
         <b-row>
@@ -121,6 +123,7 @@ function changedMinigame(task: ITask) {
           </b-col>
         </b-row>
       </div>
+      {{ area.name }}
     </b-col>
     <b-col>
       <b-form-checkbox
