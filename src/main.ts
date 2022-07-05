@@ -10,7 +10,11 @@ import "bootstrap-vue-3/dist/bootstrap-vue-3.css";
 import VueSidebarMenu from "vue-sidebar-menu";
 import "vue-sidebar-menu/dist/vue-sidebar-menu.css";
 
+import Toast from "vue-toastification";
+import "vue-toastification/dist/index.css";
+
 const app = createApp(App);
 app.use(BootstrapVue3);
+app.use(Toast);
 app.use(VueSidebarMenu);
 app.use(store).use(router).mount("#app");

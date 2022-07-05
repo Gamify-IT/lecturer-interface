@@ -4,9 +4,12 @@ import { ref, watch } from "vue";
 import { useRoute } from "vue-router";
 import AreaBox from "../components/AreaBox.vue";
 import EditMinigameConfigurationModal from "@/components/EditMinigameConfigurationModal.vue";
+import { useToast } from "vue-toastification";
 
 const worlds: IWorld[] = exampleWorlds();
 const availableMinigames = Object.values(Minigame);
+
+const toast = useToast();
 
 const route = useRoute();
 const id = route.params.id;
@@ -29,6 +32,7 @@ function editMinigameConfiguration(task: ITask) {
 
 function updateMinigameConfiguration(task: ITask) {
   console.log("Pressed submit button in configuration modal");
+  toast.success("Configurations of " + task.lectureName + " was saved!");
 }
 
 function closedEditModal() {

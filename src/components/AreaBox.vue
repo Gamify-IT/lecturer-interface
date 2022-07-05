@@ -2,11 +2,14 @@
 import { defineProps, defineEmits, ref, watch } from "vue";
 import { IArea, ITask } from "@/ts/worlds";
 import VueMultiselect from "vue-multiselect";
+import { useToast } from "vue-toastification";
 
 const props = defineProps<{
   area: IArea;
   availableMinigames: [];
 }>();
+
+const toast = useToast();
 
 const area = ref(props.area);
 const collapse = ref(Array<boolean>());
@@ -25,6 +28,16 @@ const emit = defineEmits<{
 
 function startEditMinigame(task: ITask) {
   emit("editMinigameConfiguration", task);
+}
+
+function toggledAreaSwitch(area: IArea) {
+  console.log("Toggled switch of " + area.name);
+  console.log(area.active);
+  if (area.active) {
+    toast.success("Area " + area.name + " was activated!");
+  } else {
+    toast.error("Area " + area.name + " was deactivated!");
+  }
 }
 </script>
 
@@ -45,7 +58,12 @@ function startEditMinigame(task: ITask) {
       <span>{{ area.name }}</span>
     </b-col>
     <b-col>
-      <b-form-checkbox v-model="area.active" name="check-button" switch>
+      <b-form-checkbox
+        v-model="area.active"
+        @change="toggledAreaSwitch(area)"
+        name="check-button"
+        switch
+      >
       </b-form-checkbox>
     </b-col>
   </b-row>
