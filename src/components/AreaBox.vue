@@ -58,6 +58,17 @@ function toggledAreaSwitch(area: IArea) {
     toast.error("Area " + area.name + " was deactivated!");
   }
 }
+
+function changedMinigame(task: ITask) {
+  toast.success(
+    "Minigame in Task " +
+      task.lectureName +
+      " was updated to " +
+      task.game +
+      "!"
+  );
+  console.log("Changed minigame to " + task.game);
+}
 </script>
 
 <template>
@@ -130,6 +141,7 @@ function toggledAreaSwitch(area: IArea) {
             <VueMultiselect
               v-model="task.game"
               :options="availableMinigames"
+              @update:model-value="changedMinigame(task)"
             ></VueMultiselect>
           </b-col>
           <b-col>
