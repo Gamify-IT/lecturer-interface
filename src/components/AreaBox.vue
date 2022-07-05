@@ -15,7 +15,6 @@ const area = ref(props.area);
 const collapse = ref(Array<boolean>());
 
 const editingAreaLecturerName = ref();
-const editingAreaLectureNameValue = ref();
 
 watch(
   () => props.area,
@@ -34,17 +33,20 @@ function startEditMinigame(task: ITask) {
 }
 
 function startEditAreaLecturerName(area: IArea) {
-  editingAreaLecturerName.value = area;
-  editingAreaLectureNameValue.value = area.lectureName;
+  editingAreaLecturerName.value = area.lectureName;
 }
 
 function saveEditAreaLecturerName(area: IArea) {
-  editingAreaLecturerName.value = null;
-  area.lectureName = editingAreaLectureNameValue.value;
+  area.lectureName = editingAreaLecturerName.value;
   toast.success(
     "Lecturename of " + area.name + " was updated to " + area.lectureName + "!"
   );
-  editingAreaLectureNameValue.value = null;
+  editingAreaLecturerName.value = null;
+}
+
+function cancelEditAreaLecturerName(area: IArea) {
+  toast.warning("Lecturename of " + area.name + " was not updated!");
+  editingAreaLecturerName.value = null;
 }
 
 function toggledAreaSwitch(area: IArea) {
@@ -73,7 +75,7 @@ function toggledAreaSwitch(area: IArea) {
     </b-col>
     <b-col>
       <h6>{{ area.name }}</h6>
-      <div v-if="editingAreaLecturerName != area">
+      <div v-if="editingAreaLecturerName == null">
         {{ area.lectureName }}
         <button
           type="button"
@@ -86,16 +88,25 @@ function toggledAreaSwitch(area: IArea) {
       <div v-else>
         <b-row>
           <b-col>
-            <b-form-input v-model="editingAreaLectureNameValue"></b-form-input>
+            <b-form-input v-model="editingAreaLecturerName"></b-form-input>
           </b-col>
           <b-col>
-            <button
-              type="button"
-              class="btn btn-success btn-sm"
-              @click="saveEditAreaLecturerName(area)"
-            >
-              <i class="bi bi-journal-check"></i>
-            </button>
+            <b-button-group>
+              <b-button
+                variant="success"
+                size="sm"
+                @click="saveEditAreaLecturerName(area)"
+              >
+                <i class="bi bi-journal-check"></i>
+              </b-button>
+              <b-button
+                variant="danger"
+                size="sm"
+                @click="cancelEditAreaLecturerName(area)"
+              >
+                <i class="bi bi-x-lg"></i>
+              </b-button>
+            </b-button-group>
           </b-col>
         </b-row>
       </div>
