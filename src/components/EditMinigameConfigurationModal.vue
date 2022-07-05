@@ -11,12 +11,6 @@ const props = defineProps<{
 const minigame = ref();
 const form = ref();
 const showModal = ref(props.showModal);
-const editingModal = ref();
-
-onMounted(() => {
-  const modal = editingModal.value;
-  console.log(modal);
-});
 
 watch(
   () => props.minigame,
@@ -69,8 +63,6 @@ function handleSubmit() {
 
 <template>
   <b-modal
-    ref="editingModal"
-    id="editingModal"
     title="Edit game configuration"
     v-model="showModal"
     @show="resetModal"
