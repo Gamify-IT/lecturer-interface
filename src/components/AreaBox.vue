@@ -6,7 +6,7 @@ import { useToast } from "vue-toastification";
 
 const props = defineProps<{
   area: IArea;
-  availableMinigames: [];
+  availableMinigames: Minigame[];
 }>();
 
 const toast = useToast();

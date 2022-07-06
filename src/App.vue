@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import { SidebarMenu } from "vue-sidebar-menu";
+import { SidebarHeaderItem, SidebarItem } from "vue-sidebar-menu";
 import "vue-sidebar-menu/dist/vue-sidebar-menu.css";
 import { exampleWorlds, IWorld } from "./ts/models";
 
 const worlds: IWorld[] = exampleWorlds();
 
-const menu = [
+const menu: (SidebarHeaderItem | SidebarItem)[] = [
   {
     header: "Main Navigation",
     hiddenOnCollapse: false,
