@@ -1,27 +1,51 @@
-<template>
-  <img alt="Vue logo" src="./assets/logo.png" />
-  <HelloWorld msg="Welcome to Your Vue.js + TypeScript App" />
-</template>
+<script setup lang="ts">
+import { SidebarHeaderItem, SidebarItem } from "vue-sidebar-menu";
+import "vue-sidebar-menu/dist/vue-sidebar-menu.css";
+import { exampleWorlds, IWorld } from "./ts/models";
 
-<script lang="ts">
-import { defineComponent } from "vue";
-import HelloWorld from "./components/HelloWorld.vue";
+const worlds: IWorld[] = exampleWorlds();
 
-export default defineComponent({
-  name: "App",
-  components: {
-    HelloWorld,
+const menu: (SidebarHeaderItem | SidebarItem)[] = [
+  {
+    header: "Main Navigation",
+    hiddenOnCollapse: false,
   },
+];
+worlds.forEach((world) => {
+  menu.push({
+    href: "/worlds/" + world.id,
+    title: world.name,
+    icon: "bi-map-fill",
+  });
 });
 </script>
 
+<template>
+  <div class="app-wrapper">
+    <sidebar-menu :menu="menu" :relative="true" />
+    <!-- route outlet -->
+    <!-- component matched by the route will render here -->
+    <div class="router-view-wrapper">
+      <router-view></router-view>
+    </div>
+  </div>
+</template>
+
 <style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
+body {
+  height: 100vh;
+}
+
+.app-wrapper {
+  display: flex;
+}
+
+.app-wrapper .v-sidebar-menu {
+  height: 100vh;
+}
+
+.router-view-wrapper {
+  width: 100%;
+  overflow: scroll;
 }
 </style>
