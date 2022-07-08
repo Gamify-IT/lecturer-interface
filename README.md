@@ -1,6 +1,6 @@
 # Lecturer-Interface
 
-A easy to use interface with that the lecturers can configure the areas of the overworld and the configurations of the minigames.
+An easy to use interface that lecturers can use to configure the areas of the overworld and the shown minigames.
 
 ## Development
 
