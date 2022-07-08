@@ -32,30 +32,34 @@ function startEditMinigame(task: ITask) {
   emit("editMinigameConfiguration", task);
 }
 
-function startEditAreaLecturerName(area: IArea) {
-  editingAreaLecturerName.value = area.lectureName;
+function startEditAreaLecturerName(editingArea: IArea) {
+  editingAreaLecturerName.value = editingArea.lectureName;
 }
 
-function saveEditAreaLecturerName(area: IArea) {
-  area.lectureName = editingAreaLecturerName.value;
+function saveEditAreaLecturerName(editedArea: IArea) {
+  editedArea.lectureName = editingAreaLecturerName.value;
   toast.success(
-    "Lecturename of " + area.name + " was updated to " + area.lectureName + "!"
+    "Lecturename of " +
+      editedArea.name +
+      " was updated to " +
+      editedArea.lectureName +
+      "!"
   );
   editingAreaLecturerName.value = null;
 }
 
-function cancelEditAreaLecturerName(area: IArea) {
-  toast.warning("Lecturename of " + area.name + " was not updated!");
+function cancelEditAreaLecturerName(editedArea: IArea) {
+  toast.warning("Lecturename of " + editedArea.name + " was not updated!");
   editingAreaLecturerName.value = null;
 }
 
-function toggledAreaSwitch(area: IArea) {
-  console.log("Toggled switch of " + area.name);
-  console.log(area.active);
-  if (area.active) {
-    toast.success("Area " + area.name + " was activated!");
+function toggledAreaSwitch(toggledArea: IArea) {
+  console.log("Toggled switch of " + toggledArea.name);
+  console.log(toggledArea.active);
+  if (toggledArea.active) {
+    toast.success("Area " + toggledArea.name + " was activated!");
   } else {
-    toast.error("Area " + area.name + " was deactivated!");
+    toast.error("Area " + toggledArea.name + " was deactivated!");
   }
 }
 
@@ -82,8 +86,8 @@ function changedMinigame(task: ITask) {
         size="small"
         @click="collapse[area.id] = !collapse[area.id]"
       >
-        <i v-if="!collapse[area.id]" class="bi bi-box-arrow-in-down"></i>
-        <i v-else class="bi bi-box-arrow-in-up"></i>
+        <em v-if="!collapse[area.id]" class="bi bi-box-arrow-in-down"></em>
+        <em v-else class="bi bi-box-arrow-in-up"></em>
         Collapse
       </b-button>
     </b-col>
@@ -96,7 +100,7 @@ function changedMinigame(task: ITask) {
             size="small"
             @click="startEditAreaLecturerName(area)"
           >
-            <i class="bi bi-pencil-square"></i>
+            <em class="bi bi-pencil-square"></em>
           </b-button>
         </h4>
       </div>
@@ -112,14 +116,14 @@ function changedMinigame(task: ITask) {
                 size="sm"
                 @click="saveEditAreaLecturerName(area)"
               >
-                <i class="bi bi-journal-check"></i>
+                <em class="bi bi-journal-check"></em>
               </b-button>
               <b-button
                 variant="danger"
                 size="sm"
                 @click="cancelEditAreaLecturerName(area)"
               >
-                <i class="bi bi-x-lg"></i>
+                <em class="bi bi-x-lg"></em>
               </b-button>
             </b-button-group>
           </b-col>
@@ -155,7 +159,7 @@ function changedMinigame(task: ITask) {
               size="small"
               @click="startEditMinigame(task)"
             >
-              <i class="bi bi-pencil-square"></i>
+              <em class="bi bi-pencil-square"></em>
               Edit
             </b-button>
           </b-col>
@@ -166,4 +170,3 @@ function changedMinigame(task: ITask) {
 </template>
 
 <style src="vue-multiselect/dist/vue-multiselect.css"></style>
-<style scoped></style>
