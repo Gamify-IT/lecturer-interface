@@ -36,7 +36,7 @@ function editMinigameConfiguration(task: ITask) {
 
 function updateMinigameConfiguration(task: ITask) {
   console.log("Pressed submit button in configuration modal");
-  toast.success("Configurations of " + task.lectureName + " was saved!");
+  toast.success(`Configurations of ${task.lectureName} was saved!`);
 }
 
 function closedEditModal() {

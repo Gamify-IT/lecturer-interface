@@ -1,5 +1,6 @@
-const { defineConfig } = require('@vue/cli-service');
+const { defineConfig } = require("@vue/cli-service");
 module.exports = defineConfig({
-  publicPath: process.env.NODE_ENV === 'production' ? '/lecturer-interface' : '/',
+  publicPath:
+    process.env.NODE_ENV === "production" ? "/lecturer-interface" : "/",
   transpileDependencies: true,
 });

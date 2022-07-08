@@ -39,17 +39,13 @@ function startEditAreaLecturerName(editingArea: IArea) {
 function saveEditAreaLecturerName(editedArea: IArea) {
   editedArea.lectureName = editingAreaLecturerName.value;
   toast.success(
-    "Lecturename of " +
-      editedArea.name +
-      " was updated to " +
-      editedArea.lectureName +
-      "!"
+    `Name of lecture ${editedArea.name} was updated to ${editedArea.lectureName}!`
   );
   editingAreaLecturerName.value = null;
 }
 
 function cancelEditAreaLecturerName(editedArea: IArea) {
-  toast.warning("Lecturename of " + editedArea.name + " was not updated!");
+  toast.warning(`Name of lecture ${editedArea.name} was not updated!`);
   editingAreaLecturerName.value = null;
 }
 
@@ -57,9 +53,9 @@ function toggledAreaSwitch(toggledArea: IArea) {
   console.log("Toggled switch of " + toggledArea.name);
   console.log(toggledArea.active);
   if (toggledArea.active) {
-    toast.success("Area " + toggledArea.name + " was activated!");
+    toast.success(`Area ${toggledArea.name} was activated!`);
   } else {
-    toast.error("Area " + toggledArea.name + " was deactivated!");
+    toast.error(`Area ${toggledArea.name} was deactivated!`);
   }
 }
 
@@ -68,11 +64,7 @@ function changedMinigame(task: ITask) {
     task.game = Minigame.NONE;
   }
   toast.success(
-    "Minigame in Task " +
-      task.lectureName +
-      " was updated to " +
-      task.game +
-      "!"
+    `Minigame in Task ${task.lectureName} was updated to ${task.game}!`
   );
   console.log("Changed minigame to " + task.game);
 }
