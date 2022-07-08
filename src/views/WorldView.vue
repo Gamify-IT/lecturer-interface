@@ -20,9 +20,11 @@ const showEditModal = ref(false);
 
 updateSelectedWorld(id);
 
-function updateSelectedWorld(id: any) {
-  if (!isNaN(id)) {
-    world.value = worlds.find((world) => world.id == id);
+function updateSelectedWorld(selectedId: any) {
+  if (!isNaN(selectedId)) {
+    world.value = worlds.find(
+      (matchingWorld) => matchingWorld.id == selectedId
+    );
   }
 }
 
@@ -34,7 +36,7 @@ function editMinigameConfiguration(task: ITask) {
 
 function updateMinigameConfiguration(task: ITask) {
   console.log("Pressed submit button in configuration modal");
-  toast.success("Configurations of " + task.lectureName + " was saved!");
+  toast.success(`Configurations of ${task.lectureName} was saved!`);
 }
 
 function closedEditModal() {
@@ -86,12 +88,10 @@ watch(
     <div
       class="alert alert-danger alert-dismissible d-flex align-items-center fade show"
     >
-      <i class="bi-exclamation-octagon-fill"></i>
+      <em class="bi-exclamation-octagon-fill"></em>
       <strong class="mx-2">Error!</strong>
       World with id {{ id }} not found!
       <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
     </div>
   </div>
 </template>
-
-<style scoped></style>

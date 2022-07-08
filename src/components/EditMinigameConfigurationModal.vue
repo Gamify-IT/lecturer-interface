@@ -34,8 +34,7 @@ const emit = defineEmits<{
 }>();
 
 function checkFormValidity(): boolean {
-  const valid = form.value.checkValidity();
-  return valid;
+  return form.value.checkValidity();
 }
 
 function resetModal() {
