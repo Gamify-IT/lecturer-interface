@@ -28,7 +28,7 @@ describe("WorldView.vue", () => {
       },
     });
   });
-  test("WordView has for every Dungeon a AreaBox", async () => {
+  test("WordView has for every Dungeon an AreaBox", async () => {
     expect(wrapper.findComponent(EditMinigameConfiguration).exists()).toBe(
       true
     );
@@ -38,14 +38,14 @@ describe("WorldView.vue", () => {
       currentWorld.dungeons.length + 1
     );
     currentWorld.dungeons.forEach((dungeon) => {
-      const areaBoxe = wrapper
+      const areaBox = wrapper
         .findAllComponents(AreaBox)
         .find(
           (box) =>
             box.html().includes(dungeon.lectureName) &&
             box.html().includes(dungeon.name)
         );
-      expect(areaBoxe != null).toBe(true);
+      expect(areaBox != null).toBe(true);
     });
   });
 });
