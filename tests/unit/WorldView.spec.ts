@@ -28,7 +28,7 @@ describe("WorldView.vue", () => {
       },
     });
   });
-  test("WordView has for every Dungeon an AreaBox", async () => {
+  test("WorldView has an AreaBox for every Dungeon", async () => {
     expect(wrapper.findComponent(EditMinigameConfiguration).exists()).toBe(
       true
     );

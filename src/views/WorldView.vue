@@ -12,7 +12,7 @@ let worlds: IWorld[];
 if (process.env.NODE_ENV == "test") {
   worlds = exampleWorlds();
 } else {
-  // later when rest api is in use this has to be changed
+  // TODO: later when rest api is in use this has to be changed
   worlds = exampleWorlds();
 }
 

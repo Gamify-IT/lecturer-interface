@@ -32,12 +32,12 @@ describe("AreaBox.vue", () => {
   });
   test("Lecturer-Name is editable on button click and saveable", async () => {
     let areaNameColumn = wrapper.find("#area-name-column");
-    let lectuererNameInput = areaNameColumn.find("input");
+    let lecturerNameInput = areaNameColumn.find("input");
     expect(areaNameColumn.exists()).toBe(true);
     expect(areaNameColumn.html()).toContain("Kapitel 1: UML");
     expect(areaNameColumn.html()).toContain("Dungeon 1");
 
-    expect(lectuererNameInput.exists()).toBe(false);
+    expect(lecturerNameInput.exists()).toBe(false);
 
     const editAreaLecutererNameButton = areaNameColumn.find("button");
     editAreaLecutererNameButton.trigger("click");
@@ -46,9 +46,9 @@ describe("AreaBox.vue", () => {
     await Promise.resolve();
 
     areaNameColumn = wrapper.find("#area-name-column");
-    lectuererNameInput = areaNameColumn.find("input");
-    expect(lectuererNameInput.exists()).toBe(true);
-    lectuererNameInput.setValue("New Chapter XY");
+    lecturerNameInput = areaNameColumn.find("input");
+    expect(lecturerNameInput.exists()).toBe(true);
+    lecturerNameInput.setValue("New Chapter XY");
 
     const submitButton = areaNameColumn.find(".btn-success");
     expect(submitButton.exists()).toBe(true);
@@ -58,19 +58,19 @@ describe("AreaBox.vue", () => {
     await Promise.resolve();
 
     areaNameColumn = wrapper.find("#area-name-column");
-    lectuererNameInput = areaNameColumn.find("input");
-    expect(lectuererNameInput.exists()).toBe(false);
+    lecturerNameInput = areaNameColumn.find("input");
+    expect(lecturerNameInput.exists()).toBe(false);
     expect(areaNameColumn.html()).toContain("New Chapter XY");
     expect(areaNameColumn.html()).toContain("Dungeon 1");
   });
   test("Lecturer-Name is editable on button click and cancelable", async () => {
     let areaNameColumn = wrapper.find("#area-name-column");
-    let lectuererNameInput = areaNameColumn.find("input");
+    let lecturerNameInput = areaNameColumn.find("input");
     expect(areaNameColumn.exists()).toBe(true);
     expect(areaNameColumn.html()).toContain("Kapitel 1: UML");
     expect(areaNameColumn.html()).toContain("Dungeon 1");
 
-    expect(lectuererNameInput.exists()).toBe(false);
+    expect(lecturerNameInput.exists()).toBe(false);
 
     const editAreaLecutererNameButton = areaNameColumn.find("button");
     editAreaLecutererNameButton.trigger("click");
@@ -79,9 +79,9 @@ describe("AreaBox.vue", () => {
     await Promise.resolve();
 
     areaNameColumn = wrapper.find("#area-name-column");
-    lectuererNameInput = areaNameColumn.find("input");
-    expect(lectuererNameInput.exists()).toBe(true);
-    lectuererNameInput.setValue("New Dungeon Name");
+    lecturerNameInput = areaNameColumn.find("input");
+    expect(lecturerNameInput.exists()).toBe(true);
+    lecturerNameInput.setValue("New Dungeon Name");
 
     const submitButton = areaNameColumn.find(".btn-danger");
     expect(submitButton.exists()).toBe(true);
@@ -91,8 +91,8 @@ describe("AreaBox.vue", () => {
     await Promise.resolve();
 
     areaNameColumn = wrapper.find("#area-name-column");
-    lectuererNameInput = areaNameColumn.find("input");
-    expect(lectuererNameInput.exists()).toBe(false);
+    lecturerNameInput = areaNameColumn.find("input");
+    expect(lecturerNameInput.exists()).toBe(false);
     expect(areaNameColumn.html()).toContain("Kapitel 1: UML");
     expect(areaNameColumn.html()).toContain("Dungeon 1");
   });
