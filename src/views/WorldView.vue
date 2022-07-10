@@ -6,7 +6,16 @@ import AreaBox from "../components/AreaBox.vue";
 import EditMinigameConfigurationModal from "@/components/EditMinigameConfigurationModal.vue";
 import { useToast } from "vue-toastification";
 
-const worlds: IWorld[] = exampleWorlds();
+let worlds: IWorld[];
+
+// on testing the example worlds gets used
+if (process.env.NODE_ENV == "test") {
+  worlds = exampleWorlds();
+} else {
+  // TODO: later when rest api is in use this has to be changed
+  worlds = exampleWorlds();
+}
+
 const availableMinigames = Object.values(Minigame);
 
 const toast = useToast();

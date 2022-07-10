@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { defineProps, defineEmits, ref, watch } from "vue";
 import { IArea, ITask, Minigame } from "@/ts/models";
-import VueMultiselect from "vue-multiselect";
 import { useToast } from "vue-toastification";
 
 const props = defineProps<{
@@ -72,7 +71,7 @@ function changedMinigame(task: ITask) {
 
 <template>
   <b-row>
-    <b-col>
+    <b-col id="collapse-tasks-column">
       <b-button
         variant="secondary"
         size="small"
@@ -83,7 +82,7 @@ function changedMinigame(task: ITask) {
         Collapse
       </b-button>
     </b-col>
-    <b-col>
+    <b-col id="area-name-column">
       <div v-if="editingAreaLecturerName == null">
         <h4>
           {{ area.lectureName }}
@@ -134,16 +133,16 @@ function changedMinigame(task: ITask) {
     </b-col>
   </b-row>
   <b-row>
-    <b-collapse id="collapse-4" v-model="collapse[area.id]">
+    <b-collapse id="collapse-tasks" v-model="collapse[area.id]">
       <b-card v-for="task in area.tasks" :key="task.id" class="mt-1">
         <b-row>
           <b-col>{{ task.lectureName }}</b-col>
           <b-col>
-            <VueMultiselect
+            <b-form-select
               v-model="task.game"
               :options="availableMinigames"
-              @update:model-value="changedMinigame(task)"
-            ></VueMultiselect>
+              @input="changedMinigame(task)"
+            ></b-form-select>
           </b-col>
           <b-col>
             <b-button
@@ -160,5 +159,3 @@ function changedMinigame(task: ITask) {
     </b-collapse>
   </b-row>
 </template>
-
-<style src="vue-multiselect/dist/vue-multiselect.css"></style>
