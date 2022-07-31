@@ -153,7 +153,11 @@ function changedMinigame(task: ITask) {
     </b-col>
   </b-row>
   <b-row>
-    <b-collapse id="collapse-tasks" v-model="collapse[area.id]">
+    <b-collapse
+      id="collapse-tasks"
+      v-model="collapse[area.id]"
+      v-if="collapse[area.id]"
+    >
       <b-card
         v-for="task in area.minigameTasks.sort(
           (task1, task2) => task1.index > task2.index

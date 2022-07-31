@@ -33,13 +33,11 @@ function loadSelectedWorld(
         (dungeon1: IDungeon, dungeon2: IDungeon) =>
           dungeon1.index > dungeon2.index
       );
+      console.log("Loaded selected world " + selectedWorldIndex);
     })
     .catch((error) => {
       console.log(error);
     });
-  console.log("=");
-  console.log(selectedCourseId);
-  console.log(selectedWorldIndex);
 }
 
 function editMinigameConfiguration(task: ITask) {
@@ -58,17 +56,10 @@ function closedEditModal() {
   showEditModal.value = false;
 }
 watch(
-  () => route.params.courseId,
-  (newId) => {
-    courseId.value = parseInt(newId as string);
-    loadSelectedWorld(courseId.value, worldIndex.value);
-  },
-  { deep: true }
-);
-watch(
-  () => route.params.worldIndex,
-  (newIndex) => {
-    worldIndex.value = parseInt(newIndex as string);
+  () => [route.params.courseId, route.params.worldIndex],
+  (newVal) => {
+    courseId.value = parseInt(newVal[0] as string);
+    worldIndex.value = parseInt(newVal[1] as string);
     loadSelectedWorld(courseId.value, worldIndex.value);
   },
   { deep: true }
