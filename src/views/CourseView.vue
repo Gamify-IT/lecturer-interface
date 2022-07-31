@@ -34,8 +34,8 @@ const toast = useToast();
 
 <template>
   <div class="container mt-4">
-    <div v-if="course != null">
-      <h1>Course name: {{ course.courseName }}</h1>
+    <div v-if="course != null" class="">
+      <h1 class="h1">Course name: {{ course.courseName }}</h1>
     </div>
     <div v-else>
       <div

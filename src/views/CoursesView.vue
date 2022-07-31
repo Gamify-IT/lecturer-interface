@@ -17,6 +17,11 @@ async function loadCourses() {
       console.log(error);
     });
 }
+
+function printTest(object: PointerEvent) {
+  console.log("Test" + object.clientY);
+}
+
 const fields = [
   {
     key: "id",
@@ -41,13 +46,23 @@ const route = useRoute();
 
 <template>
   <div class="container mt-4">
-    <b-table :fields="fields" :items="courses">
-      <template #cell(courseName)="data">
-        <!-- `data.value` is the value after formatted by the Formatter -->
-        <a :href="`#${data.value.replace(/[^a-z]+/i, '-').toLowerCase()}`">{{
-          data.value
-        }}</a>
-      </template>
+    <b-table
+      bordered
+      striped
+      hover
+      responsive
+      class="table-cursor"
+      :fields="fields"
+      :items="courses"
+      @click="printTest"
+    >
+      <b-row @click="printTest()"> test </b-row>
     </b-table>
   </div>
 </template>
+
+<style>
+.table-cursor {
+  cursor: pointer;
+}
+</style>
