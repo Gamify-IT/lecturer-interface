@@ -76,7 +76,7 @@ watch(
 </script>
 
 <template>
-  <div v-if="world != null" class="container mt-5">
+  <div v-if="world != undefined" class="container mt-5">
     <h2>Configure {{ world.name }}</h2>
 
     <div>

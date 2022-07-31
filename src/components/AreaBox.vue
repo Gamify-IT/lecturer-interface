@@ -154,9 +154,15 @@ function changedMinigame(task: ITask) {
   </b-row>
   <b-row>
     <b-collapse id="collapse-tasks" v-model="collapse[area.id]">
-      <b-card v-for="task in area.minigameTasks" :key="task.id" class="mt-1">
+      <b-card
+        v-for="task in area.minigameTasks.sort(
+          (task1, task2) => task1.index > task2.index
+        )"
+        :key="task.id"
+        class="mt-1"
+      >
         <b-row>
-          <b-col>{{ task.topicName }}</b-col>
+          <b-col>{{ task.index }}</b-col>
           <b-col>
             <b-form-select
               v-model="task.game"
