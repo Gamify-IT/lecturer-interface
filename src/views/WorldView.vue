@@ -1,62 +1,75 @@
 <script setup lang="ts">
-import { exampleWorlds, ITask, IWorld, Minigame } from "@/ts/models";
+import { IDungeon, ITask, IWorld, Minigame } from "@/ts/models";
+import { getWorld } from "@/ts/world-rest-client";
 import { ref, watch } from "vue";
 import { useRoute } from "vue-router";
 import AreaBox from "../components/AreaBox.vue";
 import EditMinigameConfigurationModal from "@/components/EditMinigameConfigurationModal.vue";
 import { useToast } from "vue-toastification";
 
-let worlds: IWorld[];
-
-// on testing the example worlds gets used
-if (process.env.NODE_ENV == "test") {
-  worlds = exampleWorlds();
-} else {
-  // TODO: later when rest api is in use this has to be changed
-  worlds = exampleWorlds();
-}
-
 const availableMinigames = Object.values(Minigame);
 
 const toast = useToast();
 
 const route = useRoute();
-const id = route.params.id;
+const courseId = ref(parseInt(route.params.courseId as string));
+const worldIndex = ref(parseInt(route.params.worldIndex as string));
 const world = ref();
 
 const editedMinigame = ref();
 const showEditModal = ref(false);
 
-updateSelectedWorld(id);
+loadSelectedWorld(courseId.value, worldIndex.value);
 
-function updateSelectedWorld(selectedId: any) {
-  if (!isNaN(selectedId)) {
-    world.value = worlds.find(
-      (matchingWorld) => matchingWorld.id == selectedId
-    );
-  }
+function loadSelectedWorld(
+  selectedCourseId: number,
+  selectedWorldIndex: number
+) {
+  getWorld(selectedCourseId, selectedWorldIndex)
+    .then((response) => {
+      const result = response.data;
+      world.value = result;
+      world.value.dungeons = world.value.dungeons.sort(
+        (dungeon1: IDungeon, dungeon2: IDungeon) =>
+          dungeon1.index > dungeon2.index
+      );
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+  console.log("=");
+  console.log(selectedCourseId);
+  console.log(selectedWorldIndex);
 }
 
 function editMinigameConfiguration(task: ITask) {
   editedMinigame.value = task;
-  console.log("Want to edit minigame " + task.lectureName);
+  console.log("Want to edit minigame " + task.id);
   showEditModal.value = true;
 }
 
 function updateMinigameConfiguration(task: ITask) {
   console.log("Pressed submit button in configuration modal");
-  toast.success(`Configurations of ${task.lectureName} was saved!`);
+  toast.success(`Configurations of ${task.id} was saved!`);
 }
 
 function closedEditModal() {
   console.log("Parent got info that modal was closed");
   showEditModal.value = false;
 }
-
 watch(
-  () => route.params.id,
+  () => route.params.courseId,
   (newId) => {
-    updateSelectedWorld(newId);
+    courseId.value = parseInt(newId as string);
+    loadSelectedWorld(courseId.value, worldIndex.value);
+  },
+  { deep: true }
+);
+watch(
+  () => route.params.worldIndex,
+  (newIndex) => {
+    worldIndex.value = parseInt(newIndex as string);
+    loadSelectedWorld(courseId.value, worldIndex.value);
   },
   { deep: true }
 );
@@ -72,6 +85,9 @@ watch(
           <b-tr>
             <AreaBox
               :area="world"
+              :courseId="courseId"
+              :worldIndex="world.index"
+              :dungeonIndex="0"
               :availableMinigames="availableMinigames"
               @editMinigameConfiguration="editMinigameConfiguration"
             />
@@ -79,7 +95,10 @@ watch(
           <b-tr v-for="dungeon in world.dungeons" :key="dungeon.id">
             <AreaBox
               :area="dungeon"
+              :courseId="courseId"
               :availableMinigames="availableMinigames"
+              :worldIndex="world.index"
+              :dungeonIndex="dungeon.index"
               @editMinigameConfiguration="editMinigameConfiguration"
             />
           </b-tr>
@@ -99,7 +118,7 @@ watch(
     >
       <em class="bi-exclamation-octagon-fill"></em>
       <strong class="mx-2">Error!</strong>
-      World with id {{ id }} not found!
+      World in course {{ courseId }} with index {{ worldIndex }} not found;
       <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
     </div>
   </div>

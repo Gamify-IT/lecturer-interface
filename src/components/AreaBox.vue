@@ -1,10 +1,15 @@
 <script setup lang="ts">
 import { defineProps, defineEmits, ref, watch } from "vue";
+import { updateArea } from "@/ts/area-rest-client";
+
 import { IArea, ITask, Minigame } from "@/ts/models";
 import { useToast } from "vue-toastification";
 
 const props = defineProps<{
   area: IArea;
+  courseId: number;
+  worldIndex: number;
+  dungeonIndex: number;
   availableMinigames: Minigame[];
 }>();
 
@@ -37,9 +42,19 @@ function startEditAreaLecturerName(editingArea: IArea) {
 
 function saveEditAreaLecturerName(editedArea: IArea) {
   editedArea.topicName = editingAreaLecturerName.value;
+  updateArea(props.courseId, props.worldIndex, props.dungeonIndex, editedArea)
+    .then((response) => {
+      const result: IArea = response.data;
+      editedArea = result;
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+  editedArea.topicName = editingAreaLecturerName.value;
   toast.success(
-    `Name of lecture ${editedArea.staticName} was updated to ${editedArea.topicName}!`
+    `Topic name of lecture ${editedArea.staticName} was updated to ${editedArea.topicName}!`
   );
+
   editingAreaLecturerName.value = null;
 }
 
@@ -51,11 +66,18 @@ function cancelEditAreaLecturerName(editedArea: IArea) {
 function toggledAreaSwitch(toggledArea: IArea) {
   console.log("Toggled switch of " + toggledArea.staticName);
   console.log(toggledArea.active);
-  if (toggledArea.active) {
-    toast.success(`Area ${toggledArea.staticName} was activated!`);
-  } else {
-    toast.error(`Area ${toggledArea.staticName} was deactivated!`);
-  }
+  updateArea(props.courseId, props.worldIndex, props.dungeonIndex, toggledArea)
+    .then((response) => {
+      const result: IArea = response.data;
+      if (result.active) {
+        toast.success(`Area ${toggledArea.staticName} was activated!`);
+      } else {
+        toast.error(`Area ${toggledArea.staticName} was deactivated!`);
+      }
+    })
+    .catch((error) => {
+      console.log(error);
+    });
 }
 
 function changedMinigame(task: ITask) {
@@ -83,7 +105,7 @@ function changedMinigame(task: ITask) {
     <b-col id="area-name-column">
       <div v-if="editingAreaLecturerName == null">
         <h4>
-          {{ area.lectureName }}
+          {{ area.topicName }}
           <b-button
             variant="light"
             size="small"
@@ -118,7 +140,7 @@ function changedMinigame(task: ITask) {
           </b-col>
         </b-row>
       </div>
-      {{ area.name }}
+      {{ area.staticName }}
     </b-col>
     <b-col>
       <b-form-checkbox
@@ -132,9 +154,9 @@ function changedMinigame(task: ITask) {
   </b-row>
   <b-row>
     <b-collapse id="collapse-tasks" v-model="collapse[area.id]">
-      <b-card v-for="task in area.tasks" :key="task.id" class="mt-1">
+      <b-card v-for="task in area.minigameTasks" :key="task.id" class="mt-1">
         <b-row>
-          <b-col>{{ task.lectureName }}</b-col>
+          <b-col>{{ task.topicName }}</b-col>
           <b-col>
             <b-form-select
               v-model="task.game"

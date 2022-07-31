@@ -9,27 +9,30 @@ export interface ICourse {
 
 export interface IArea {
   id: string;
+  index: number;
   staticName: string;
   topicName: string;
   active: boolean;
-  tasks: ITask[];
+  minigameTasks: ITask[];
 }
 
 export interface IWorld extends IArea {
   id: string;
+  index: number;
   staticName: string;
   topicName: string;
   active: boolean;
   dungeons: IDungeon[];
-  tasks: ITask[];
+  minigameTasks: ITask[];
 }
 
 export interface IDungeon extends IArea {
   id: string;
+  index: number;
   staticName: string;
   topicName: string;
   active: boolean;
-  tasks: ITask[];
+  minigameTasks: ITask[];
 }
 
 export interface ITask {
@@ -72,48 +75,54 @@ export class Course implements ICourse {
 
 export class World implements IWorld {
   id: string;
+  index: number;
   staticName: string;
   topicName: string;
   active: boolean;
   dungeons: IDungeon[];
-  tasks: ITask[];
+  minigameTasks: ITask[];
 
   public constructor(
     id: string,
+    index: number,
     staticName: string,
     topicName: string,
     active: boolean,
     dungeons: IDungeon[],
-    tasks: ITask[]
+    minigameTasks: ITask[]
   ) {
     this.id = id;
+    this.index = index;
     this.staticName = staticName;
     this.topicName = topicName;
     this.active = active;
     this.dungeons = dungeons;
-    this.tasks = tasks;
+    this.minigameTasks = minigameTasks;
   }
 }
 
 export class Dungeon implements IDungeon {
   id: string;
+  index: number;
   staticName: string;
   topicName: string;
   active: boolean;
-  tasks: ITask[];
+  minigameTasks: ITask[];
 
   public constructor(
     id: string,
+    index: number,
     staticName: string,
     topicName: string,
     active: boolean,
-    tasks: ITask[]
+    minigameTasks: ITask[]
   ) {
     this.id = id;
+    this.index = index;
     this.staticName = staticName;
     this.topicName = topicName;
     this.active = active;
-    this.tasks = tasks;
+    this.minigameTasks = minigameTasks;
   }
 }
 
@@ -127,6 +136,10 @@ export class Task implements ITask {
     this.game = game;
     this.congifurationId = configurationId;
   }
+}
+
+export function isWorld(area: any) {
+  return area.dungeons;
 }
 
 export function exampleWorlds(): IWorld[] {

@@ -3,11 +3,10 @@ import axios from "axios";
 import config from "@/config";
 import { ICourse } from "./models";
 
-export async function getCourses() {
+export async function getCourses(): Promise<ICourse[]> {
   return axios.get(`${config.apiBaseUrl}/courses`);
 }
 
-export async function getCourse(id: number) {
-  console.log("Request");
+export async function getCourse(id: number): Promise<ICourse> {
   return axios.get(`${config.apiBaseUrl}/courses/${id}`);
 }

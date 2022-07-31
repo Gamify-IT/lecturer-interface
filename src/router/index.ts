@@ -16,7 +16,7 @@ const routes: Array<RouteRecordRaw> = [
     component: CourseView,
   },
   {
-    path: "/worlds/:id",
+    path: "/courses/:courseId/worlds/:worldIndex",
     name: "worlds",
     component: WorldView,
   },

@@ -32,16 +32,13 @@ worlds.forEach((world) => {
 </template>
 
 <style>
-body {
-  height: 100vh;
-}
-
 .app-wrapper {
+  height: 100vh;
   display: flex;
 }
 
-.app-wrapper .v-sidebar-menu {
-  height: 100vh;
+.v-sidebar-menu {
+  height: 100%;
 }
 
 .router-view-wrapper {
