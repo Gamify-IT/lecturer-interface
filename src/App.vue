@@ -50,13 +50,26 @@ function loadMenu() {
   console.log(menu.value);
 }
 
-getCourseId().then((courseId) => {
-  loadCourse(courseId);
+showSideBar().then((show) => {
+  if (show) {
+    getCourseId().then((courseId) => {
+      loadCourse(courseId);
+    });
+  }
 });
 
 const sidebarActive = ["course", "worlds"];
 
-const showSideBar = computed(() => {
+async function showSideBar() {
+  await router.isReady();
+  const route = router.currentRoute.value.name;
+  if (route) {
+    return sidebarActive.includes(route.toString());
+  }
+  return false;
+}
+
+const showSideBarComputed = computed(() => {
   const route = router.currentRoute.value.name;
   if (route) {
     return sidebarActive.includes(route.toString());
@@ -82,7 +95,7 @@ async function getCourseId(): Promise<number> {
 <template>
   {{ course }}
   <div class="app-wrapper">
-    <sidebar-menu :menu="menu" :relative="true" v-if="showSideBar" />
+    <sidebar-menu :menu="menu" :relative="true" v-if="showSideBarComputed" />
     <!-- route outlet -->
     <!-- component matched by the route will render here -->
     <div class="router-view-wrapper">
