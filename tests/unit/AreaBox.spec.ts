@@ -10,10 +10,10 @@ describe("AreaBox.vue", () => {
 
   beforeEach(() => {
     const tasks = [
-      new Task(1, "Aufgabe 1", Minigame.BUGFINDER, "w1-d1-t1"),
-      new Task(2, "Aufgabe 2", Minigame.MOORHUHN, "w1-d1-t2"),
+      new Task("1", Minigame.BUGFINDER, "asdsaas"),
+      new Task("2", Minigame.MOORHUHN, "asdasdsa"),
     ];
-    dungeon = new Dungeon(1, "Dungeon 1", "Kapitel 1: UML", true, tasks);
+    dungeon = new Dungeon("1", "Dungeon 1", "Kapitel 1: UML", true, tasks);
     const availableMinigames = Object.values(Minigame);
     wrapper = mount(AreaBox, {
       props: {
@@ -28,12 +28,12 @@ describe("AreaBox.vue", () => {
   test("AreaBox shows in a coloumn lecturer name and given name", () => {
     const areaNameColumn = wrapper.find("#area-name-column");
     expect(areaNameColumn.exists()).toBe(true);
-    expect(areaNameColumn.html()).toContain(dungeon.lectureName);
-    expect(areaNameColumn.html()).toContain(dungeon.name);
+    expect(areaNameColumn.html()).toContain(dungeon.topicName);
+    expect(areaNameColumn.html()).toContain(dungeon.staticName);
   });
   test("Lecturer-Name is editable on button click and saveable", async () => {
-    const initialDungeonName = dungeon.name;
-    const initialDungeonLectureName = dungeon.lectureName;
+    const initialDungeonName = dungeon.staticName;
+    const initialDungeonLectureName = dungeon.topicName;
 
     const updatedDungeonLectureName = "New Chapter XY";
 
@@ -71,8 +71,8 @@ describe("AreaBox.vue", () => {
     expect(areaNameColumn.html()).toContain(initialDungeonName);
   });
   test("Lecturer-Name is editable on button click and cancelable", async () => {
-    const initialDungeonName = dungeon.name;
-    const initialDungeonLectureName = dungeon.lectureName;
+    const initialDungeonName = dungeon.staticName;
+    const initialDungeonLectureName = dungeon.topicName;
 
     let areaNameColumn = wrapper.find("#area-name-column");
     let lecturerNameInput = areaNameColumn.find("input");

@@ -11,7 +11,7 @@ describe("WorldView.vue", () => {
   let currentWorld: IWorld;
   let wrapper: WrapperLike;
   beforeEach(async () => {
-    const id = 1;
+    const id = "1";
 
     // on testing the example worlds gets used
     const worlds = exampleWorlds();
@@ -33,7 +33,7 @@ describe("WorldView.vue", () => {
       true
     );
     expect(wrapper.findComponent(AreaBox).exists()).toBe(true);
-    expect(wrapper.html()).toContain("Configure " + currentWorld.name);
+    expect(wrapper.html()).toContain("Configure " + currentWorld.staticName);
     expect(wrapper.findAllComponents(AreaBox).length).toBe(
       currentWorld.dungeons.length + 1
     );
@@ -42,8 +42,8 @@ describe("WorldView.vue", () => {
         .findAllComponents(AreaBox)
         .find(
           (box) =>
-            box.html().includes(dungeon.lectureName) &&
-            box.html().includes(dungeon.name)
+            box.html().includes(dungeon.topicName) &&
+            box.html().includes(dungeon.staticName)
         );
       expect(areaBox != null).toBe(true);
     });

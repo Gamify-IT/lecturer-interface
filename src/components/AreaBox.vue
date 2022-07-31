@@ -32,29 +32,29 @@ function startEditMinigame(task: ITask) {
 }
 
 function startEditAreaLecturerName(editingArea: IArea) {
-  editingAreaLecturerName.value = editingArea.lectureName;
+  editingAreaLecturerName.value = editingArea.topicName;
 }
 
 function saveEditAreaLecturerName(editedArea: IArea) {
-  editedArea.lectureName = editingAreaLecturerName.value;
+  editedArea.topicName = editingAreaLecturerName.value;
   toast.success(
-    `Name of lecture ${editedArea.name} was updated to ${editedArea.lectureName}!`
+    `Name of lecture ${editedArea.staticName} was updated to ${editedArea.topicName}!`
   );
   editingAreaLecturerName.value = null;
 }
 
 function cancelEditAreaLecturerName(editedArea: IArea) {
-  toast.warning(`Name of lecture ${editedArea.name} was not updated!`);
+  toast.warning(`Name of lecture ${editedArea.staticName} was not updated!`);
   editingAreaLecturerName.value = null;
 }
 
 function toggledAreaSwitch(toggledArea: IArea) {
-  console.log("Toggled switch of " + toggledArea.name);
+  console.log("Toggled switch of " + toggledArea.staticName);
   console.log(toggledArea.active);
   if (toggledArea.active) {
-    toast.success(`Area ${toggledArea.name} was activated!`);
+    toast.success(`Area ${toggledArea.staticName} was activated!`);
   } else {
-    toast.error(`Area ${toggledArea.name} was deactivated!`);
+    toast.error(`Area ${toggledArea.staticName} was deactivated!`);
   }
 }
 
@@ -62,9 +62,7 @@ function changedMinigame(task: ITask) {
   if (task.game == null) {
     task.game = Minigame.NONE;
   }
-  toast.success(
-    `Minigame in Task ${task.lectureName} was updated to ${task.game}!`
-  );
+  toast.success(`Minigame in Task was updated to ${task.game}!`);
   console.log("Changed minigame to " + task.game);
 }
 </script>

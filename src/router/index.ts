@@ -1,7 +1,20 @@
 import WorldView from "@/views/WorldView.vue";
+import CoursesView from "@/views/CoursesView.vue";
+import CourseView from "@/views/CourseView.vue";
+
 import { createRouter, createWebHistory, RouteRecordRaw } from "vue-router";
 
 const routes: Array<RouteRecordRaw> = [
+  {
+    path: "/",
+    name: "courses",
+    component: CoursesView,
+  },
+  {
+    path: "/courses/:id",
+    name: "course",
+    component: CourseView,
+  },
   {
     path: "/worlds/:id",
     name: "worlds",
