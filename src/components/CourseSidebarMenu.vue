@@ -56,7 +56,7 @@ function loadMenu() {
     icon: "bi-book-half",
   });
   const worlds = course.worlds.sort(
-    (world1, world2) => world1.index + world2.index
+    (world1, world2) => world1.index - world2.index
   );
   worlds.forEach((world: IWorld) => {
     menu.value.push({

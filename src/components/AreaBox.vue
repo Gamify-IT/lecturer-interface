@@ -90,6 +90,7 @@ function changedMinigame(task: ITask) {
 </script>
 
 <template>
+  {{ area.index }}
   <b-row>
     <b-col id="collapse-tasks-column">
       <b-button

@@ -68,9 +68,10 @@ watch(
 
 <template>
   <div v-if="world != undefined" class="container mt-5">
-    <h2>Configure {{ world.name }}</h2>
+    <h2>Configure World {{ world.index }}</h2>
+    <h4>{{ world.staticName }}</h4>
 
-    <div>
+    <div style="margin-top: 30px">
       <b-table-simple>
         <b-tbody>
           <b-tr>
