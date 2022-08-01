@@ -36,6 +36,11 @@ function loadMenu() {
       hiddenOnCollapse: false,
     },
   ];
+  menu.value.push({
+    href: "/courses/" + course.id,
+    title: "course : " + course.courseName,
+    icon: "bi-map-fill",
+  });
   const worlds = course.worlds.sort(
     (world1, world2) => world1.index + world2.index
   );
