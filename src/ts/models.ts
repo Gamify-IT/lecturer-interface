@@ -41,6 +41,11 @@ export interface ITask {
   congifurationId: string;
 }
 
+export interface courseInitialData {
+  courseName: string;
+  description: string;
+}
+
 export enum Minigame {
   NONE = "NONE",
   MOORHUHN = "MOORHUHN",
