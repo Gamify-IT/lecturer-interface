@@ -88,19 +88,27 @@ function resetModal() {
         >
       </template>
     </b-table>
-    <b-button variant="success" v-b-modal.createCourse>
+    <b-button variant="success" v-b-modal.create-course>
       create new course
     </b-button>
     <b-modal
-      id="createCourse"
-      title="create course"
+      title="Create course"
+      id="create-course"
       @show="resetModal"
       @ok="handleOk"
     >
-      <p class="my-4">Name:</p>
-      <b-form-input v-model="nameInput"></b-form-input>
-      <p class="my-4">Description:</p>
-      <b-form-input v-model="descriptionInput"></b-form-input>
+      <form ref="form" @submit.stop.prevent="submitBug(editBug)">
+        <b-form-group label="Name" label-for="name">
+          <b-form-input id="name" v-model="nameInput"></b-form-input>
+        </b-form-group>
+
+        <b-form-group label="Description" label-for="description">
+          <b-form-input
+            id="description"
+            v-model="descriptionInput"
+          ></b-form-input>
+        </b-form-group>
+      </form>
     </b-modal>
   </div>
 </template>
