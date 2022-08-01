@@ -97,7 +97,7 @@ function resetModal() {
       @show="resetModal"
       @ok="handleOk"
     >
-      <form ref="form" @submit.stop.prevent="submitBug(editBug)">
+      <form ref="form" @submit.stop.prevent="">
         <b-form-group label="Name" label-for="name">
           <b-form-input id="name" v-model="nameInput"></b-form-input>
         </b-form-group>
