@@ -4,6 +4,7 @@ import { getCourses } from "@/ts/course-rest-client";
 import { ref, watch } from "vue";
 import { useRoute } from "vue-router";
 import { useToast } from "vue-toastification";
+import router from "@/router";
 
 const courses = ref(Array<ICourse>());
 
@@ -18,8 +19,9 @@ async function loadCourses() {
     });
 }
 
-function printTest(object: PointerEvent) {
-  console.log("Test" + object.clientY);
+function directToCourse(id: string) {
+  console.log("Course:" + id);
+  router.push("/courses/" + id);
 }
 
 const fields = [
@@ -50,13 +52,19 @@ const route = useRoute();
       bordered
       striped
       hover
-      responsive
       class="table-cursor"
       :fields="fields"
       :items="courses"
-      @click="printTest"
     >
-      <b-row @click="printTest()"> test </b-row>
+      <template
+        v-for="(field, index) in fields"
+        :key="index"
+        #[`cell(${field.key})`]="data"
+      >
+        <b-row class="table-row" @click="directToCourse(data.item.id)">
+          {{ data.value }}</b-row
+        >
+      </template>
     </b-table>
   </div>
 </template>
@@ -64,5 +72,8 @@ const route = useRoute();
 <style>
 .table-cursor {
   cursor: pointer;
+}
+.table-row {
+  padding-left: 5px;
 }
 </style>
