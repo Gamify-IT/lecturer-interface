@@ -2,7 +2,7 @@
 import { defineProps, defineEmits, ref, watch } from "vue";
 import { SidebarHeaderItem, SidebarItem } from "vue-sidebar-menu";
 import "vue-sidebar-menu/dist/vue-sidebar-menu.css";
-import { exampleWorlds, ICourse, IWorld } from "@/ts/models";
+import { exampleWorlds, ICourse, IDungeon, IWorld } from "@/ts/models";
 import { store } from "@/store";
 
 import { computed } from "vue";
@@ -55,16 +55,68 @@ function loadMenu() {
     title: "course : " + course.courseName,
     icon: "bi-book-half",
   });
-  const worlds = course.worlds.sort(
+  const worlds: IWorld[] = course.worlds.sort(
     (world1, world2) => world1.index - world2.index
   );
+
   worlds.forEach((world: IWorld) => {
+    const dungeons: IDungeon[] = world.dungeons.sort(
+      (dungeon1, dungeon2) => dungeon1.index - dungeon2.index
+    );
+    const dungeonChild = dungeons.map((dungeon) => {
+      return {
+        title: "Dungeon " + dungeon.index,
+        icon: "bi-tablet-landscape",
+        child: [
+          {
+            href:
+              "/courses/" +
+              course.id +
+              "/worlds/" +
+              world.index +
+              "/dungeons/" +
+              dungeon.index +
+              "/minigames",
+            title: "Minigames",
+            icon: "bi-puzzle-fill",
+          },
+          {
+            href:
+              "/courses/" +
+              course.id +
+              "/worlds/" +
+              world.index +
+              "/dungeons/" +
+              dungeon.index +
+              "/npcs",
+            title: "NPC",
+            icon: "bi-person-fill",
+          },
+        ],
+      };
+    });
+
+    const taskChild = [
+      {
+        href: "/courses/" + course.id + "/worlds/" + world.index + "/minigames",
+        title: "Minigames",
+        icon: "bi-puzzle-fill",
+      },
+      {
+        href: "/courses/" + course.id + "/worlds/" + world.index + "/npcs",
+        title: "NPC",
+        icon: "bi-person-fill",
+      },
+    ];
+
     menu.value.push({
       href: "/courses/" + course.id + "/worlds/" + world.index,
       title: world.staticName,
       icon: "bi-map-fill",
+      child: [...taskChild, ...dungeonChild],
     });
   });
+
   console.log("LOADED MENU");
   console.log(menu.value);
 }
