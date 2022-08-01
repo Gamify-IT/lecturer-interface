@@ -14,3 +14,7 @@ export async function getCourse(id: number): Promise<ICourse> {
 export async function postCourse(initialData: courseInitialData) {
   return axios.post(`${config.apiBaseUrl}/courses/`, initialData);
 }
+
+export async function putCourse(course: ICourse) {
+  return axios.put(`${config.apiBaseUrl}/courses/${course.id}`, course);
+}
