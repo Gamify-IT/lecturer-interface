@@ -148,7 +148,6 @@ function cancelEditDescription(editedArea: IArea) {
           </b-row>
         </div>
       </b-col>
-      <p>description: {{ course.description }}</p>
     </div>
     <div v-else>
       <div
