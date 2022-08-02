@@ -2,7 +2,7 @@ import axios, { AxiosResponse } from "axios";
 
 import config from "@/config";
 
-export async function getMinigames(
+export async function getNPCs(
   courseId: number,
   worldIndex: number,
   dungoenIndex: number | undefined

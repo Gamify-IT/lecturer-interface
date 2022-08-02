@@ -10,10 +10,18 @@ describe("AreaBox.vue", () => {
 
   beforeEach(() => {
     const tasks = [
-      new Task("1", Minigame.BUGFINDER, "asdsaas"),
-      new Task("2", Minigame.MOORHUHN, "asdasdsa"),
+      new Task("1", 1, Minigame.BUGFINDER, "asdsaas"),
+      new Task("2", 2, Minigame.MOORHUHN, "asdasdsa"),
     ];
-    dungeon = new Dungeon("1", 1, "Dungeon 1", "Kapitel 1: UML", true, tasks);
+    dungeon = new Dungeon(
+      "1",
+      1,
+      "Dungeon 1",
+      "Kapitel 1: UML",
+      true,
+      tasks,
+      []
+    );
     const availableMinigames = Object.values(Minigame);
     wrapper = mount(AreaBox, {
       props: {

@@ -18,6 +18,8 @@ const sidebarActive = [
   "worlds",
   "world-minigames",
   "dungeon-minigames",
+  "world-npcs",
+  "dungeon-npcs",
 ];
 
 watch(

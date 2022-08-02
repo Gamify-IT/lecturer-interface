@@ -14,6 +14,7 @@ export interface IArea {
   topicName: string;
   active: boolean;
   minigameTasks: ITask[];
+  npcs: INPC[];
 }
 
 export interface IWorld extends IArea {
@@ -24,6 +25,7 @@ export interface IWorld extends IArea {
   active: boolean;
   dungeons: IDungeon[];
   minigameTasks: ITask[];
+  npcs: INPC[];
 }
 
 export interface IDungeon extends IArea {
@@ -33,12 +35,20 @@ export interface IDungeon extends IArea {
   topicName: string;
   active: boolean;
   minigameTasks: ITask[];
+  npcs: INPC[];
 }
 
 export interface ITask {
   id: string;
+  index: number;
   game: Minigame;
   congifurationId: string;
+}
+
+export interface INPC {
+  id: string;
+  index: number;
+  text: string;
 }
 
 export interface courseInitialData {
@@ -87,6 +97,7 @@ export class World implements IWorld {
   active: boolean;
   dungeons: IDungeon[];
   minigameTasks: ITask[];
+  npcs: INPC[];
 
   public constructor(
     id: string,
@@ -95,7 +106,8 @@ export class World implements IWorld {
     topicName: string,
     active: boolean,
     dungeons: IDungeon[],
-    minigameTasks: ITask[]
+    minigameTasks: ITask[],
+    npcs: INPC[]
   ) {
     this.id = id;
     this.index = index;
@@ -104,6 +116,7 @@ export class World implements IWorld {
     this.active = active;
     this.dungeons = dungeons;
     this.minigameTasks = minigameTasks;
+    this.npcs = npcs;
   }
 }
 
@@ -114,6 +127,7 @@ export class Dungeon implements IDungeon {
   topicName: string;
   active: boolean;
   minigameTasks: ITask[];
+  npcs: INPC[];
 
   public constructor(
     id: string,
@@ -121,7 +135,8 @@ export class Dungeon implements IDungeon {
     staticName: string,
     topicName: string,
     active: boolean,
-    minigameTasks: ITask[]
+    minigameTasks: ITask[],
+    npcs: INPC[]
   ) {
     this.id = id;
     this.index = index;
@@ -129,18 +144,38 @@ export class Dungeon implements IDungeon {
     this.topicName = topicName;
     this.active = active;
     this.minigameTasks = minigameTasks;
+    this.npcs = npcs;
   }
 }
 
 export class Task implements ITask {
   id: string;
+  index: number;
   game: Minigame;
   congifurationId: string;
 
-  public constructor(id: string, game: Minigame, configurationId: string) {
+  public constructor(
+    id: string,
+    index: number,
+    game: Minigame,
+    configurationId: string
+  ) {
     this.id = id;
+    this.index = index;
     this.game = game;
     this.congifurationId = configurationId;
+  }
+}
+
+export class NPC implements INPC {
+  id: string;
+  index: number;
+  text: string;
+
+  public constructor(id: string, index: number, text: string) {
+    this.id = id;
+    this.index = index;
+    this.text = text;
   }
 }
 
