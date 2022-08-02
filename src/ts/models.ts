@@ -44,6 +44,7 @@ export interface ITask {
 export interface courseInitialData {
   courseName: string;
   description: string;
+  semester: string;
 }
 
 export enum Minigame {

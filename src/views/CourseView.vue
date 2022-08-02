@@ -11,6 +11,7 @@ const id = route.params.id;
 const course = ref();
 const editingCourseName = ref();
 const editingDescription = ref();
+const editingSemester = ref();
 
 async function loadCourse(id: any) {
   console.log("load course");
@@ -42,7 +43,7 @@ function saveEditCourseName() {
   course.value.courseName = editingCourseName.value;
   putCourse(course.value);
   toast.success(
-    `Topic name of course ${course.value.courseName} was updated successfully}!`
+    `Name of course ${course.value.courseName} was updated successfully}!`
   );
   editingCourseName.value = null;
 }
@@ -60,14 +61,34 @@ function saveEditDescription() {
   course.value.description = editingDescription.value;
   putCourse(course.value);
   toast.success(
-    `Topic name of course ${course.value.description} was updated successfully}!`
+    `Description of course ${course.value.description} was updated successfully}!`
   );
   editingDescription.value = null;
 }
 
-function cancelEditDescription(editedArea: IArea) {
-  toast.warning(`Name of course ${course.value.description} was not updated!`);
+function cancelEditDescription() {
+  toast.warning(
+    `Description of course ${course.value.description} was not updated!`
+  );
   editingDescription.value = null;
+}
+
+function startEditSemester() {
+  editingSemester.value = course.value.semester;
+}
+
+function saveEditSemester() {
+  course.value.semester = editingSemester.value;
+  putCourse(course.value);
+  toast.success(
+    `Semester of course ${course.value.semester} was updated successfully}!`
+  );
+  editingSemester.value = null;
+}
+
+function cancelEditSemester() {
+  toast.warning(`Semester of course ${course.value.semester} was not updated!`);
+  editingSemester.value = null;
 }
 </script>
 
@@ -140,6 +161,37 @@ function cancelEditDescription(editedArea: IArea) {
                   variant="danger"
                   size="sm"
                   @click="cancelEditDescription"
+                >
+                  <em class="bi bi-x-lg"></em>
+                </b-button>
+              </b-button-group>
+            </b-col>
+          </b-row>
+        </div>
+      </b-col>
+      <b-col>
+        <div v-if="editingSemester == null">
+          <h5>
+            semester: {{ course.semester }}
+            <b-button variant="light" size="small" @click="startEditSemester">
+              <em class="bi bi-pencil-square"></em>
+            </b-button>
+          </h5>
+        </div>
+        <div v-else>
+          <b-row>
+            <b-col>
+              <b-form-input v-model="editingSemester"></b-form-input>
+            </b-col>
+            <b-col>
+              <b-button-group>
+                <b-button variant="success" size="sm" @click="saveEditSemester">
+                  <em class="bi bi-journal-check"></em>
+                </b-button>
+                <b-button
+                  variant="danger"
+                  size="sm"
+                  @click="cancelEditSemester"
                 >
                   <em class="bi bi-x-lg"></em>
                 </b-button>

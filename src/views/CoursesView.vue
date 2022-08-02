@@ -5,7 +5,7 @@ import { postCourse } from "@/ts/course-rest-client";
 import { ref, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useToast } from "vue-toastification";
-import { BFormInput } from "bootstrap-vue-3";
+import { BFormGroup, BFormInput } from "bootstrap-vue-3";
 
 const courses = ref(Array<ICourse>());
 
@@ -13,6 +13,7 @@ const router = useRouter();
 
 let nameInput = ref();
 let descriptionInput = ref();
+let semesterInput = ref();
 
 async function loadCourses() {
   getCourses()
@@ -43,6 +44,10 @@ const fields = [
     key: "description",
     label: "Description",
   },
+  {
+    key: "semester",
+    label: "Semester",
+  },
 ];
 
 loadCourses();
@@ -52,11 +57,14 @@ function handleOk() {
     "create Course name: " +
       nameInput.value +
       ", description: " +
-      descriptionInput.value
+      descriptionInput.value +
+      ", in the semester" +
+      semesterInput.value
   );
   postCourse({
     courseName: nameInput.value,
     description: descriptionInput.value,
+    semester: semesterInput.value,
   }).then((response) => {
     courses.value.push(response.data);
   });
@@ -65,6 +73,7 @@ function handleOk() {
 function resetModal() {
   nameInput.value = "";
   descriptionInput.value = "";
+  semesterInput.value = "";
 }
 </script>
 
@@ -107,6 +116,12 @@ function resetModal() {
             id="description"
             v-model="descriptionInput"
           ></b-form-input>
+        </b-form-group>
+        <b-form-group
+          label="Semester in the format (WS/SS)-year"
+          label-for="semester"
+        >
+          <b-form-input id="semester" v-model="semesterInput"></b-form-input>
         </b-form-group>
       </form>
     </b-modal>
