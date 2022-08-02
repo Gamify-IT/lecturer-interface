@@ -42,7 +42,7 @@ export interface ITask {
   id: string;
   index: number;
   game: Minigame;
-  congifurationId: string;
+  configurationId: string;
 }
 
 export interface INPC {
@@ -57,6 +57,18 @@ export interface courseInitialData {
   semester: string;
 }
 
+export interface IMoorhuhnConfiguration {
+  id?: string;
+  questions: IMoorhuhnQuestion[];
+}
+
+export interface IMoorhuhnQuestion {
+  id?: string;
+  text: string;
+  rightAnswer: string;
+  wrongAnswers: string[];
+}
+
 export enum Minigame {
   NONE = "NONE",
   MOORHUHN = "MOORHUHN",
@@ -65,6 +77,14 @@ export enum Minigame {
   CROSSWORDPUZZLE = "CROSSWORDPUZZLE",
   GIT_CARD_GAME = "GIT-CARD-GAME",
   UML_GAME = "UML-GAME",
+}
+
+export class MoorhuhnConfiguration implements IMoorhuhnConfiguration {
+  id?: string;
+  questions: IMoorhuhnQuestion[];
+  public constructor(questions: IMoorhuhnQuestion[]) {
+    this.questions = questions;
+  }
 }
 
 export class Course implements ICourse {
@@ -152,7 +172,7 @@ export class Task implements ITask {
   id: string;
   index: number;
   game: Minigame;
-  congifurationId: string;
+  configurationId: string;
 
   public constructor(
     id: string,
@@ -163,7 +183,7 @@ export class Task implements ITask {
     this.id = id;
     this.index = index;
     this.game = game;
-    this.congifurationId = configurationId;
+    this.configurationId = configurationId;
   }
 }
 

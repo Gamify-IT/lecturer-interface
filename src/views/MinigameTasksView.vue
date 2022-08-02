@@ -1,22 +1,24 @@
 <script setup lang="ts">
 import { IArea, ICourse, ITask, Minigame } from "@/ts/models";
-import { getMinigames } from "@/ts/minigame-rest-client";
+import { getMinigames, putMinigame } from "@/ts/minigame-rest-client";
 import { defineProps, ref, watch } from "vue";
 import { useRoute } from "vue-router";
 import { useToast } from "vue-toastification";
 import EditMinigameConfigurationModal from "@/components/EditMinigameConfigurationModal.vue";
+import EditMoorhuhnConfigurationModal from "@/components/EditMoorhuhnConfigurationModal.vue";
 import { BButtonGroup, BFormCheckbox } from "bootstrap-vue-3";
 
 const availableMinigames = Object.values(Minigame);
 
 const toast = useToast();
 const route = useRoute();
-const courseId = ref(route.params.courseId);
-const worldIndex = ref(route.params.worldIndex);
-const dungeonIndex = ref(route.params.dungeonIndex);
+const courseId = ref(route.params.courseId as string);
+const worldIndex = ref(route.params.worldIndex as string);
+const dungeonIndex = ref(route.params.dungeonIndex as string);
 
 const editedMinigame = ref();
 const showEditModal = ref(false);
+const showMoorhuhnModal = ref(false);
 
 watch(
   () => [
@@ -75,7 +77,12 @@ function changedMinigame(task: ITask) {
 function editMinigameConfiguration(task: ITask) {
   editedMinigame.value = task;
   console.log("Want to edit minigame " + task.id);
-  showEditModal.value = true;
+  if (task.game == "NONE") {
+    showEditModal.value = true;
+  }
+  if (task.game == "MOORHUHN") {
+    showMoorhuhnModal.value = true;
+  }
 }
 
 function updateMinigameConfiguration(task: ITask) {
@@ -85,7 +92,15 @@ function updateMinigameConfiguration(task: ITask) {
 
 function closedEditModal() {
   console.log("Parent got info that modal was closed");
+  console.log(editedMinigame.value.id);
+  putMinigame(
+    parseInt(courseId.value),
+    parseInt(worldIndex.value),
+    parseInt(dungeonIndex.value),
+    editedMinigame.value
+  );
   showEditModal.value = false;
+  showMoorhuhnModal.value = false;
 }
 </script>
 
@@ -122,6 +137,12 @@ function closedEditModal() {
   </div>
   <EditMinigameConfigurationModal
     :showModal="showEditModal"
+    :minigame="editedMinigame"
+    @updateMinigameConfiguration="updateMinigameConfiguration"
+    @closedModal="closedEditModal"
+  />
+  <EditMoorhuhnConfigurationModal
+    :showModal="showMoorhuhnModal"
     :minigame="editedMinigame"
     @updateMinigameConfiguration="updateMinigameConfiguration"
     @closedModal="closedEditModal"

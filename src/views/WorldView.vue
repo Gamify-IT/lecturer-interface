@@ -6,6 +6,7 @@ import { useRoute } from "vue-router";
 import AreaBox from "../components/AreaBox.vue";
 import EditMinigameConfigurationModal from "@/components/EditMinigameConfigurationModal.vue";
 import { useToast } from "vue-toastification";
+import EditMoorhuhnConfigurationModal from "@/components/EditMoorhuhnConfigurationModal.vue";
 
 const availableMinigames = Object.values(Minigame);
 
@@ -18,6 +19,7 @@ const world = ref();
 
 const editedMinigame = ref();
 const showEditModal = ref(false);
+const showMoorhuhnModal = ref(false);
 
 loadSelectedWorld(courseId.value, worldIndex.value);
 
@@ -43,7 +45,12 @@ function loadSelectedWorld(
 function editMinigameConfiguration(task: ITask) {
   editedMinigame.value = task;
   console.log("Want to edit minigame " + task.id);
-  showEditModal.value = true;
+  if (task.game == "NONE") {
+    showEditModal.value = true;
+  }
+  if (task.game == "MOORHUHN") {
+    showMoorhuhnModal.value = true;
+  }
 }
 
 function updateMinigameConfiguration(task: ITask) {
@@ -54,6 +61,7 @@ function updateMinigameConfiguration(task: ITask) {
 function closedEditModal() {
   console.log("Parent got info that modal was closed");
   showEditModal.value = false;
+  showMoorhuhnModal.value = false;
 }
 watch(
   () => [route.params.courseId, route.params.worldIndex],
@@ -98,6 +106,12 @@ watch(
       </b-table-simple>
       <EditMinigameConfigurationModal
         :showModal="showEditModal"
+        :minigame="editedMinigame"
+        @updateMinigameConfiguration="updateMinigameConfiguration"
+        @closedModal="closedEditModal"
+      />
+      <EditMoorhuhnConfigurationModal
+        :showModal="showMoorhuhnModal"
         :minigame="editedMinigame"
         @updateMinigameConfiguration="updateMinigameConfiguration"
         @closedModal="closedEditModal"
