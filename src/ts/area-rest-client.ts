@@ -1,16 +1,28 @@
-import axios from "axios";
+import axios, { AxiosResponse } from "axios";
 
 import config from "@/config";
 import { IArea } from "./models";
-import { updateWorld } from "./world-rest-client";
-import { updateDungeon } from "./dungeon-rest-client";
+import { getWorld, updateWorld } from "./world-rest-client";
+import { getDungeon, updateDungeon } from "./dungeon-rest-client";
+
+export async function getArea(
+  courseId: number,
+  worldIndex: number,
+  dungeonIndex: number | undefined
+): Promise<AxiosResponse> {
+  if (dungeonIndex == undefined) {
+    return getWorld(courseId, worldIndex);
+  } else {
+    return getDungeon(courseId, worldIndex, dungeonIndex);
+  }
+}
 
 export async function updateArea(
   courseId: number,
   worldIndex: number,
   dungeonIndex: number,
   area: IArea
-): Promise<IArea> {
+): Promise<AxiosResponse> {
   if (dungeonIndex == 0) {
     return updateWorld(courseId, worldIndex, area);
   } else {

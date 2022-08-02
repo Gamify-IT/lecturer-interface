@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios, { AxiosResponse } from "axios";
 
 import config from "@/config";
 import { IArea } from "./models";
@@ -6,7 +6,7 @@ import { IArea } from "./models";
 export async function getDungeons(
   courseId: number,
   worldIndex: number
-): Promise<IArea[]> {
+): Promise<AxiosResponse> {
   return axios.get(
     `${config.apiBaseUrl}/courses/${courseId}/worlds/${worldIndex}/dungeons`
   );
@@ -16,7 +16,7 @@ export async function getDungeon(
   courseId: number,
   worldIndex: number,
   dungeonIndex: number
-): Promise<IArea> {
+): Promise<AxiosResponse> {
   return axios.get(
     `${config.apiBaseUrl}/courses/${courseId}/worlds/${worldIndex}/dungeons/${dungeonIndex}`
   );
@@ -27,7 +27,7 @@ export async function updateDungeon(
   worldIndex: number,
   dungeonIndex: number,
   dungeon: IArea
-): Promise<IArea> {
+): Promise<AxiosResponse> {
   return axios.put(
     `${config.apiBaseUrl}/courses/${courseId}/worlds/${worldIndex}/dungeons/${dungeonIndex}`,
     dungeon

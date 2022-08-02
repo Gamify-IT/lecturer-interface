@@ -11,9 +11,9 @@ const availableMinigames = Object.values(Minigame);
 
 const toast = useToast();
 const route = useRoute();
-let courseId = route.params.courseId;
-let worldIndex = route.params.worldIndex;
-let dungeonIndex = route.params.dungeonIndex;
+const courseId = ref(route.params.courseId);
+const worldIndex = ref(route.params.worldIndex);
+const dungeonIndex = ref(route.params.dungeonIndex);
 
 const editedMinigame = ref();
 const showEditModal = ref(false);
@@ -25,10 +25,10 @@ watch(
     route.params.dungeonIndex,
   ],
   (newVal) => {
-    courseId = newVal[0];
-    worldIndex = newVal[1];
-    dungeonIndex = newVal[2];
-    loadMinigames(courseId, worldIndex, dungeonIndex);
+    courseId.value = newVal[0];
+    worldIndex.value = newVal[1];
+    dungeonIndex.value = newVal[2];
+    loadMinigames(courseId.value, worldIndex.value, dungeonIndex.value);
   },
   { deep: true }
 );
@@ -44,7 +44,7 @@ async function loadMinigames(
   if (
     isNaN(courseId) ||
     isNaN(worldIndex) ||
-    (dungeonIndex != null && isNaN(dungeonIndex))
+    (dungeonIndex != undefined && isNaN(dungeonIndex))
   ) {
     console.log("one of the ids is NaN");
     return;
@@ -62,7 +62,7 @@ async function loadMinigames(
     });
 }
 
-loadMinigames(courseId, worldIndex, dungeonIndex);
+loadMinigames(courseId.value, worldIndex.value, dungeonIndex.value);
 
 function changedMinigame(task: ITask) {
   if (task.game == null) {
@@ -91,7 +91,12 @@ function closedEditModal() {
 
 <template>
   <div class="container mt-4">
-    <h1>Minigames</h1>
+    <h1 v-if="dungeonIndex == undefined">
+      Minigames from World {{ worldIndex }}
+    </h1>
+    <h1 v-else>
+      Minigames from World World {{ worldIndex }}, Dungeon {{ dungeonIndex }}
+    </h1>
     <b-card v-for="task in minigames" :key="task.id" class="mt-1">
       <b-row>
         <b-col>{{ task.index }}</b-col>
