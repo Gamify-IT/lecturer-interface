@@ -13,7 +13,12 @@ const router = useRouter();
 let course: ICourse;
 const menu = ref([]);
 
-const sidebarActive = ["course", "worlds"];
+const sidebarActive = [
+  "course",
+  "worlds",
+  "world-minigames",
+  "dungeon-minigames",
+];
 
 watch(
   () => [router.currentRoute.value.fullPath],
