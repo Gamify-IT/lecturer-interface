@@ -11,6 +11,8 @@ const courses = ref(Array<ICourse>());
 
 const router = useRouter();
 
+const toast = useToast();
+
 let nameInput = ref();
 let descriptionInput = ref();
 let semesterInput = ref();
@@ -65,9 +67,15 @@ function handleOk() {
     courseName: nameInput.value,
     description: descriptionInput.value,
     semester: semesterInput.value,
-  }).then((response) => {
-    courses.value.push(response.data);
-  });
+  })
+    .then((response) => {
+      courses.value.push(response.data);
+      toast.success(`Course ${response.data.courseName} is created!`);
+    })
+    .catch((error) => {
+      toast.error(`Course ${nameInput.value} is created!`);
+      console.log(error);
+    });
 }
 
 function resetModal() {
@@ -79,14 +87,7 @@ function resetModal() {
 
 <template>
   <div class="container mt-4">
-    <b-table
-      bordered
-      striped
-      hover
-      class="table-cursor"
-      :fields="fields"
-      :items="courses"
-    >
+    <b-table bordered striped hover :fields="fields" :items="courses">
       <template
         v-for="(field, index) in fields"
         :key="index"
@@ -94,7 +95,7 @@ function resetModal() {
       >
         <b-row
           v-if="data.item.active"
-          class="table-row-active"
+          class="table-row-active table-cursor"
           @click="directToCourse(data.item.id)"
         >
           {{ data.value }}</b-row
