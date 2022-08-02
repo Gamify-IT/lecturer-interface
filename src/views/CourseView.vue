@@ -4,7 +4,7 @@ import { getCourse, putCourse } from "@/ts/course-rest-client";
 import { defineProps, ref, watch } from "vue";
 import { useRoute } from "vue-router";
 import { useToast } from "vue-toastification";
-import { BButtonGroup } from "bootstrap-vue-3";
+import { BButtonGroup, BFormCheckbox } from "bootstrap-vue-3";
 
 const route = useRoute();
 const id = route.params.id;
@@ -89,6 +89,18 @@ function saveEditSemester() {
 function cancelEditSemester() {
   toast.warning(`Semester of course ${course.value.semester} was not updated!`);
   editingSemester.value = null;
+}
+function toggleCourseSwitch() {
+  putCourse(course.value).then((response) => {
+    course.value = response.data;
+    if (course.value.active) {
+      toast.success(`Course ${course.value.courseName} was activated!`);
+      console.log(course.value.active);
+    } else {
+      toast.error(`Course ${course.value.courseName} was deactivated!`);
+      console.log(course.value.active);
+    }
+  });
 }
 </script>
 
@@ -199,6 +211,14 @@ function cancelEditSemester() {
             </b-col>
           </b-row>
         </div>
+      </b-col>
+      <b-col>
+        <b-form-checkbox
+          v-model="course.active"
+          @change="toggleCourseSwitch"
+          name="check-button"
+          switch
+        ></b-form-checkbox>
       </b-col>
     </div>
     <div v-else>

@@ -92,7 +92,18 @@ function resetModal() {
         :key="index"
         #[`cell(${field.key})`]="data"
       >
-        <b-row class="table-row" @click="directToCourse(data.item.id)">
+        <b-row
+          v-if="data.item.active"
+          class="table-row-active"
+          @click="directToCourse(data.item.id)"
+        >
+          {{ data.value }}</b-row
+        >
+        <b-row
+          v-else
+          class="table-row-inactive"
+          @click="directToCourse(data.item.id)"
+        >
           {{ data.value }}</b-row
         >
       </template>
@@ -132,7 +143,11 @@ function resetModal() {
 .table-cursor {
   cursor: pointer;
 }
-.table-row {
+.table-row-active {
   padding-left: 5px;
+}
+.table-row-inactive {
+  padding-left: 5px;
+  color: grey;
 }
 </style>
