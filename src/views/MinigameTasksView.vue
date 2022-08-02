@@ -53,7 +53,7 @@ async function loadMinigames(
     .then((response) => {
       const result: ITask[] = response.data;
       minigames.value = result.sort(
-        (task1, task2) => task1.index > task2.index
+        (task1, task2) => task1.index - task2.index
       );
       console.log(result);
     })
