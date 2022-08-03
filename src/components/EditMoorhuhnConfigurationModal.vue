@@ -10,6 +10,7 @@ import {
   getMoorhuhnConfig,
   postMoorhuhnConfig,
 } from "@/ts/moorhuhn-rest-client";
+import { useToast } from "vue-toastification";
 
 const props = defineProps<{
   minigame: ITask;
@@ -35,6 +36,7 @@ const fields = [
   },
 ];
 
+const toast = useToast();
 const minigame = ref();
 const form = ref();
 const showModal = ref(props.showModal);
@@ -44,6 +46,9 @@ const question = ref();
 const rightAnswer = ref();
 const showQuestionModal = ref();
 const oldMinigame = ref();
+const wrongAnswers = ref(Array<string>());
+const addWrongAnswers = ref(false);
+const wrongAnswer = ref();
 
 watch(
   () => props.minigame,
@@ -105,11 +110,22 @@ function handleSubmit() {
 }
 
 function handleQuestionOk() {
-  configuration.value.questions.push({
-    text: question.value,
-    rightAnswer: rightAnswer.value,
-    wrongAnswers: ["test", "test2"],
+  let contains = false;
+  configuration.value.questions.forEach((pQuestion) => {
+    if (pQuestion.text == question.value) {
+      contains = true;
+    }
   });
+  if (!contains) {
+    console.log(wrongAnswers.value);
+    configuration.value.questions.push({
+      text: question.value,
+      rightAnswer: rightAnswer.value,
+      wrongAnswers: wrongAnswers.value,
+    });
+  } else {
+    toast.error("Question already exists");
+  }
   showModal.value = true;
   console.log(configuration.value);
 }
@@ -122,9 +138,17 @@ function loadModal() {
   if (oldMinigame.value != null) {
     if (oldMinigame.value.id != minigame.value.id) {
       if (minigame.value.configurationId != undefined) {
-        getMoorhuhnConfig(minigame.value.configurationId).then((response) => {
-          configuration.value = response.data;
-        });
+        getMoorhuhnConfig(minigame.value.configurationId)
+          .then((response) => {
+            configuration.value = response.data;
+          })
+          .catch((error) => {
+            console.log(error);
+            if (error.response.status == 404) {
+              minigame.value.configurationId = undefined;
+              configuration.value.questions = [];
+            }
+          });
         oldMinigame.value = minigame.value;
       } else {
         configuration.value.questions = [];
@@ -133,11 +157,19 @@ function loadModal() {
     }
   } else {
     if (minigame.value.configurationId != undefined) {
-      getMoorhuhnConfig(minigame.value.configurationId).then((response) => {
-        configuration.value = response.data;
-        oldMinigame.value = minigame.value;
-        console.log("getConfig");
-      });
+      getMoorhuhnConfig(minigame.value.configurationId)
+        .then((response) => {
+          configuration.value = response.data;
+          oldMinigame.value = minigame.value;
+          console.log("getConfig");
+        })
+        .catch((error) => {
+          console.log(error);
+          if (error.response.status == 404) {
+            minigame.value.configurationId = undefined;
+            configuration.value.questions = [];
+          }
+        });
     } else {
       if (minigame.value.configurationId != null) {
         configuration.value.questions = [];
@@ -159,6 +191,20 @@ function removeQuestion(text: string) {
   });
   console.log(filteredQuestions);
   configuration.value.questions = filteredQuestions;
+}
+function startAddWrongAnswer() {
+  addWrongAnswers.value = true;
+}
+
+function endAddWrongAnswer() {
+  wrongAnswers.value.push(wrongAnswer.value);
+  wrongAnswer.value = "";
+  addWrongAnswers.value = false;
+}
+function resetQuestionModal() {
+  question.value = "";
+  rightAnswer.value = "";
+  wrongAnswers.value = [];
 }
 </script>
 <template>
@@ -213,6 +259,21 @@ function removeQuestion(text: string) {
     </b-form-group>
     <b-form-group label="Correct Answer" label-for="correct-answer">
       <b-form-input id="correct-answer" v-model="rightAnswer" required />
+    </b-form-group>
+    <b-form-group>
+      <div v-for="answer in wrongAnswers" :key="answer">
+        {{ answer }}
+      </div>
+      <b-button
+        v-if="!addWrongAnswers"
+        @click="startAddWrongAnswer"
+        variant="success"
+        >add wrong answer</b-button
+      >
+      <div v-if="addWrongAnswers">
+        <b-form-input v-model="wrongAnswer"></b-form-input>
+        <b-button @click="endAddWrongAnswer" variant="success">add</b-button>
+      </div>
     </b-form-group>
   </b-modal>
 </template>
