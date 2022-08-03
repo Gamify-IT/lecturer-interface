@@ -48,7 +48,7 @@ export interface ITask {
 export interface INPC {
   id: string;
   index: number;
-  text: string;
+  text: string[];
 }
 
 export interface courseInitialData {
@@ -190,9 +190,9 @@ export class Task implements ITask {
 export class NPC implements INPC {
   id: string;
   index: number;
-  text: string;
+  text: string[];
 
-  public constructor(id: string, index: number, text: string) {
+  public constructor(id: string, index: number, text: string[]) {
     this.id = id;
     this.index = index;
     this.text = text;
