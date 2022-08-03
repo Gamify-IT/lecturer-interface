@@ -121,7 +121,14 @@ export function exampleWorlds(): IWorld[] {
           new Task(1, "Super finder", Minigame.BUGFINDER, "w1-d1-t1"),
         ]),
       ],
-      [new Task(2, "Chickenshock nicht vernichter", Minigame.REGEX_GAME, "w1-t1")]
+      [
+        new Task(
+          2,
+          "Chickenshock nicht vernichter",
+          Minigame.REGEX_GAME,
+          "w1-t1"
+        ),
+      ]
     ),
     new World(
       2,
