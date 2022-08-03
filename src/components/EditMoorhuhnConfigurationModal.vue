@@ -206,6 +206,15 @@ function resetQuestionModal() {
   rightAnswer.value = "";
   wrongAnswers.value = [];
 }
+function handleCancel() {
+  getMoorhuhnConfig(minigame.value.configurationId)
+    .then((response) => {
+      configuration.value = response.data;
+    })
+    .catch((error) => {
+      configuration.value.questions = [];
+    });
+}
 </script>
 <template>
   <b-modal
@@ -213,6 +222,7 @@ function resetQuestionModal() {
     v-model="showModal"
     @hidden="hiddenModal"
     @ok="handleOk"
+    @cancel="handleCancel"
     @show="loadModal"
     @abort="resetModal"
   >
