@@ -58,8 +58,13 @@ function loadMenu() {
     },
   ];
   menu.value.push({
+    href: "/",
+    title: "Back to course overview",
+    icon: "bi-card-heading",
+  });
+  menu.value.push({
     href: "/courses/" + course.id,
-    title: "course : " + course.courseName,
+    title: "Course: " + course.courseName,
     icon: "bi-book-half",
   });
   const worlds: IWorld[] = course.worlds.sort(
@@ -172,7 +177,12 @@ update();
 </script>
 
 <template>
-  <sidebar-menu :menu="menu" :relative="true" v-if="showSideBarComputed" />
+  <sidebar-menu
+    :menu="menu"
+    :relative="true"
+    :showOneChild="true"
+    v-if="showSideBarComputed"
+  />
 </template>
 
 <style>

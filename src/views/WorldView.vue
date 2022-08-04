@@ -81,6 +81,13 @@ watch(
 
     <div style="margin-top: 30px">
       <b-table-simple>
+        <b-thead head-variant="dark">
+          <b-tr>
+            <b-th>Static-Name</b-th>
+            <b-th>Topic-Name</b-th>
+            <b-th>Active</b-th>
+          </b-tr>
+        </b-thead>
         <b-tbody>
           <b-tr>
             <AreaBox
