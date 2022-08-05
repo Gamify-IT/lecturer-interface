@@ -44,4 +44,80 @@ describe("CourseView.vue", () => {
     expect(wrapper.html()).toContain(course.description);
     expect(wrapper.html()).toContain(course.semester);
   });
+  test("Course-Name is editable on button click and saveable", async () => {
+    const initialCourseName = course.courseName;
+
+    const updatedCourseName = "New Course XY";
+
+    let editCourseNameButton = wrapper.find("#course-name-edit");
+    let editCourseNameInput = wrapper.find("#course-name-input");
+    expect(editCourseNameButton.exists()).toBe(true);
+    expect(editCourseNameInput.exists()).toBe(false);
+    expect(wrapper.html()).toContain(initialCourseName);
+
+    editCourseNameButton.trigger("click");
+
+    // wait that component re-renders
+    await flushPromises();
+
+    editCourseNameInput = wrapper.find("#course-name-input");
+    expect(editCourseNameInput.exists()).toBe(true);
+    editCourseNameInput.setValue(updatedCourseName);
+
+    // click save button
+    const submitButton = wrapper.find(".btn-success");
+    expect(submitButton.exists()).toBe(true);
+    submitButton.trigger("click");
+
+    // wait that component re-renders
+    await flushPromises();
+
+    editCourseNameButton = wrapper.find("#course-name-edit");
+    editCourseNameInput = wrapper.find("#course-name-input");
+    expect(editCourseNameInput.exists()).toBe(false);
+    expect(wrapper.html()).toContain(updatedCourseName);
+
+    expect(mockAxios.put).toHaveBeenCalledWith(
+      `${config.apiBaseUrl}/courses/${course.id}`,
+      course
+    );
+  });
+  test("Course-Description is editable on button click and saveable", async () => {
+    const initialCourseDescription = course.description;
+
+    const updatedCourseDescription = "New Course XY";
+
+    let editCourseDescriptionButton = wrapper.find("#course-description-edit");
+    let editCourseDescriptionInput = wrapper.find("#course-description-input");
+    expect(editCourseDescriptionButton.exists()).toBe(true);
+    expect(editCourseDescriptionInput.exists()).toBe(false);
+    expect(wrapper.html()).toContain(initialCourseDescription);
+
+    editCourseDescriptionButton.trigger("click");
+
+    // wait that component re-renders
+    await flushPromises();
+
+    editCourseDescriptionInput = wrapper.find("#course-description-input");
+    expect(editCourseDescriptionInput.exists()).toBe(true);
+    editCourseDescriptionInput.setValue(updatedCourseDescription);
+
+    // click save button
+    const submitButton = wrapper.find(".btn-success");
+    expect(submitButton.exists()).toBe(true);
+    submitButton.trigger("click");
+
+    // wait that component re-renders
+    await flushPromises();
+
+    editCourseDescriptionButton = wrapper.find("#course-description-edit");
+    editCourseDescriptionInput = wrapper.find("#course-description-input");
+    expect(editCourseDescriptionInput.exists()).toBe(false);
+    expect(wrapper.html()).toContain(updatedCourseDescription);
+
+    expect(mockAxios.put).toHaveBeenCalledWith(
+      `${config.apiBaseUrl}/courses/${course.id}`,
+      course
+    );
+  });
 });

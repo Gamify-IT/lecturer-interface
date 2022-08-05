@@ -18,8 +18,8 @@ describe("AreaBox.vue", () => {
   beforeEach(() => {
     jest.clearAllMocks();
     const tasks = [
-      new Task("1", 1, Minigame.BUGFINDER, "asdsaas"),
-      new Task("2", 2, Minigame.CHICKENSHOCK, "asdasdsa"),
+      new Task("1", 1, Minigame.BUGFINDER, "random uuid"),
+      new Task("2", 2, Minigame.CHICKENSHOCK, "random uuid 2"),
     ];
     dungeon = new Dungeon(
       "random uuid",

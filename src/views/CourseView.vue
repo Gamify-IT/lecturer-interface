@@ -109,7 +109,12 @@ function toggleCourseSwitch() {
         <div v-if="editingCourseName == null">
           <h1>
             Course name: {{ course.courseName }}
-            <b-button variant="light" size="small" @click="startEditCourseName">
+            <b-button
+              id="course-name-edit"
+              variant="light"
+              size="small"
+              @click="startEditCourseName"
+            >
               <em class="bi bi-pencil-square"></em>
             </b-button>
           </h1>
@@ -117,7 +122,10 @@ function toggleCourseSwitch() {
         <div v-else>
           <b-row>
             <b-col>
-              <b-form-input v-model="editingCourseName"></b-form-input>
+              <b-form-input
+                id="course-name-input"
+                v-model="editingCourseName"
+              ></b-form-input>
             </b-col>
             <b-col>
               <b-button-group>
@@ -145,6 +153,7 @@ function toggleCourseSwitch() {
           <h5>
             description: {{ course.description }}
             <b-button
+              id="course-description-edit"
               variant="light"
               size="small"
               @click="startEditDescription"
@@ -156,7 +165,10 @@ function toggleCourseSwitch() {
         <div v-else>
           <b-row>
             <b-col>
-              <b-form-input v-model="editingDescription"></b-form-input>
+              <b-form-input
+                id="course-description-input"
+                v-model="editingDescription"
+              ></b-form-input>
             </b-col>
             <b-col>
               <b-button-group>
