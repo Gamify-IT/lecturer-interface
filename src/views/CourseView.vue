@@ -1,10 +1,8 @@
 <script setup lang="ts">
-import { IArea, ICourse, Minigame } from "@/ts/models";
 import { getCourse, putCourse } from "@/ts/course-rest-client";
-import { defineProps, ref, watch } from "vue";
+import { ref } from "vue";
 import { useRoute } from "vue-router";
 import { useToast } from "vue-toastification";
-import { BButtonGroup, BFormCheckbox } from "bootstrap-vue-3";
 
 const route = useRoute();
 const id = route.params.id;

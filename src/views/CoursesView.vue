@@ -2,10 +2,9 @@
 import { ICourse } from "@/ts/models";
 import { getCourses } from "@/ts/course-rest-client";
 import { postCourse } from "@/ts/course-rest-client";
-import { ref, watch } from "vue";
-import { useRoute, useRouter } from "vue-router";
+import { ref } from "vue";
+import { useRouter } from "vue-router";
 import { useToast } from "vue-toastification";
-import { BFormGroup, BFormInput } from "bootstrap-vue-3";
 
 const courses = ref(Array<ICourse>());
 

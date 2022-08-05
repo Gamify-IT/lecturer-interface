@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { IDungeon, ITask, IWorld, Minigame } from "@/ts/models";
+import { IDungeon } from "@/ts/models";
 import { getWorld } from "@/ts/world-rest-client";
 import { ref, watch } from "vue";
 import { useRoute } from "vue-router";
@@ -14,10 +14,6 @@ const route = useRoute();
 const courseId = ref(parseInt(route.params.courseId as string));
 const worldIndex = ref(parseInt(route.params.worldIndex as string));
 const world = ref();
-
-const editedMinigame = ref();
-const showEditModal = ref(false);
-const showChickenshockModal = ref(false);
 
 loadSelectedWorld(courseId.value, worldIndex.value);
 
@@ -40,27 +36,6 @@ function loadSelectedWorld(
     });
 }
 
-function editMinigameConfiguration(task: ITask) {
-  editedMinigame.value = task;
-  console.log("Want to edit minigame " + task.id);
-  if (task.game == "NONE") {
-    showEditModal.value = true;
-  }
-  if (task.game == "CHICKENSHOCK") {
-    showChickenshockModal.value = true;
-  }
-}
-
-function updateMinigameConfiguration(task: ITask) {
-  console.log("Pressed submit button in configuration modal");
-  toast.success(`Configurations of ${task.id} was saved!`);
-}
-
-function closedEditModal() {
-  console.log("Parent got info that modal was closed");
-  showEditModal.value = false;
-  showChickenshockModal.value = false;
-}
 watch(
   () => [route.params.courseId, route.params.worldIndex],
   (newVal) => {
@@ -107,18 +82,6 @@ watch(
           </b-tr>
         </b-tbody>
       </b-table-simple>
-      <EditMinigameConfigurationModal
-        :showModal="showEditModal"
-        :minigame="editedMinigame"
-        @updateMinigameConfiguration="updateMinigameConfiguration"
-        @closedModal="closedEditModal"
-      />
-      <EditChickenshockConfigurationModal
-        :showModal="showChickenshockModal"
-        :minigame="editedMinigame"
-        @updateMinigameConfiguration="updateMinigameConfiguration"
-        @closedModal="closedEditModal"
-      />
     </div>
   </div>
   <div v-else class="container mt-5 error">

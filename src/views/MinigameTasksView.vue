@@ -1,12 +1,11 @@
 <script setup lang="ts">
-import { IArea, ICourse, ITask, Minigame } from "@/ts/models";
+import { ITask, Minigame } from "@/ts/models";
 import { getMinigames, putMinigame } from "@/ts/minigame-rest-client";
-import { defineProps, ref, watch } from "vue";
+import { ref, watch } from "vue";
 import { useRoute } from "vue-router";
 import { useToast } from "vue-toastification";
 import EditMinigameConfigurationModal from "@/components/EditMinigameConfigurationModal.vue";
 import EditChickenshockConfigurationModal from "@/components/EditChickenshockConfigurationModal.vue";
-import { BButtonGroup, BFormCheckbox } from "bootstrap-vue-3";
 
 const availableMinigames = Object.values(Minigame);
 
