@@ -57,12 +57,12 @@ export interface courseInitialData {
   semester: string;
 }
 
-export interface IMoorhuhnConfiguration {
+export interface IChickenshockConfiguration {
   id?: string;
-  questions: IMoorhuhnQuestion[];
+  questions: IChickenshockQuestion[];
 }
 
-export interface IMoorhuhnQuestion {
+export interface IChickenshockQuestion {
   id?: string;
   text: string;
   rightAnswer: string;
@@ -79,10 +79,10 @@ export enum Minigame {
   UML_GAME = "UML-GAME",
 }
 
-export class MoorhuhnConfiguration implements IMoorhuhnConfiguration {
+export class ChickenshockConfiguration implements IChickenshockConfiguration {
   id?: string;
-  questions: IMoorhuhnQuestion[];
-  public constructor(questions: IMoorhuhnQuestion[]) {
+  questions: IChickenshockQuestion[];
+  public constructor(questions: IChickenshockQuestion[]) {
     this.questions = questions;
   }
 }

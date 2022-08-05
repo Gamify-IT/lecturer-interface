@@ -5,7 +5,7 @@ import { defineProps, ref, watch } from "vue";
 import { useRoute } from "vue-router";
 import { useToast } from "vue-toastification";
 import EditMinigameConfigurationModal from "@/components/EditMinigameConfigurationModal.vue";
-import EditMoorhuhnConfigurationModal from "@/components/EditMoorhuhnConfigurationModal.vue";
+import EditChickenshockConfigurationModal from "@/components/EditChickenshockConfigurationModal.vue";
 import { BButtonGroup, BFormCheckbox } from "bootstrap-vue-3";
 
 const availableMinigames = Object.values(Minigame);
@@ -18,7 +18,7 @@ const dungeonIndex = ref(route.params.dungeonIndex as string);
 
 const editedMinigame = ref();
 const showEditModal = ref(false);
-const showMoorhuhnModal = ref(false);
+const showChickenshockModal = ref(false);
 
 watch(
   () => [
@@ -27,15 +27,15 @@ watch(
     route.params.dungeonIndex,
   ],
   (newVal) => {
-    courseId.value = newVal[0];
-    worldIndex.value = newVal[1];
-    dungeonIndex.value = newVal[2];
+    courseId.value = newVal[0] as string;
+    worldIndex.value = newVal[1] as string;
+    dungeonIndex.value = newVal[2] as string;
     loadMinigames(courseId.value, worldIndex.value, dungeonIndex.value);
   },
   { deep: true }
 );
 
-const minigames = ref([]);
+const minigames = ref(Array<ITask>());
 
 async function loadMinigames(
   courseId: any,
@@ -80,8 +80,8 @@ function editMinigameConfiguration(task: ITask) {
   if (task.game == "NONE") {
     showEditModal.value = true;
   }
-  if (task.game == "MOORHUHN") {
-    showMoorhuhnModal.value = true;
+  if (task.game == "CHICKENSHOCK") {
+    showChickenshockModal.value = true;
   }
 }
 
@@ -93,14 +93,8 @@ function updateMinigameConfiguration(task: ITask) {
 function closedEditModal() {
   console.log("Parent got info that modal was closed");
   console.log(editedMinigame.value.id);
-  putMinigame(
-    parseInt(courseId.value),
-    parseInt(worldIndex.value),
-    parseInt(dungeonIndex.value),
-    editedMinigame.value
-  );
   showEditModal.value = false;
-  showMoorhuhnModal.value = false;
+  showChickenshockModal.value = false;
 }
 </script>
 
@@ -141,8 +135,8 @@ function closedEditModal() {
     @updateMinigameConfiguration="updateMinigameConfiguration"
     @closedModal="closedEditModal"
   />
-  <EditMoorhuhnConfigurationModal
-    :showModal="showMoorhuhnModal"
+  <EditChickenshockConfigurationModal
+    :showModal="showChickenshockModal"
     :minigame="editedMinigame"
     @updateMinigameConfiguration="updateMinigameConfiguration"
     @closedModal="closedEditModal"

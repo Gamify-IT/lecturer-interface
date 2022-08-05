@@ -1,16 +1,18 @@
 <script setup lang="ts">
 import { defineProps, defineEmits, ref, watch } from "vue";
 import {
-  IMoorhuhnConfiguration,
-  IMoorhuhnQuestion,
+  IChickenshockConfiguration,
+  IChickenshockQuestion,
   ITask,
-  MoorhuhnConfiguration,
+  ChickenshockConfiguration,
 } from "@/ts/models";
 import {
-  getMoorhuhnConfig,
-  postMoorhuhnConfig,
-} from "@/ts/moorhuhn-rest-client";
+  getChickenshockConfig,
+  postChickenshockConfig,
+} from "@/ts/chickenshock-rest-client";
 import { useToast } from "vue-toastification";
+import { putMinigame } from "@/ts/minigame-rest-client";
+import { useRoute } from "vue-router";
 
 const props = defineProps<{
   minigame: ITask;
@@ -36,12 +38,16 @@ const fields = [
   },
 ];
 
+const route = useRoute();
+const courseId = ref(route.params.courseId as string);
+const worldIndex = ref(route.params.worldIndex as string);
+const dungeonIndex = ref(route.params.dungeonIndex as string);
 const toast = useToast();
 const minigame = ref();
 const form = ref();
 const showModal = ref(props.showModal);
 const text = ref();
-let configuration = ref(new MoorhuhnConfiguration([]));
+let configuration = ref(new ChickenshockConfiguration([]));
 const question = ref();
 const rightAnswer = ref();
 const showQuestionModal = ref();
@@ -77,7 +83,7 @@ function checkFormValidity(): boolean {
 
 function resetModal() {
   if (minigame.value.configurationId != undefined) {
-    getMoorhuhnConfig(minigame.value.configurationId).then((response) => {
+    getChickenshockConfig(minigame.value.configurationId).then((response) => {
       configuration.value = response.data;
       console.log("getConfig");
     });
@@ -86,7 +92,13 @@ function resetModal() {
 }
 
 function handleOk() {
-  postMoorhuhnConfig(configuration.value).then((response) => {
+  putMinigame(
+    parseInt(courseId.value),
+    parseInt(worldIndex.value),
+    parseInt(dungeonIndex.value),
+    minigame.value
+  );
+  postChickenshockConfig(configuration.value).then((response) => {
     minigame.value.configurationId = response.data.id;
     console.log(minigame.value.id);
     console.log("Submit Modal");
@@ -96,6 +108,10 @@ function handleOk() {
 }
 
 function hiddenModal() {
+  if (!showQuestionModal.value) {
+    oldMinigame.value = null;
+    console.log("Test");
+  }
   console.log("Modal hidden");
   emit("closedModal");
 }
@@ -138,7 +154,7 @@ function loadModal() {
   if (oldMinigame.value != null) {
     if (oldMinigame.value.id != minigame.value.id) {
       if (minigame.value.configurationId != undefined) {
-        getMoorhuhnConfig(minigame.value.configurationId)
+        getChickenshockConfig(minigame.value.configurationId)
           .then((response) => {
             configuration.value = response.data;
           })
@@ -157,11 +173,10 @@ function loadModal() {
     }
   } else {
     if (minigame.value.configurationId != undefined) {
-      getMoorhuhnConfig(minigame.value.configurationId)
+      getChickenshockConfig(minigame.value.configurationId)
         .then((response) => {
           configuration.value = response.data;
           oldMinigame.value = minigame.value;
-          console.log("getConfig");
         })
         .catch((error) => {
           console.log(error);
@@ -171,19 +186,14 @@ function loadModal() {
           }
         });
     } else {
-      if (minigame.value.configurationId != null) {
-        configuration.value.questions = [];
-        oldMinigame.value = minigame.value;
-        console.log("emptyQuestions");
-        console.log(configuration.value);
-        console.log(minigame.value);
-      }
+      configuration.value.questions = [];
+      oldMinigame.value = minigame.value;
     }
   }
 }
 
 function removeQuestion(text: string) {
-  let filteredQuestions: IMoorhuhnQuestion[] = [];
+  let filteredQuestions: IChickenshockQuestion[] = [];
   configuration.value.questions.forEach((question) => {
     if (question.text != text) {
       filteredQuestions.push(question);
@@ -207,7 +217,7 @@ function resetQuestionModal() {
   wrongAnswers.value = [];
 }
 function handleCancel() {
-  getMoorhuhnConfig(minigame.value.configurationId)
+  getChickenshockConfig(minigame.value.configurationId)
     .then((response) => {
       configuration.value = response.data;
     })
@@ -218,7 +228,7 @@ function handleCancel() {
 </script>
 <template>
   <b-modal
-    title="Edit Moorhuhn configuration"
+    title="Edit Chickenshock configuration"
     v-model="showModal"
     @hidden="hiddenModal"
     @ok="handleOk"
@@ -258,7 +268,7 @@ function handleCancel() {
   </b-modal>
   <b-modal
     id="add-question"
-    title="Add Question to Moorhuhn configuration"
+    title="Add Question to Chickenshock configuration"
     v-model="showQuestionModal"
     @show="resetQuestionModal"
     @ok="handleQuestionOk"

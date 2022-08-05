@@ -11,7 +11,7 @@ describe("AreaBox.vue", () => {
   beforeEach(() => {
     const tasks = [
       new Task("1", 1, Minigame.BUGFINDER, "asdsaas"),
-      new Task("2", 2, Minigame.MOORHUHN, "asdasdsa"),
+      new Task("2", 2, Minigame.CHICKENSHOCK, "asdasdsa"),
     ];
     dungeon = new Dungeon(
       "1",
