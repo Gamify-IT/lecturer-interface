@@ -10,7 +10,6 @@ const props = defineProps<{
   courseId: number;
   worldIndex: number;
   dungeonIndex: number;
-  availableMinigames: Minigame[];
 }>();
 
 const toast = useToast();

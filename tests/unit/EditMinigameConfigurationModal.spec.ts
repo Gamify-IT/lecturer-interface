@@ -1,7 +1,7 @@
 import { shallowMount } from "@vue/test-utils";
 import EditMinigameConfigurationModal from "@/components/EditMinigameConfigurationModal.vue";
 import { Minigame } from "@/ts/models";
-import BootstrapVue3 from "bootstrap-vue-3";
+import BootstrapVue3, { BModal } from "bootstrap-vue-3";
 
 describe("EditMinigameConfigurationModal.vue", () => {
   const minigame = Minigame.BUGFINDER;
@@ -16,8 +16,7 @@ describe("EditMinigameConfigurationModal.vue", () => {
     },
   });
   test("Modal exists", async () => {
-    const modal = wrapper.find("b-modal-stub");
+    const modal = wrapper.findComponent(BModal);
     expect(modal.exists()).toBe(true);
-    expect(modal.html()).toContain("Edit game configuration");
   });
 });

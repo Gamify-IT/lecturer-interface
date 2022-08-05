@@ -8,8 +8,6 @@ import EditMinigameConfigurationModal from "@/components/EditMinigameConfigurati
 import { useToast } from "vue-toastification";
 import EditChickenshockConfigurationModal from "@/components/EditChickenshockConfigurationModal.vue";
 
-const availableMinigames = Object.values(Minigame);
-
 const toast = useToast();
 
 const route = useRoute();
@@ -95,7 +93,6 @@ watch(
               :courseId="courseId"
               :worldIndex="world.index"
               :dungeonIndex="0"
-              :availableMinigames="availableMinigames"
               @editMinigameConfiguration="editMinigameConfiguration"
             />
           </b-tr>
@@ -103,7 +100,6 @@ watch(
             <AreaBox
               :area="dungeon"
               :courseId="courseId"
-              :availableMinigames="availableMinigames"
               :worldIndex="world.index"
               :dungeonIndex="dungeon.index"
               @editMinigameConfiguration="editMinigameConfiguration"

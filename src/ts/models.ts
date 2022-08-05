@@ -1,5 +1,6 @@
 export interface ICourse {
   id: number;
+  semester: string;
   courseName: string;
   description: string;
 
@@ -90,6 +91,7 @@ export class ChickenshockConfiguration implements IChickenshockConfiguration {
 export class Course implements ICourse {
   id: number;
   courseName: string;
+  semester: string;
   description: string;
   active: boolean;
   worlds: IWorld[];
@@ -97,11 +99,13 @@ export class Course implements ICourse {
   public constructor(
     id: number,
     courseName: string,
+    semester: string,
     description: string,
     active: boolean,
     worlds: IWorld[]
   ) {
     this.id = id;
+    this.semester = semester;
     this.courseName = courseName;
     this.description = description;
     this.active = active;
