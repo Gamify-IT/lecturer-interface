@@ -31,7 +31,7 @@ describe("NPCView.vue", () => {
   let npcs: INPC[];
   beforeEach(async () => {
     jest.clearAllMocks();
-    const npcsResponse = {
+    /*const npcsResponse = {
       data: [
         new NPC("random uuid", 1, ["I am a NPC", "I give you a task"]),
         new NPC("random uuid 2", 2, [
@@ -41,7 +41,39 @@ describe("NPCView.vue", () => {
     };
     npcs = npcsResponse.data;
     // response for GET /courses
-    mockAxios.get.mockResolvedValueOnce(npcsResponse);
+    mockAxios.get.mockResolvedValueOnce(npcsResponse);   
+    */
+    const worldResponse = {
+      data: new World(
+        "random uuid",
+        1,
+        "Static Name",
+        "Topic Name",
+        true,
+        [
+          new Dungeon(
+            "random dungeon uuid",
+            1,
+            "Dungeon Static Name",
+            "Dungeon Topic Name",
+            false,
+            [],
+            []
+          ),
+        ],
+        [],
+        [
+          new NPC("random uuid", 1, ["I am a NPC", "I give you a task"]),
+          new NPC("random uuid 2", 2, [
+            "I hope you met my ohter NPC friend before",
+          ]),
+        ]
+      ),
+    };
+    npcs = worldResponse.data.npcs;
+
+    // response for GET /courses
+    mockAxios.get.mockResolvedValueOnce(worldResponse);
     router.push(`/courses/${courseId}/worlds/${worldIndex}/npcs`);
     await router.isReady();
     wrapper = mount(NPCView, {
