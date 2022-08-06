@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { defineProps, defineEmits, ref, watch } from "vue";
 import {
-  IChickenshockConfiguration,
   IChickenshockQuestion,
   ITask,
   ChickenshockConfiguration,
@@ -46,14 +45,12 @@ const toast = useToast();
 const minigame = ref();
 const form = ref();
 const showModal = ref(props.showModal);
-const text = ref();
 let configuration = ref(new ChickenshockConfiguration([]));
 const question = ref();
 const rightAnswer = ref();
 const showQuestionModal = ref();
 const oldMinigame = ref();
 const wrongAnswers = ref(Array<string>());
-const addWrongAnswers = ref(false);
 const wrongAnswer = ref();
 
 watch(
@@ -107,15 +104,6 @@ function handleOk() {
   });
 }
 
-function hiddenModal() {
-  if (!showQuestionModal.value) {
-    oldMinigame.value = null;
-    console.log("Test");
-  }
-  console.log("Modal hidden");
-  emit("closedModal");
-}
-
 function handleSubmit() {
   // Exit when the form isn't valid
   if (!checkFormValidity()) {
@@ -125,29 +113,23 @@ function handleSubmit() {
   emit("updateMinigameConfiguration", minigame.value);
 }
 
-function handleQuestionOk() {
-  let contains = false;
-  configuration.value.questions.forEach((pQuestion) => {
-    if (pQuestion.text == question.value) {
-      contains = true;
-    }
-  });
-  if (!contains) {
-    console.log(wrongAnswers.value);
-    configuration.value.questions.push({
-      text: question.value,
-      rightAnswer: rightAnswer.value,
-      wrongAnswers: wrongAnswers.value,
+function handleCancel() {
+  getChickenshockConfig(minigame.value.configurationId)
+    .then((response) => {
+      configuration.value = response.data;
+    })
+    .catch(() => {
+      configuration.value.questions = [];
     });
-  } else {
-    toast.error("Question already exists");
-  }
-  showModal.value = true;
-  console.log(configuration.value);
 }
 
-function handleQuestionAbort() {
-  showModal.value = true;
+function hiddenModal() {
+  if (!showQuestionModal.value) {
+    oldMinigame.value = null;
+    console.log("Test");
+  }
+  console.log("Modal hidden");
+  emit("closedModal");
 }
 
 function loadModal() {
@@ -202,28 +184,42 @@ function removeQuestion(text: string) {
   console.log(filteredQuestions);
   configuration.value.questions = filteredQuestions;
 }
-function startAddWrongAnswer() {
-  addWrongAnswers.value = true;
+
+function handleQuestionOk() {
+  let contains = false;
+  configuration.value.questions.forEach((pQuestion) => {
+    if (pQuestion.text == question.value) {
+      contains = true;
+    }
+  });
+  if (!contains) {
+    console.log(wrongAnswers.value);
+    configuration.value.questions.push({
+      text: question.value,
+      rightAnswer: rightAnswer.value,
+      wrongAnswers: wrongAnswers.value,
+    });
+  } else {
+    toast.error("Question already exists");
+  }
+  showModal.value = true;
+  console.log(configuration.value);
 }
 
-function endAddWrongAnswer() {
-  wrongAnswers.value.push(wrongAnswer.value);
-  wrongAnswer.value = "";
-  addWrongAnswers.value = false;
+function handleQuestionAbort() {
+  showModal.value = true;
 }
+
 function resetQuestionModal() {
   question.value = "";
   rightAnswer.value = "";
   wrongAnswers.value = [];
+  wrongAnswer.value = "";
 }
-function handleCancel() {
-  getChickenshockConfig(minigame.value.configurationId)
-    .then((response) => {
-      configuration.value = response.data;
-    })
-    .catch((error) => {
-      configuration.value.questions = [];
-    });
+
+function addWrongAnswer() {
+  wrongAnswers.value.push(wrongAnswer.value);
+  wrongAnswer.value = "";
 }
 </script>
 <template>
@@ -239,7 +235,7 @@ function handleCancel() {
     <form
       ref="form"
       @submit.stop.prevent="handleSubmit"
-      v-if="minigame != undefined"
+      v-if="minigame !== undefined"
     >
       <b-form-group>
         <b-button variant="success" v-b-modal.add-question>
@@ -270,6 +266,7 @@ function handleCancel() {
     id="add-question"
     title="Add Question to Chickenshock configuration"
     v-model="showQuestionModal"
+    @hidden="resetQuestionModal"
     @show="resetQuestionModal"
     @ok="handleQuestionOk"
     @cancel="handleQuestionAbort"
@@ -280,19 +277,13 @@ function handleCancel() {
     <b-form-group label="Correct Answer" label-for="correct-answer">
       <b-form-input id="correct-answer" v-model="rightAnswer" required />
     </b-form-group>
-    <b-form-group>
+    <b-form-group label="Wrong Answers">
       <div v-for="answer in wrongAnswers" :key="answer">
         {{ answer }}
       </div>
-      <b-button
-        v-if="!addWrongAnswers"
-        @click="startAddWrongAnswer"
-        variant="success"
-        >add wrong answer</b-button
-      >
-      <div v-if="addWrongAnswers">
+      <div>
         <b-form-input v-model="wrongAnswer"></b-form-input>
-        <b-button @click="endAddWrongAnswer" variant="success">add</b-button>
+        <b-button @click="addWrongAnswer" variant="success">add</b-button>
       </div>
     </b-form-group>
   </b-modal>
