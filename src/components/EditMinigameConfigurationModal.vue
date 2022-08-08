@@ -10,7 +10,6 @@ const props = defineProps<{
 const minigame = ref();
 const form = ref();
 const showModal = ref(props.showModal);
-const text = ref();
 
 watch(
   () => props.minigame,
@@ -71,7 +70,7 @@ function handleSubmit() {
     <form
       ref="form"
       @submit.stop.prevent="handleSubmit"
-      v-if="minigame != undefined"
+      v-if="minigame !== undefined"
     >
       <b-form-group label="Name" label-for="name-input">
         <b-form-input id="name-input" v-model="minigame.lectureName" required />

@@ -3,17 +3,19 @@ import { getCourse, putCourse } from "@/ts/course-rest-client";
 import { ref } from "vue";
 import { useRoute } from "vue-router";
 import { useToast } from "vue-toastification";
+import { BRow } from "bootstrap-vue-3";
 
 const route = useRoute();
-const id = route.params.id;
+const id = route.params.id as string;
 const course = ref();
 const editingCourseName = ref();
 const editingDescription = ref();
 const editingSemester = ref();
 
-async function loadCourse(id: any) {
+async function loadCourse(stringId: string) {
   console.log("load course");
-  console.log(id);
+  console.log(stringId);
+  let id = parseInt(stringId);
   if (isNaN(id)) {
     console.log("NAN");
     return;
@@ -223,6 +225,7 @@ function toggleCourseSwitch() {
         </div>
       </b-col>
       <b-col>
+        <h4>activate:</h4>
         <b-form-checkbox
           v-model="course.active"
           @change="toggleCourseSwitch"

@@ -1,9 +1,7 @@
 <script setup lang="ts">
-import { defineProps, defineEmits, ref, watch } from "vue";
-import { SidebarHeaderItem, SidebarItem } from "vue-sidebar-menu";
+import { ref, watch } from "vue";
 import "vue-sidebar-menu/dist/vue-sidebar-menu.css";
-import { exampleWorlds, ICourse, IDungeon, IWorld } from "@/ts/models";
-import { store } from "@/store";
+import { ICourse, IDungeon, IWorld } from "@/ts/models";
 
 import { computed } from "vue";
 import { useRouter } from "vue-router";
@@ -24,7 +22,7 @@ const sidebarActive = [
 
 watch(
   () => [router.currentRoute.value.fullPath],
-  (newVal) => {
+  () => {
     getCourseIdFromRouter().then((id) => {
       if (course == null || course.id != id) {
         update();

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ITask, Minigame } from "@/ts/models";
-import { getMinigames, putMinigame } from "@/ts/minigame-rest-client";
+import { getMinigames } from "@/ts/minigame-rest-client";
 import { ref, watch } from "vue";
 import { useRoute } from "vue-router";
 import { useToast } from "vue-toastification";
@@ -99,7 +99,7 @@ function closedEditModal() {
 
 <template>
   <div class="container mt-4">
-    <h1 v-if="dungeonIndex == undefined">
+    <h1 v-if="dungeonIndex === undefined">
       Minigames from World {{ worldIndex }}
     </h1>
     <h1 v-else>

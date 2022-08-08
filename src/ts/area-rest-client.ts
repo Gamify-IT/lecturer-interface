@@ -1,6 +1,5 @@
-import axios, { AxiosResponse } from "axios";
+import { AxiosResponse } from "axios";
 
-import config from "@/config";
 import { IArea } from "./models";
 import { getWorld, updateWorld } from "./world-rest-client";
 import { getDungeon, updateDungeon } from "./dungeon-rest-client";

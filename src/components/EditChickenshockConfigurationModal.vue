@@ -89,12 +89,6 @@ function resetModal() {
 }
 
 function handleOk() {
-  putMinigame(
-    parseInt(courseId.value),
-    parseInt(worldIndex.value),
-    parseInt(dungeonIndex.value),
-    minigame.value
-  );
   postChickenshockConfig(configuration.value).then((response) => {
     minigame.value.configurationId = response.data.id;
     console.log(minigame.value.id);
@@ -102,6 +96,12 @@ function handleOk() {
     oldMinigame.value = minigame.value;
     handleSubmit();
   });
+  putMinigame(
+    parseInt(courseId.value),
+    parseInt(worldIndex.value),
+    parseInt(dungeonIndex.value),
+    minigame.value
+  );
 }
 
 function handleSubmit() {
@@ -133,32 +133,11 @@ function hiddenModal() {
 }
 
 function loadModal() {
-  if (oldMinigame.value != null) {
-    if (oldMinigame.value.id != minigame.value.id) {
-      if (minigame.value.configurationId != undefined) {
-        getChickenshockConfig(minigame.value.configurationId)
-          .then((response) => {
-            configuration.value = response.data;
-          })
-          .catch((error) => {
-            console.log(error);
-            if (error.response.status == 404) {
-              minigame.value.configurationId = undefined;
-              configuration.value.questions = [];
-            }
-          });
-        oldMinigame.value = minigame.value;
-      } else {
-        configuration.value.questions = [];
-        oldMinigame.value = minigame.value;
-      }
-    }
-  } else {
+  function getMinigame() {
     if (minigame.value.configurationId != undefined) {
       getChickenshockConfig(minigame.value.configurationId)
         .then((response) => {
           configuration.value = response.data;
-          oldMinigame.value = minigame.value;
         })
         .catch((error) => {
           console.log(error);
@@ -167,10 +146,19 @@ function loadModal() {
             configuration.value.questions = [];
           }
         });
+      oldMinigame.value = minigame.value;
     } else {
       configuration.value.questions = [];
       oldMinigame.value = minigame.value;
     }
+  }
+
+  if (oldMinigame.value != null) {
+    if (oldMinigame.value.id != minigame.value.id) {
+      getMinigame();
+    }
+  } else {
+    getMinigame();
   }
 }
 

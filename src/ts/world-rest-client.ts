@@ -1,11 +1,7 @@
 import axios, { AxiosResponse } from "axios";
 
 import config from "@/config";
-import { IArea, ICourse, IWorld } from "./models";
-
-export async function getWorlds(courseId: number) {
-  return axios.get(`${config.apiBaseUrl}/courses/${courseId}/worlds`);
-}
+import { IArea } from "./models";
 
 export async function getWorld(
   courseId: number,

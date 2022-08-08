@@ -4,12 +4,9 @@ import { getWorld } from "@/ts/world-rest-client";
 import { ref, watch } from "vue";
 import { useRoute } from "vue-router";
 import AreaBox from "../components/AreaBox.vue";
-import EditMinigameConfigurationModal from "@/components/EditMinigameConfigurationModal.vue";
 import { useToast } from "vue-toastification";
-import EditChickenshockConfigurationModal from "@/components/EditChickenshockConfigurationModal.vue";
 
-const toast = useToast();
-
+useToast();
 const route = useRoute();
 const courseId = ref(parseInt(route.params.courseId as string));
 const worldIndex = ref(parseInt(route.params.worldIndex as string));
@@ -23,8 +20,7 @@ function loadSelectedWorld(
 ) {
   getWorld(selectedCourseId, selectedWorldIndex)
     .then((response) => {
-      const result = response.data;
-      world.value = result;
+      world.value = response.data;
       world.value.dungeons = world.value.dungeons.sort(
         (dungeon1: IDungeon, dungeon2: IDungeon) =>
           dungeon1.index > dungeon2.index
@@ -48,7 +44,7 @@ watch(
 </script>
 
 <template>
-  <div v-if="world != undefined" class="container mt-5">
+  <div v-if="world !== undefined" class="container mt-5">
     <h2>Configure World {{ world.index }}</h2>
     <h4>{{ world.staticName }}</h4>
 

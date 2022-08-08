@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { ICourse } from "@/ts/models";
-import { getCourses } from "@/ts/course-rest-client";
-import { postCourse } from "@/ts/course-rest-client";
+import { getCourses, postCourse } from "@/ts/course-rest-client";
 import { ref } from "vue";
 import { useRouter } from "vue-router";
 import { useToast } from "vue-toastification";
@@ -19,8 +18,7 @@ let semesterInput = ref();
 async function loadCourses() {
   getCourses()
     .then((response) => {
-      const result = response.data;
-      courses.value = result;
+      courses.value = response.data;
     })
     .catch((error) => {
       console.log(error);
@@ -101,7 +99,7 @@ function resetModal() {
         >
         <b-row
           v-else
-          class="table-row-inactive"
+          class="table-row-inactive table-cursor"
           @click="directToCourse(data.item.id)"
         >
           {{ data.value }}</b-row

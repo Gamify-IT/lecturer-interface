@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { defineProps, defineEmits, ref, watch } from "vue";
+import { defineProps, ref, watch } from "vue";
 import { updateArea } from "@/ts/area-rest-client";
 
-import { IArea, ITask, Minigame } from "@/ts/models";
+import { IArea } from "@/ts/models";
 import { useToast } from "vue-toastification";
 
 const props = defineProps<{
@@ -15,8 +15,7 @@ const props = defineProps<{
 const toast = useToast();
 
 const area = ref(props.area);
-const collapse = ref(Array<boolean>());
-
+ref(Array<boolean>());
 const editingAreaLecturerName = ref();
 
 watch(
@@ -27,14 +26,6 @@ watch(
   { deep: true }
 );
 
-const emit = defineEmits<{
-  (e: "editMinigameConfiguration", minigame: ITask): void;
-}>();
-
-function startEditMinigame(task: ITask) {
-  emit("editMinigameConfiguration", task);
-}
-
 function startEditAreaLecturerName(editingArea: IArea) {
   editingAreaLecturerName.value = editingArea.topicName;
 }
@@ -43,8 +34,7 @@ function saveEditAreaLecturerName(editedArea: IArea) {
   editedArea.topicName = editingAreaLecturerName.value;
   updateArea(props.courseId, props.worldIndex, props.dungeonIndex, editedArea)
     .then((response) => {
-      const result: IArea = response.data;
-      editedArea = result;
+      editedArea = response.data;
     })
     .catch((error) => {
       console.log(error);
@@ -77,14 +67,6 @@ function toggledAreaSwitch(toggledArea: IArea) {
     .catch((error) => {
       console.log(error);
     });
-}
-
-function changedMinigame(task: ITask) {
-  if (task.game == null) {
-    task.game = Minigame.NONE;
-  }
-  toast.success(`Minigame in Task was updated to ${task.game}!`);
-  console.log("Changed minigame to " + task.game);
 }
 </script>
 

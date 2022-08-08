@@ -1,20 +1,22 @@
-import axios from "axios";
+import axios, { AxiosResponse } from "axios";
 
 import config from "@/config";
 import { courseInitialData, ICourse } from "./models";
 
-export async function getCourses(): Promise<ICourse[]> {
+export async function getCourses(): Promise<AxiosResponse> {
   return axios.get(`${config.apiBaseUrl}/courses`);
 }
 
-export async function getCourse(id: number): Promise<ICourse> {
+export async function getCourse(id: number): Promise<AxiosResponse> {
   return axios.get(`${config.apiBaseUrl}/courses/${id}`);
 }
 
-export async function postCourse(initialData: courseInitialData) {
+export async function postCourse(
+  initialData: courseInitialData
+): Promise<AxiosResponse> {
   return axios.post(`${config.apiBaseUrl}/courses/`, initialData);
 }
 
-export async function putCourse(course: ICourse) {
+export async function putCourse(course: ICourse): Promise<AxiosResponse> {
   return axios.put(`${config.apiBaseUrl}/courses/${course.id}`, course);
 }

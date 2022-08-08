@@ -1,7 +1,7 @@
 import { mount, VueWrapper, flushPromises } from "@vue/test-utils";
 import mockAxios from "jest-mock-axios";
 import router from "@/router/index";
-import NPCView from "@/views/NPCView.vue";
+import NPCView from "@/views/NPCsView.vue";
 import {
   Dungeon,
   INPC,
@@ -24,7 +24,7 @@ import config from "@/config";
 
 jest.mock("axios");
 
-describe("NPCView.vue", () => {
+describe("NPCsView.vue", () => {
   let wrapper: VueWrapper;
   const courseId = 1;
   const worldIndex = 1;

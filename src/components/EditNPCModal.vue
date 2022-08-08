@@ -80,7 +80,7 @@ function handleSubmit() {
     @show="resetModal"
     @hidden="hiddenModal"
     @ok="handleOk"
-    v-if="npc != undefined"
+    v-if="npc !== undefined"
   >
     <form ref="form" @submit.stop.prevent="handleSubmit">
       <b-input-group

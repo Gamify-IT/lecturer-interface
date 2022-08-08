@@ -2,7 +2,7 @@ import WorldView from "@/views/WorldView.vue";
 import CoursesView from "@/views/CoursesView.vue";
 import CourseView from "@/views/CourseView.vue";
 import MinigameTasksView from "@/views/MinigameTasksView.vue";
-import NPCView from "@/views/NPCView.vue";
+import NPCView from "@/views/NPCsView.vue";
 
 import { createRouter, createWebHistory, RouteRecordRaw } from "vue-router";
 

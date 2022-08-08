@@ -31,7 +31,7 @@ watch(
   { deep: true }
 );
 
-const npcs = ref([]);
+const npcs = ref(Array<INPC>());
 
 async function loadNPCs(courseId: any, worldIndex: any, dungeonIndex: any) {
   console.log("load npcs");
@@ -65,12 +65,10 @@ function editNPC(npc: INPC) {
 function updateNPC(npc: INPC) {
   console.log("Pressed submit button in npc configuration modal");
   putNPC(courseId.value, worldIndex.value, dungeonIndex.value, npc.index, npc)
-    .then((response) => {
-      const result: INPC = response.data;
-      const updatedNPC: INPC = result;
+    .then(() => {
       toast.success(`NPC with index ${npc.index} was updated!`);
     })
-    .catch((error) => {
+    .catch(() => {
       toast.error(`NPC with index ${npc.index} could not be updated!`);
     });
 }
@@ -83,7 +81,7 @@ function closedEditModal() {
 
 <template>
   <div class="container mt-4">
-    <h1 v-if="dungeonIndex == undefined">NPCs from World {{ worldIndex }}</h1>
+    <h1 v-if="dungeonIndex === undefined">NPCs from World {{ worldIndex }}</h1>
     <h1 v-else>
       NPCs from World World {{ worldIndex }}, Dungeon {{ dungeonIndex }}
     </h1>
