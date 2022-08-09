@@ -42,7 +42,7 @@ const courseId = ref(route.params.courseId as string);
 const worldIndex = ref(route.params.worldIndex as string);
 const dungeonIndex = ref(route.params.dungeonIndex as string);
 const toast = useToast();
-const minigame = ref();
+const minigame = ref(props.minigame);
 const form = ref();
 const showModal = ref(props.showModal);
 let configuration = ref(new ChickenshockConfiguration([]));
@@ -89,19 +89,23 @@ function resetModal() {
 }
 
 function handleOk() {
-  postChickenshockConfig(configuration.value).then((response) => {
-    minigame.value.configurationId = response.data.id;
-    console.log(minigame.value.id);
-    console.log("Submit Modal");
-    oldMinigame.value = minigame.value;
-    handleSubmit();
-  });
-  putMinigame(
-    parseInt(courseId.value),
-    parseInt(worldIndex.value),
-    parseInt(dungeonIndex.value),
-    minigame.value
-  );
+  postChickenshockConfig(configuration.value)
+    .then((response) => {
+      minigame.value.configurationId = response.data.id;
+      console.log("Submit Modal");
+      console.log("id:" + response.data.id);
+      console.log("minigameId" + minigame.value.configurationId);
+      oldMinigame.value = minigame.value;
+      handleSubmit();
+    })
+    .then(() => {
+      putMinigame(
+        parseInt(courseId.value),
+        parseInt(worldIndex.value),
+        parseInt(dungeonIndex.value),
+        minigame.value
+      );
+    });
 }
 
 function handleSubmit() {
@@ -181,7 +185,6 @@ function handleQuestionOk() {
     }
   });
   if (!contains) {
-    console.log(wrongAnswers.value);
     configuration.value.questions.push({
       text: question.value,
       rightAnswer: rightAnswer.value,
@@ -191,7 +194,6 @@ function handleQuestionOk() {
     toast.error("Question already exists");
   }
   showModal.value = true;
-  console.log(configuration.value);
 }
 
 function handleQuestionAbort() {
@@ -213,6 +215,7 @@ function addWrongAnswer() {
 <template>
   <b-modal
     title="Edit Chickenshock configuration"
+    id="edit-modal"
     v-model="showModal"
     @hidden="hiddenModal"
     @ok="handleOk"
@@ -226,7 +229,11 @@ function addWrongAnswer() {
       v-if="minigame !== undefined"
     >
       <b-form-group>
-        <b-button variant="success" v-b-modal.add-question>
+        <b-button
+          variant="success"
+          id="add-question-button"
+          v-b-modal.add-question
+        >
           add question
         </b-button>
       </b-form-group>
@@ -270,8 +277,13 @@ function addWrongAnswer() {
         {{ answer }}
       </div>
       <div>
-        <b-form-input v-model="wrongAnswer"></b-form-input>
-        <b-button @click="addWrongAnswer" variant="success">add</b-button>
+        <b-form-input id="wrong-answer" v-model="wrongAnswer"></b-form-input>
+        <b-button
+          @click="addWrongAnswer"
+          variant="success"
+          id="button-wrong-answer"
+          >add</b-button
+        >
       </div>
     </b-form-group>
   </b-modal>
