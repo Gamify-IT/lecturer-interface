@@ -41,10 +41,19 @@ function startEditCourseName() {
 
 function saveEditCourseName() {
   course.value.courseName = editingCourseName.value;
-  putCourse(course.value);
-  toast.success(
-    `Name of course ${course.value.courseName} was updated successfully}!`
-  );
+  putCourse(course.value)
+    .then((response) => {
+      course.value = response.data;
+      toast.success(
+        `Name of course ${course.value.courseName} was updated successfully!`
+      );
+    })
+    .catch((error) => {
+      console.log(error);
+      toast.error(
+        `Name of course ${course.value.courseName} could not be updated!`
+      );
+    });
   editingCourseName.value = null;
 }
 
@@ -59,10 +68,19 @@ function startEditDescription() {
 
 function saveEditDescription() {
   course.value.description = editingDescription.value;
-  putCourse(course.value);
-  toast.success(
-    `Description of course ${course.value.description} was updated successfully}!`
-  );
+  putCourse(course.value)
+    .then((response) => {
+      course.value = response.data;
+      toast.success(
+        `Description of course ${course.value.courseName} was updated successfully!`
+      );
+    })
+    .catch((error) => {
+      console.log(error);
+      toast.error(
+        `Description of course ${course.value.courseName} could not be updated!`
+      );
+    });
   editingDescription.value = null;
 }
 
@@ -79,10 +97,20 @@ function startEditSemester() {
 
 function saveEditSemester() {
   course.value.semester = editingSemester.value;
-  putCourse(course.value);
-  toast.success(
-    `Semester of course ${course.value.semester} was updated successfully}!`
-  );
+  putCourse(course.value)
+    .then((response) => {
+      course.value = response.data;
+      toast.success(
+        `Semester of course ${course.value.semester} was updated successfully}!`
+      );
+    })
+    .catch((error) => {
+      console.log(error);
+      toast.error(
+        `Semester of course ${course.value.semester} could not be updated}!`
+      );
+    });
+
   editingSemester.value = null;
 }
 

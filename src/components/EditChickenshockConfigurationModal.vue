@@ -80,10 +80,21 @@ function checkFormValidity(): boolean {
 
 function resetModal() {
   if (minigame.value.configurationId != undefined) {
-    getChickenshockConfig(minigame.value.configurationId).then((response) => {
-      configuration.value = response.data;
-      console.log("getConfig");
-    });
+    getChickenshockConfig(minigame.value.configurationId)
+      .then((response) => {
+        configuration.value = response.data;
+      })
+      .catch((error) => {
+        console.log(error);
+        if (error.response.status == 404) {
+          minigame.value.configurationId = undefined;
+          configuration.value.questions = [];
+        }
+      });
+    oldMinigame.value = minigame.value;
+  } else {
+    configuration.value.questions = [];
+    oldMinigame.value = minigame.value;
   }
   console.log("Reset Modal");
 }
@@ -117,16 +128,6 @@ function handleSubmit() {
   emit("updateMinigameConfiguration", minigame.value);
 }
 
-function handleCancel() {
-  getChickenshockConfig(minigame.value.configurationId)
-    .then((response) => {
-      configuration.value = response.data;
-    })
-    .catch(() => {
-      configuration.value.questions = [];
-    });
-}
-
 function hiddenModal() {
   if (!showQuestionModal.value) {
     oldMinigame.value = null;
@@ -137,32 +138,12 @@ function hiddenModal() {
 }
 
 function loadModal() {
-  function getMinigame() {
-    if (minigame.value.configurationId != undefined) {
-      getChickenshockConfig(minigame.value.configurationId)
-        .then((response) => {
-          configuration.value = response.data;
-        })
-        .catch((error) => {
-          console.log(error);
-          if (error.response.status == 404) {
-            minigame.value.configurationId = undefined;
-            configuration.value.questions = [];
-          }
-        });
-      oldMinigame.value = minigame.value;
-    } else {
-      configuration.value.questions = [];
-      oldMinigame.value = minigame.value;
-    }
-  }
-
   if (oldMinigame.value != null) {
     if (oldMinigame.value.id != minigame.value.id) {
-      getMinigame();
+      resetModal();
     }
   } else {
-    getMinigame();
+    resetModal();
   }
 }
 
@@ -219,7 +200,7 @@ function addWrongAnswer() {
     v-model="showModal"
     @hidden="hiddenModal"
     @ok="handleOk"
-    @cancel="handleCancel"
+    @cancel="resetModal"
     @show="loadModal"
     @abort="resetModal"
   >

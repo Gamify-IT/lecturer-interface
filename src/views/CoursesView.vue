@@ -70,7 +70,7 @@ function handleOk() {
       toast.success(`Course ${response.data.courseName} is created!`);
     })
     .catch((error) => {
-      toast.error(`Course ${nameInput.value} is created!`);
+      toast.error(`Course ${nameInput.value} could not be created created!`);
       console.log(error);
     });
 }

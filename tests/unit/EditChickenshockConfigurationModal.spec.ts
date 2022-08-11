@@ -37,6 +37,9 @@ describe("EditChickenshockConfigurationModal.vue", () => {
     const configurationResponse = {
       data: configuration,
     };
+    const div = document.createElement("div");
+    div.id = "root";
+    document.body.appendChild(div);
     mockAxios.get.mockResolvedValueOnce(configurationResponse);
     router.push(`/courses/1/worlds/1`);
     await router.isReady();
