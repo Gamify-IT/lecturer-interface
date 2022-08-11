@@ -74,9 +74,11 @@ function changedMinigame(task: ITask) {
     parseInt(worldIndex.value),
     parseInt(dungeonIndex.value),
     task
-  );
-  toast.success(`Minigame in Task was updated to ${task.game}!`);
-  console.log("Changed minigame to " + task.game);
+  ).then((response) => {
+    task = response.data;
+    toast.success(`Minigame in Task was updated to ${task.game}!`);
+    console.log("Changed minigame to " + task.game);
+  });
 }
 
 function editMinigameConfiguration(task: ITask) {

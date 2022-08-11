@@ -258,7 +258,11 @@ function addWrongAnswer() {
         {{ answer }}
       </div>
       <div>
-        <b-form-input id="wrong-answer" v-model="wrongAnswer"></b-form-input>
+        <b-form-input
+          @keydown.enter="addWrongAnswer"
+          id="wrong-answer"
+          v-model="wrongAnswer"
+        ></b-form-input>
         <b-button
           @click="addWrongAnswer"
           variant="success"

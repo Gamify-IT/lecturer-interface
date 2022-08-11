@@ -127,7 +127,7 @@ function resetModal() {
           ></b-form-input>
         </b-form-group>
         <b-form-group
-          label="Semester in the format (WS/SS)-year"
+          label="Semester in the format (WS/SS)-year(22)"
           label-for="semester"
         >
           <b-form-input id="semester" v-model="semesterInput"></b-form-input>
