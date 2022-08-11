@@ -101,13 +101,13 @@ function saveEditSemester() {
     .then((response) => {
       course.value = response.data;
       toast.success(
-        `Semester of course ${course.value.semester} was updated successfully}!`
+        `Semester of course ${course.value.courseName} was updated successfully}!`
       );
     })
     .catch((error) => {
       console.log(error);
       toast.error(
-        `Semester of course ${course.value.semester} could not be updated}!`
+        `Semester of course ${course.value.courseName} could not be updated}!`
       );
     });
 
@@ -115,7 +115,7 @@ function saveEditSemester() {
 }
 
 function cancelEditSemester() {
-  toast.warning(`Semester of course ${course.value.semester} was not updated!`);
+  toast.warning(`Semester of course ${course.value.courseName} was not updated!`);
   editingSemester.value = null;
 }
 function toggleCourseSwitch() {
@@ -253,7 +253,7 @@ function toggleCourseSwitch() {
         </div>
       </b-col>
       <b-col>
-        <h4>activate:</h4>
+        <h4>active:</h4>
         <b-form-checkbox
           v-model="course.active"
           @change="toggleCourseSwitch"

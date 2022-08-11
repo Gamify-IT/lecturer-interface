@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ITask, Minigame } from "@/ts/models";
-import { getMinigames } from "@/ts/minigame-rest-client";
+import { getMinigames, putMinigame } from "@/ts/minigame-rest-client";
 import { ref, watch } from "vue";
 import { useRoute } from "vue-router";
 import { useToast } from "vue-toastification";
@@ -69,6 +69,12 @@ function changedMinigame(task: ITask) {
   if (task.game == null) {
     task.game = Minigame.NONE;
   }
+  putMinigame(
+    parseInt(courseId.value),
+    parseInt(worldIndex.value),
+    parseInt(dungeonIndex.value),
+    task
+  );
   toast.success(`Minigame in Task was updated to ${task.game}!`);
   console.log("Changed minigame to " + task.game);
 }
