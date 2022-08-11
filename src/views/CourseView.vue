@@ -115,7 +115,9 @@ function saveEditSemester() {
 }
 
 function cancelEditSemester() {
-  toast.warning(`Semester of course ${course.value.courseName} was not updated!`);
+  toast.warning(
+    `Semester of course ${course.value.courseName} was not updated!`
+  );
   editingSemester.value = null;
 }
 function toggleCourseSwitch() {
