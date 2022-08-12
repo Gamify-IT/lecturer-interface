@@ -2,24 +2,8 @@ import { mount, VueWrapper, flushPromises } from "@vue/test-utils";
 import mockAxios from "jest-mock-axios";
 import router from "@/router/index";
 import NPCView from "@/views/NPCsView.vue";
-import {
-  Dungeon,
-  INPC,
-  ITask,
-  IWorld,
-  Minigame,
-  NPC,
-  Task,
-  World,
-} from "@/ts/models";
-import BootstrapVue3, {
-  BButton,
-  BFormCheckbox,
-  BTableSimple,
-  BTbody,
-  BTd,
-  BTr,
-} from "bootstrap-vue-3";
+import { Dungeon, INPC, NPC, World } from "@/ts/models";
+import BootstrapVue3 from "bootstrap-vue-3";
 import config from "@/config";
 
 jest.mock("axios");

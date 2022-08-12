@@ -94,7 +94,7 @@ function editMinigameConfiguration(task: ITask) {
 
 function updateMinigameConfiguration(task: ITask) {
   console.log("Pressed submit button in configuration modal");
-  toast.success(`Configurations of ${task.id} was saved!`);
+  toast.success(`Configuration of minigame ${task.index} was saved!`);
 }
 
 function closedEditModal() {

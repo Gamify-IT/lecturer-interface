@@ -1,7 +1,7 @@
 import axios, { AxiosResponse } from "axios";
 
 import config from "@/config";
-import { courseInitialData, ICourse } from "./models";
+import { CourseInitialData, ICourse } from "./models";
 
 export async function getCourses(): Promise<AxiosResponse> {
   return axios.get(`${config.apiBaseUrl}/courses`);
@@ -12,7 +12,7 @@ export async function getCourse(id: number): Promise<AxiosResponse> {
 }
 
 export async function postCourse(
-  initialData: courseInitialData
+  initialData: CourseInitialData
 ): Promise<AxiosResponse> {
   return axios.post(`${config.apiBaseUrl}/courses/`, initialData);
 }
