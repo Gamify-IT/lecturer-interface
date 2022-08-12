@@ -37,6 +37,7 @@ function checkFormValidity(): boolean {
 }
 
 function resetModal() {
+  console.log(minigame.value.game);
   console.log("Reset Modal");
 }
 
@@ -58,10 +59,9 @@ function handleSubmit() {
   emit("updateMinigameConfiguration", minigame.value);
 }
 </script>
-
 <template>
   <b-modal
-    title="Edit game configuration"
+    title="Edit configuration"
     v-model="showModal"
     @show="resetModal"
     @hidden="hiddenModal"
@@ -70,7 +70,7 @@ function handleSubmit() {
     <form
       ref="form"
       @submit.stop.prevent="handleSubmit"
-      v-if="minigame != undefined"
+      v-if="minigame !== undefined"
     >
       <b-form-group label="Name" label-for="name-input">
         <b-form-input id="name-input" v-model="minigame.lectureName" required />
