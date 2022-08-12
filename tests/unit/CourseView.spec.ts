@@ -74,6 +74,7 @@ describe("CourseView.vue", () => {
 
     editCourseNameButton = wrapper.find("#course-name-edit");
     editCourseNameInput = wrapper.find("#course-name-input");
+    expect(editCourseNameButton.exists()).toBe(true);
     expect(editCourseNameInput.exists()).toBe(false);
     expect(wrapper.html()).toContain(updatedCourseName);
 
@@ -112,6 +113,7 @@ describe("CourseView.vue", () => {
 
     editCourseDescriptionButton = wrapper.find("#course-description-edit");
     editCourseDescriptionInput = wrapper.find("#course-description-input");
+    expect(editCourseDescriptionButton.exists()).toBe(true);
     expect(editCourseDescriptionInput.exists()).toBe(false);
     expect(wrapper.html()).toContain(updatedCourseDescription);
 

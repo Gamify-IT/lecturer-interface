@@ -231,7 +231,7 @@ function addWrongAnswer() {
               variant="danger"
               @click="removeQuestion(row.item.text)"
             >
-              <i class="bi bi-trash"></i>
+              <em class="bi bi-trash"></em>
             </b-button>
           </template>
         </b-table>

@@ -2,15 +2,8 @@ import { mount, VueWrapper, flushPromises } from "@vue/test-utils";
 import mockAxios from "jest-mock-axios";
 import router from "@/router/index";
 import MinigameTasksView from "@/views/MinigameTasksView.vue";
-import { Dungeon, ITask, IWorld, Minigame, Task, World } from "@/ts/models";
-import BootstrapVue3, {
-  BButton,
-  BFormCheckbox,
-  BTableSimple,
-  BTbody,
-  BTd,
-  BTr,
-} from "bootstrap-vue-3";
+import { ITask, Minigame, Task } from "@/ts/models";
+import BootstrapVue3 from "bootstrap-vue-3";
 import config from "@/config";
 
 jest.mock("axios");

@@ -3,7 +3,6 @@ import { getCourse, putCourse } from "@/ts/course-rest-client";
 import { ref } from "vue";
 import { useRoute } from "vue-router";
 import { useToast } from "vue-toastification";
-import { BRow } from "bootstrap-vue-3";
 
 const route = useRoute();
 const id = route.params.id as string;
@@ -101,14 +100,15 @@ function saveEditSemester() {
     .then((response) => {
       course.value = response.data;
       toast.success(
-        `Semester of course ${course.value.courseName} was updated successfully}!`
+        `Semester of course ${course.value.courseName} was updated successfully!`
       );
     })
     .catch((error) => {
       console.log(error);
       toast.error(
-        `Semester of course ${course.value.courseName} could not be updated}!`
+        `Semester of course ${course.value.courseName} could not be updated!`
       );
+      loadCourse(id);
     });
 
   editingSemester.value = null;

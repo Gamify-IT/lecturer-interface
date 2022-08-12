@@ -93,7 +93,7 @@ function handleSubmit() {
       >
         <b-form-input id="text-input" v-model="text[index - 1]" />
         <b-button size="sm" variant="danger" @click="removeEntry(index - 1)">
-          <i class="bi bi-trash"></i>
+          <em class="bi bi-trash"></em>
         </b-button>
       </b-input-group>
       <b-button @click="addEntry" variant="success" class="mt-3"

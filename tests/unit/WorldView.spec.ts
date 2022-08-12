@@ -4,7 +4,6 @@ import router from "@/router/index";
 import WorldView from "@/views/WorldView.vue";
 import { Dungeon, IWorld, World } from "@/ts/models";
 import BootstrapVue3, {
-  BButton,
   BFormCheckbox,
   BTableSimple,
   BTbody,

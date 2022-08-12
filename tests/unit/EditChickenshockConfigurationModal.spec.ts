@@ -1,15 +1,7 @@
 import { flushPromises, mount, VueWrapper } from "@vue/test-utils";
 import EditChickenshockConfigurationModal from "@/components/EditChickenshockConfigurationModal.vue";
 import { IChickenshockConfiguration, ITask, Minigame } from "@/ts/models";
-import BootstrapVue3, {
-  BButton,
-  BModal,
-  BRow,
-  BTable,
-  BTbody,
-  BTd,
-  BTr,
-} from "bootstrap-vue-3";
+import BootstrapVue3, { BButton, BModal } from "bootstrap-vue-3";
 import router from "@/router";
 import mockAxios from "jest-mock-axios";
 
@@ -85,7 +77,7 @@ describe("EditChickenshockConfigurationModal.vue", () => {
     await answerInput.setValue(addedAnswer);
     const wrongAnswerInput = wrapper.findComponent("#wrong-answer");
     expect(wrongAnswerInput.exists()).toBe(true);
-    await wrongAnswerInput.setValue(wrongAnswerInput);
+    await wrongAnswerInput.setValue(addedWrongAnswer);
     const buttonAddWrongAnswer = wrapper.findComponent("#button-wrong-answer");
     expect(buttonAddWrongAnswer.exists()).toBe(true);
   });

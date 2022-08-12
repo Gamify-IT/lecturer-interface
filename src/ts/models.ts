@@ -52,7 +52,7 @@ export interface INPC {
   text: string[];
 }
 
-export interface courseInitialData {
+export interface CourseInitialData {
   courseName: string;
   description: string;
   semester: string;
@@ -205,50 +205,4 @@ export class NPC implements INPC {
 
 export function isWorld(area: any) {
   return area.dungeons;
-}
-
-export function exampleWorlds(): IWorld[] {
-  return [];
-  /*return [
-    new World(
-      1,
-      "World 1",
-      "Kapitel 1",
-      true,
-      [
-        new Dungeon(1, "Dungeon 1", "Absatz 1", true, [
-          new Task("1", "Super finder", Minigame.BUGFINDER, "w1-d1-t1"),
-        ]),
-      ],
-      [
-        new Task(
-          2,
-          "Chickenshock nicht vernichter",
-          Minigame.REGEX_GAME,
-          "w1-t1"
-        ),
-      ]
-    ),
-    new World(
-      2,
-      "World 2",
-      "Kapitel 2",
-      true,
-      [
-        new Dungeon(1, "Dungeon 1", "Absatz 1", false, [
-          new Task(3, "Super finder v2", Minigame.BUGFINDER, "w2-d1-t1"),
-        ]),
-        new Dungeon(2, "Dungeon 2", "Absatz 2", true, [
-          new Task(
-            4,
-            "Super crosswordpuzzle",
-            Minigame.CROSSWORDPUZZLE,
-            "w2-d2-t1"
-          ),
-          new Task(5, "Super regex game", Minigame.REGEX_GAME, "w2-d2-t2"),
-        ]),
-      ],
-      [new Task(6, "Git-Card-Game lol", Minigame.GIT_CARD_GAME, "w2-t1")]
-    ),
-  ];*/
 }
