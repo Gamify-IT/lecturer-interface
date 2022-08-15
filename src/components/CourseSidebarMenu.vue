@@ -180,7 +180,8 @@ update();
     :relative="true"
     :showOneChild="true"
     v-if="showSideBarComputed"
-  />
+  >
+  </sidebar-menu>
 </template>
 
 <style>
@@ -196,5 +197,8 @@ update();
 .router-view-wrapper {
   width: 100%;
   overflow: scroll;
+}
+.v-sidebar-menu .vsm--dropdown {
+  padding-left: 15px;
 }
 </style>
