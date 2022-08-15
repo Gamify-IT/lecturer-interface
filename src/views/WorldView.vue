@@ -64,7 +64,6 @@ watch(
               :courseId="courseId"
               :worldIndex="world.index"
               :dungeonIndex="0"
-              @editMinigameConfiguration="editMinigameConfiguration"
             />
           </b-tr>
           <b-tr v-for="dungeon in world.dungeons" :key="dungeon.id">
@@ -73,7 +72,6 @@ watch(
               :courseId="courseId"
               :worldIndex="world.index"
               :dungeonIndex="dungeon.index"
-              @editMinigameConfiguration="editMinigameConfiguration"
             />
           </b-tr>
         </b-tbody>

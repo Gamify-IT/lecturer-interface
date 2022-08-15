@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { defineProps, ref, watch } from "vue";
 import { updateArea } from "@/ts/area-rest-client";
-
 import { IArea } from "@/ts/models";
 import { useToast } from "vue-toastification";
+import EditableStringAttribute from "@/components/EditableStringAttribute.vue";
 
 const props = defineProps<{
   area: IArea;
@@ -15,8 +15,6 @@ const props = defineProps<{
 const toast = useToast();
 
 const area = ref(props.area);
-ref(Array<boolean>());
-const editingAreaLecturerName = ref();
 
 watch(
   () => props.area,
@@ -26,30 +24,24 @@ watch(
   { deep: true }
 );
 
-function startEditAreaLecturerName(editingArea: IArea) {
-  editingAreaLecturerName.value = editingArea.topicName;
-}
-
-function saveEditAreaLecturerName(editedArea: IArea) {
-  editedArea.topicName = editingAreaLecturerName.value;
-  updateArea(props.courseId, props.worldIndex, props.dungeonIndex, editedArea)
+function saveTopicName(topicName: string) {
+  area.value.topicName = topicName;
+  updateArea(props.courseId, props.worldIndex, props.dungeonIndex, area.value)
     .then((response) => {
-      editedArea = response.data;
+      area.value = response.data;
     })
     .catch((error) => {
       console.log(error);
     });
-  editedArea.topicName = editingAreaLecturerName.value;
   toast.success(
-    `Topic name of lecture ${editedArea.staticName} was updated to ${editedArea.topicName}!`
+    `Topic name of course ${area.value.staticName} was updated to ${area.value.topicName}!`
   );
-
-  editingAreaLecturerName.value = null;
 }
 
-function cancelEditAreaLecturerName(editedArea: IArea) {
-  toast.warning(`Name of lecture ${editedArea.staticName} was not updated!`);
-  editingAreaLecturerName.value = null;
+function cancelEditTopicName() {
+  toast.warning(
+    `Topic name of course ${area.value.staticName} was not updated!`
+  );
 }
 
 function toggledAreaSwitch(toggledArea: IArea) {
@@ -75,41 +67,12 @@ function toggledAreaSwitch(toggledArea: IArea) {
     <h5>{{ area.staticName }}</h5>
   </b-td>
   <b-td id="area-name-column">
-    <div v-if="editingAreaLecturerName == null">
-      <h4>
-        {{ area.topicName }}
-        <b-button
-          variant="light"
-          size="small"
-          @click="startEditAreaLecturerName(area)"
-        >
-          <em class="bi bi-pencil-square"></em>
-        </b-button>
-      </h4>
-    </div>
-    <div v-else>
-      <b-input-group>
-        <b-col sm="8">
-          <b-form-input v-model="editingAreaLecturerName"></b-form-input>
-        </b-col>
-        <b-button-group>
-          <b-button
-            variant="success"
-            size="sm"
-            @click="saveEditAreaLecturerName(area)"
-          >
-            <em class="bi bi-journal-check"></em>
-          </b-button>
-          <b-button
-            variant="danger"
-            size="sm"
-            @click="cancelEditAreaLecturerName(area)"
-          >
-            <em class="bi bi-x-lg"></em>
-          </b-button>
-        </b-button-group>
-      </b-input-group>
-    </div>
+    <EditableStringAttribute
+      :prefix="null"
+      :value="area.topicName"
+      @submit="saveTopicName"
+      @cancel="cancelEditTopicName"
+    />
   </b-td>
   <b-td>
     <b-form-checkbox
