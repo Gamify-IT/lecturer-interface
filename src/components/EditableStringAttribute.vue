@@ -2,7 +2,7 @@
 import { defineProps, defineEmits, ref, watch } from "vue";
 
 const props = defineProps<{
-  value: string;
+  value: string | null;
   prefix: string | null;
 }>();
 
