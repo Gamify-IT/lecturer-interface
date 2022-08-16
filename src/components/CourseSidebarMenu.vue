@@ -199,6 +199,6 @@ update();
   overflow: scroll;
 }
 .v-sidebar-menu .vsm--dropdown {
-  padding-left: 15px;
+  padding-left: 30px;
 }
 </style>
