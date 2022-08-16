@@ -3,13 +3,11 @@ import { getCourse, putCourse } from "@/ts/course-rest-client";
 import { ref } from "vue";
 import { useRoute } from "vue-router";
 import { useToast } from "vue-toastification";
+import EditableStringAttribute from "@/components/EditableStringAttribute.vue";
 
 const route = useRoute();
 const id = route.params.id as string;
 const course = ref();
-const editingCourseName = ref();
-const editingDescription = ref();
-const editingSemester = ref();
 
 async function loadCourse(stringId: string) {
   console.log("load course");
@@ -34,12 +32,8 @@ loadCourse(id);
 
 const toast = useToast();
 
-function startEditCourseName() {
-  editingCourseName.value = course.value.courseName;
-}
-
-function saveEditCourseName() {
-  course.value.courseName = editingCourseName.value;
+function saveCourseName(courseName: string) {
+  course.value.courseName = courseName;
   putCourse(course.value)
     .then((response) => {
       course.value = response.data;
@@ -53,20 +47,14 @@ function saveEditCourseName() {
         `Name of course ${course.value.courseName} could not be updated!`
       );
     });
-  editingCourseName.value = null;
 }
 
 function cancelEditCourseName() {
-  toast.warning(`Name of course ${course.value.courseName} was not updated!`);
-  editingCourseName.value = null;
+  toast.warning(`Name of course ${course.value.description} was not updated!`);
 }
 
-function startEditDescription() {
-  editingDescription.value = course.value.description;
-}
-
-function saveEditDescription() {
-  course.value.description = editingDescription.value;
+function saveDescription(description: string) {
+  course.value.description = description;
   putCourse(course.value)
     .then((response) => {
       course.value = response.data;
@@ -80,22 +68,16 @@ function saveEditDescription() {
         `Description of course ${course.value.courseName} could not be updated!`
       );
     });
-  editingDescription.value = null;
 }
 
 function cancelEditDescription() {
   toast.warning(
     `Description of course ${course.value.description} was not updated!`
   );
-  editingDescription.value = null;
 }
 
-function startEditSemester() {
-  editingSemester.value = course.value.semester;
-}
-
-function saveEditSemester() {
-  course.value.semester = editingSemester.value;
+function saveSemester(semester: string) {
+  course.value.semester = semester;
   putCourse(course.value)
     .then((response) => {
       course.value = response.data;
@@ -110,16 +92,14 @@ function saveEditSemester() {
       );
       loadCourse(id);
     });
-
-  editingSemester.value = null;
 }
 
 function cancelEditSemester() {
   toast.warning(
     `Semester of course ${course.value.courseName} was not updated!`
   );
-  editingSemester.value = null;
 }
+
 function toggleCourseSwitch() {
   putCourse(course.value).then((response) => {
     course.value = response.data;
@@ -138,121 +118,31 @@ function toggleCourseSwitch() {
   <div class="container mt-4">
     <div v-if="course != null" class="">
       <b-col>
-        <div v-if="editingCourseName == null">
-          <h1>
-            Course name: {{ course.courseName }}
-            <b-button
-              id="course-name-edit"
-              variant="light"
-              size="small"
-              @click="startEditCourseName"
-            >
-              <em class="bi bi-pencil-square"></em>
-            </b-button>
-          </h1>
-        </div>
-        <div v-else>
-          <b-row>
-            <b-col>
-              <b-form-input
-                id="course-name-input"
-                v-model="editingCourseName"
-              ></b-form-input>
-            </b-col>
-            <b-col>
-              <b-button-group>
-                <b-button
-                  variant="success"
-                  size="sm"
-                  @click="saveEditCourseName"
-                >
-                  <em class="bi bi-journal-check"></em>
-                </b-button>
-                <b-button
-                  variant="danger"
-                  size="sm"
-                  @click="cancelEditCourseName"
-                >
-                  <em class="bi bi-x-lg"></em>
-                </b-button>
-              </b-button-group>
-            </b-col>
-          </b-row>
-        </div>
+        <EditableStringAttribute
+          prefix="Name"
+          :value="course.courseName"
+          @submit="saveCourseName"
+          @cancel="cancelEditCourseName"
+          id="course-name"
+        />
       </b-col>
       <b-col>
-        <div v-if="editingDescription == null">
-          <h5>
-            description: {{ course.description }}
-            <b-button
-              id="course-description-edit"
-              variant="light"
-              size="small"
-              @click="startEditDescription"
-            >
-              <em class="bi bi-pencil-square"></em>
-            </b-button>
-          </h5>
-        </div>
-        <div v-else>
-          <b-row>
-            <b-col>
-              <b-form-input
-                id="course-description-input"
-                v-model="editingDescription"
-              ></b-form-input>
-            </b-col>
-            <b-col>
-              <b-button-group>
-                <b-button
-                  variant="success"
-                  size="sm"
-                  @click="saveEditDescription"
-                >
-                  <em class="bi bi-journal-check"></em>
-                </b-button>
-                <b-button
-                  variant="danger"
-                  size="sm"
-                  @click="cancelEditDescription"
-                >
-                  <em class="bi bi-x-lg"></em>
-                </b-button>
-              </b-button-group>
-            </b-col>
-          </b-row>
-        </div>
+        <EditableStringAttribute
+          prefix="Description"
+          :value="course.description"
+          @submit="saveDescription"
+          @cancel="cancelEditDescription"
+          id="course-description"
+        />
       </b-col>
       <b-col>
-        <div v-if="editingSemester == null">
-          <h5>
-            semester: {{ course.semester }}
-            <b-button variant="light" size="small" @click="startEditSemester">
-              <em class="bi bi-pencil-square"></em>
-            </b-button>
-          </h5>
-        </div>
-        <div v-else>
-          <b-row>
-            <b-col>
-              <b-form-input v-model="editingSemester"></b-form-input>
-            </b-col>
-            <b-col>
-              <b-button-group>
-                <b-button variant="success" size="sm" @click="saveEditSemester">
-                  <em class="bi bi-journal-check"></em>
-                </b-button>
-                <b-button
-                  variant="danger"
-                  size="sm"
-                  @click="cancelEditSemester"
-                >
-                  <em class="bi bi-x-lg"></em>
-                </b-button>
-              </b-button-group>
-            </b-col>
-          </b-row>
-        </div>
+        <EditableStringAttribute
+          prefix="Semester"
+          :value="course.semester"
+          @submit="saveSemester"
+          @cancel="cancelEditSemester"
+          id="course-semester"
+        />
       </b-col>
       <b-col>
         <h4>active:</h4>

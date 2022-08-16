@@ -3,8 +3,9 @@ import mockAxios from "jest-mock-axios";
 import router from "@/router/index";
 import CourseView from "@/views/CourseView.vue";
 import { Course, ICourse } from "@/ts/models";
-import BootstrapVue3 from "bootstrap-vue-3";
+import BootstrapVue3, { BButton, BFormInput } from "bootstrap-vue-3";
 import config from "@/config";
+import EditableStringAttribute from "@/components/EditableStringAttribute.vue";
 
 jest.mock("axios");
 
@@ -49,8 +50,17 @@ describe("CourseView.vue", () => {
 
     const updatedCourseName = "New Course XY";
 
-    let editCourseNameButton = wrapper.find("#course-name-edit");
-    let editCourseNameInput = wrapper.find("#course-name-input");
+    const stringEditComponent = wrapper
+      .findAllComponents(EditableStringAttribute)
+      .find((component) => component.attributes().id == "course-name");
+    expect(stringEditComponent != null).toBe(true);
+
+    if (stringEditComponent == null) {
+      return;
+    }
+
+    let editCourseNameButton = stringEditComponent.findComponent(BButton);
+    let editCourseNameInput = stringEditComponent.findComponent(BFormInput);
     expect(editCourseNameButton.exists()).toBe(true);
     expect(editCourseNameInput.exists()).toBe(false);
     expect(wrapper.html()).toContain(initialCourseName);
@@ -60,7 +70,7 @@ describe("CourseView.vue", () => {
     // wait that component re-renders
     await flushPromises();
 
-    editCourseNameInput = wrapper.find("#course-name-input");
+    editCourseNameInput = stringEditComponent.findComponent(BFormInput);
     expect(editCourseNameInput.exists()).toBe(true);
     editCourseNameInput.setValue(updatedCourseName);
 
@@ -72,8 +82,8 @@ describe("CourseView.vue", () => {
     // wait that component re-renders
     await flushPromises();
 
-    editCourseNameButton = wrapper.find("#course-name-edit");
-    editCourseNameInput = wrapper.find("#course-name-input");
+    editCourseNameButton = stringEditComponent.findComponent(BButton);
+    editCourseNameInput = stringEditComponent.findComponent(BFormInput);
     expect(editCourseNameButton.exists()).toBe(true);
     expect(editCourseNameInput.exists()).toBe(false);
     expect(wrapper.html()).toContain(updatedCourseName);
@@ -88,8 +98,19 @@ describe("CourseView.vue", () => {
 
     const updatedCourseDescription = "New Course XY";
 
-    let editCourseDescriptionButton = wrapper.find("#course-description-edit");
-    let editCourseDescriptionInput = wrapper.find("#course-description-input");
+    const stringEditComponent = wrapper
+      .findAllComponents(EditableStringAttribute)
+      .find((component) => component.attributes().id == "course-description");
+    expect(stringEditComponent != null).toBe(true);
+
+    if (stringEditComponent == null) {
+      return;
+    }
+
+    let editCourseDescriptionButton =
+      stringEditComponent.findComponent(BButton);
+    let editCourseDescriptionInput =
+      stringEditComponent.findComponent(BFormInput);
     expect(editCourseDescriptionButton.exists()).toBe(true);
     expect(editCourseDescriptionInput.exists()).toBe(false);
     expect(wrapper.html()).toContain(initialCourseDescription);
@@ -99,7 +120,7 @@ describe("CourseView.vue", () => {
     // wait that component re-renders
     await flushPromises();
 
-    editCourseDescriptionInput = wrapper.find("#course-description-input");
+    editCourseDescriptionInput = stringEditComponent.findComponent(BFormInput);
     expect(editCourseDescriptionInput.exists()).toBe(true);
     editCourseDescriptionInput.setValue(updatedCourseDescription);
 
@@ -111,8 +132,8 @@ describe("CourseView.vue", () => {
     // wait that component re-renders
     await flushPromises();
 
-    editCourseDescriptionButton = wrapper.find("#course-description-edit");
-    editCourseDescriptionInput = wrapper.find("#course-description-input");
+    editCourseDescriptionButton = stringEditComponent.findComponent(BButton);
+    editCourseDescriptionInput = stringEditComponent.findComponent(BFormInput);
     expect(editCourseDescriptionButton.exists()).toBe(true);
     expect(editCourseDescriptionInput.exists()).toBe(false);
     expect(wrapper.html()).toContain(updatedCourseDescription);
