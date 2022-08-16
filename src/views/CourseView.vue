@@ -1,11 +1,12 @@
 <script setup lang="ts">
-import { getCourse, putCourse } from "@/ts/course-rest-client";
+import { getCourse, putCourse, deleteCourse } from "@/ts/course-rest-client";
 import { ref } from "vue";
-import { useRoute } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 import { useToast } from "vue-toastification";
 import EditableStringAttribute from "@/components/EditableStringAttribute.vue";
 
 const route = useRoute();
+const router = useRouter();
 const id = route.params.id as string;
 const course = ref();
 
@@ -112,47 +113,62 @@ function toggleCourseSwitch() {
     }
   });
 }
+
+const showDeleteConfirmation = ref(false);
+
+function confirmDeleteCourse() {
+  deleteCourse(course.value.id)
+    .then((response) => {
+      toast.success(
+        `Course ${course.value.courseName} was deleted sucessfully!`
+      );
+      router.push("/");
+    })
+    .catch((error) => {
+      console.log(error);
+      toast.error(`Course ${course.value.courseName} could not be deleted!`);
+    });
+}
 </script>
 
 <template>
   <div class="container mt-4">
     <div v-if="course != null" class="">
-      <b-col>
-        <EditableStringAttribute
-          prefix="Name"
-          :value="course.courseName"
-          @submit="saveCourseName"
-          @cancel="cancelEditCourseName"
-          id="course-name"
-        />
-      </b-col>
-      <b-col>
-        <EditableStringAttribute
-          prefix="Description"
-          :value="course.description"
-          @submit="saveDescription"
-          @cancel="cancelEditDescription"
-          id="course-description"
-        />
-      </b-col>
-      <b-col>
-        <EditableStringAttribute
-          prefix="Semester"
-          :value="course.semester"
-          @submit="saveSemester"
-          @cancel="cancelEditSemester"
-          id="course-semester"
-        />
-      </b-col>
-      <b-col>
-        <h4>active:</h4>
-        <b-form-checkbox
-          v-model="course.active"
-          @change="toggleCourseSwitch"
-          name="check-button"
-          switch
-        ></b-form-checkbox>
-      </b-col>
+      <b-button
+        variant="danger"
+        size="small"
+        @click="showDeleteConfirmation = true"
+      >
+        Delete Course
+      </b-button>
+      <EditableStringAttribute
+        prefix="Name"
+        :value="course.courseName"
+        @submit="saveCourseName"
+        @cancel="cancelEditCourseName"
+        id="course-name"
+      />
+      <EditableStringAttribute
+        prefix="Description"
+        :value="course.description"
+        @submit="saveDescription"
+        @cancel="cancelEditDescription"
+        id="course-description"
+      />
+      <EditableStringAttribute
+        prefix="Semester"
+        :value="course.semester"
+        @submit="saveSemester"
+        @cancel="cancelEditSemester"
+        id="course-semester"
+      />
+      <h4>active:</h4>
+      <b-form-checkbox
+        v-model="course.active"
+        @change="toggleCourseSwitch"
+        name="check-button"
+        switch
+      ></b-form-checkbox>
     </div>
     <div v-else>
       <div
@@ -169,4 +185,14 @@ function toggleCourseSwitch() {
       </div>
     </div>
   </div>
+  <b-modal
+    title="Delete Course confirmation"
+    v-model="showDeleteConfirmation"
+    @ok="confirmDeleteCourse"
+    header-bg-variant="danger"
+    v-if="course != null"
+  >
+    Are you sure you want to delete course {{ course.courseName }} of semester
+    {{ course.semester }}?
+  </b-modal>
 </template>
