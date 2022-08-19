@@ -117,6 +117,7 @@ function toggleCourseSwitch() {
 const showDeleteConfirmation = ref(false);
 
 function confirmDeleteCourse() {
+  showDeleteConfirmation.value = false;
   deleteCourse(course.value.id)
     .then((response) => {
       toast.success(
