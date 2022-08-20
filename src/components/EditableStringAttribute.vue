@@ -58,16 +58,18 @@ function cancelEdit() {
     </b-button>
   </h5>
   <b-col sm="6" v-else>
-    <b-form @submit="saveEdit" @cancel="cancelEdit">
-      <b-input-group :prepend="prefix">
-        <b-form-input v-model="editingValue"></b-form-input>
-        <b-button variant="success" type="submit" size="sm" @click="saveEdit">
-          <em class="bi bi-journal-check"></em>
-        </b-button>
-        <b-button variant="danger" size="sm" type="reset" @click="cancelEdit">
-          <em class="bi bi-x-lg"></em>
-        </b-button>
-      </b-input-group>
-    </b-form>
+    <b-input-group
+      :prepend="prefix"
+      @keyup.enter="saveEdit"
+      @keyup.esc="cancelEdit"
+    >
+      <b-form-input v-model="editingValue"></b-form-input>
+      <b-button variant="success" type="submit" size="sm" @click="saveEdit">
+        <em class="bi bi-journal-check"></em>
+      </b-button>
+      <b-button variant="danger" size="sm" type="reset" @click="cancelEdit">
+        <em class="bi bi-x-lg"></em>
+      </b-button>
+    </b-input-group>
   </b-col>
 </template>
