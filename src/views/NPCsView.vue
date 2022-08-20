@@ -9,6 +9,7 @@ import { getArea } from "@/ts/area-rest-client";
 
 const toast = useToast();
 const route = useRoute();
+const loading = ref(false);
 const courseId = ref(route.params.courseId);
 const worldIndex = ref(route.params.worldIndex);
 const dungeonIndex = ref(route.params.dungeonIndex);
@@ -34,6 +35,7 @@ watch(
 const npcs = ref(Array<INPC>());
 
 async function loadNPCs(courseId: any, worldIndex: any, dungeonIndex: any) {
+  loading.value = true;
   console.log("load npcs");
   if (
     isNaN(courseId) ||
@@ -41,6 +43,7 @@ async function loadNPCs(courseId: any, worldIndex: any, dungeonIndex: any) {
     (dungeonIndex != undefined && isNaN(dungeonIndex))
   ) {
     console.log("one of the ids is NaN");
+    loading.value = false;
     return;
   }
   getArea(courseId, worldIndex, dungeonIndex)
@@ -51,7 +54,8 @@ async function loadNPCs(courseId: any, worldIndex: any, dungeonIndex: any) {
     })
     .catch((error) => {
       console.log(error);
-    });
+    })
+    .finally(() => (loading.value = false));
 }
 
 loadNPCs(courseId.value, worldIndex.value, dungeonIndex.value);
@@ -80,23 +84,27 @@ function closedEditModal() {
 </script>
 
 <template>
-  <div class="container mt-4">
-    <h1 v-if="dungeonIndex === undefined">NPCs from World {{ worldIndex }}</h1>
-    <h1 v-else>
-      NPCs from World World {{ worldIndex }}, Dungeon {{ dungeonIndex }}
-    </h1>
-    <b-card v-for="npc in npcs" :key="npc.id" class="mt-1">
-      <b-row>
-        <b-col>{{ npc.index }}</b-col>
-        <b-col>
-          <b-button variant="info" size="small" @click="editNPC(npc)">
-            <em class="bi bi-pencil-square"></em>
-            Edit
-          </b-button>
-        </b-col>
-      </b-row>
-    </b-card>
-  </div>
+  <b-overlay :show="loading" rounded="sm">
+    <div class="container mt-4">
+      <h1 v-if="dungeonIndex === undefined">
+        NPCs from World {{ worldIndex }}
+      </h1>
+      <h1 v-else>
+        NPCs from World World {{ worldIndex }}, Dungeon {{ dungeonIndex }}
+      </h1>
+      <b-card v-for="npc in npcs" :key="npc.id" class="mt-1">
+        <b-row>
+          <b-col>{{ npc.index }}</b-col>
+          <b-col>
+            <b-button variant="info" size="small" @click="editNPC(npc)">
+              <em class="bi bi-pencil-square"></em>
+              Edit
+            </b-button>
+          </b-col>
+        </b-row>
+      </b-card>
+    </div>
+  </b-overlay>
   <NPCEditModal
     :showModal="showEditModal"
     :npc="editedNPC"

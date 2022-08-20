@@ -8,6 +8,7 @@ import { useToast } from "vue-toastification";
 
 useToast();
 const route = useRoute();
+const loading = ref(false);
 const courseId = ref(parseInt(route.params.courseId as string));
 const worldIndex = ref(parseInt(route.params.worldIndex as string));
 const world = ref();
@@ -18,6 +19,7 @@ function loadSelectedWorld(
   selectedCourseId: number,
   selectedWorldIndex: number
 ) {
+  loading.value = true;
   getWorld(selectedCourseId, selectedWorldIndex)
     .then((response) => {
       world.value = response.data;
@@ -29,7 +31,8 @@ function loadSelectedWorld(
     })
     .catch((error) => {
       console.log(error);
-    });
+    })
+    .finally(() => (loading.value = false));
 }
 
 watch(
@@ -44,48 +47,54 @@ watch(
 </script>
 
 <template>
-  <div v-if="world !== undefined" class="container mt-5">
-    <h2>Configure World {{ world.index }}</h2>
-    <h4>{{ world.staticName }}</h4>
+  <b-overlay :show="loading" rounded="sm">
+    <div v-if="world !== undefined" class="container mt-5">
+      <h2>Configure World {{ world.index }}</h2>
+      <h4>{{ world.staticName }}</h4>
 
-    <div style="margin-top: 30px">
-      <b-table-simple>
-        <b-thead head-variant="dark">
-          <b-tr>
-            <b-th>Static-Name</b-th>
-            <b-th>Topic-Name</b-th>
-            <b-th>Active</b-th>
-          </b-tr>
-        </b-thead>
-        <b-tbody>
-          <b-tr>
-            <AreaBox
-              :area="world"
-              :courseId="courseId"
-              :worldIndex="world.index"
-              :dungeonIndex="0"
-            />
-          </b-tr>
-          <b-tr v-for="dungeon in world.dungeons" :key="dungeon.id">
-            <AreaBox
-              :area="dungeon"
-              :courseId="courseId"
-              :worldIndex="world.index"
-              :dungeonIndex="dungeon.index"
-            />
-          </b-tr>
-        </b-tbody>
-      </b-table-simple>
+      <div style="margin-top: 30px">
+        <b-table-simple>
+          <b-thead head-variant="dark">
+            <b-tr>
+              <b-th>Static-Name</b-th>
+              <b-th>Topic-Name</b-th>
+              <b-th>Active</b-th>
+            </b-tr>
+          </b-thead>
+          <b-tbody>
+            <b-tr>
+              <AreaBox
+                :area="world"
+                :courseId="courseId"
+                :worldIndex="world.index"
+                :dungeonIndex="0"
+              />
+            </b-tr>
+            <b-tr v-for="dungeon in world.dungeons" :key="dungeon.id">
+              <AreaBox
+                :area="dungeon"
+                :courseId="courseId"
+                :worldIndex="world.index"
+                :dungeonIndex="dungeon.index"
+              />
+            </b-tr>
+          </b-tbody>
+        </b-table-simple>
+      </div>
     </div>
-  </div>
-  <div v-else class="container mt-5 error">
-    <div
-      class="alert alert-danger alert-dismissible d-flex align-items-center fade show"
-    >
-      <em class="bi-exclamation-octagon-fill"></em>
-      <strong class="mx-2">Error!</strong>
-      World in course {{ courseId }} with index {{ worldIndex }} not found;
-      <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    <div v-else class="container mt-5 error">
+      <div
+        class="alert alert-danger alert-dismissible d-flex align-items-center fade show"
+      >
+        <em class="bi-exclamation-octagon-fill"></em>
+        <strong class="mx-2">Error!</strong>
+        World in course {{ courseId }} with index {{ worldIndex }} not found;
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="alert"
+        ></button>
+      </div>
     </div>
-  </div>
+  </b-overlay>
 </template>

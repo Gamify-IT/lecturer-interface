@@ -11,6 +11,7 @@ const availableMinigames = Object.values(Minigame);
 
 const toast = useToast();
 const route = useRoute();
+const loading = ref(false);
 const courseId = ref(route.params.courseId as string);
 const worldIndex = ref(route.params.worldIndex as string);
 const dungeonIndex = ref(route.params.dungeonIndex as string);
@@ -41,12 +42,14 @@ async function loadMinigames(
   worldIndex: any,
   dungeonIndex: any
 ) {
+  loading.value = true;
   console.log("load minigames");
   if (
     isNaN(courseId) ||
     isNaN(worldIndex) ||
     (dungeonIndex != undefined && isNaN(dungeonIndex))
   ) {
+    loading.value = false;
     console.log("one of the ids is NaN");
     return;
   }
@@ -60,7 +63,8 @@ async function loadMinigames(
     })
     .catch((error) => {
       console.log(error);
-    });
+    })
+    .finally(() => (loading.value = false));
 }
 
 loadMinigames(courseId.value, worldIndex.value, dungeonIndex.value);
@@ -106,36 +110,38 @@ function closedEditModal() {
 </script>
 
 <template>
-  <div class="container mt-4">
-    <h1 v-if="dungeonIndex === undefined">
-      Minigames from World {{ worldIndex }}
-    </h1>
-    <h1 v-else>
-      Minigames from World World {{ worldIndex }}, Dungeon {{ dungeonIndex }}
-    </h1>
-    <b-card v-for="task in minigames" :key="task.id" class="mt-1">
-      <b-row>
-        <b-col>{{ task.index }}</b-col>
-        <b-col>
-          <b-form-select
-            v-model="task.game"
-            :options="availableMinigames"
-            @input="changedMinigame(task)"
-          ></b-form-select>
-        </b-col>
-        <b-col>
-          <b-button
-            variant="info"
-            size="small"
-            @click="editMinigameConfiguration(task)"
-          >
-            <em class="bi bi-pencil-square"></em>
-            Edit
-          </b-button>
-        </b-col>
-      </b-row>
-    </b-card>
-  </div>
+  <b-overlay :show="loading" rounded="sm">
+    <div class="container mt-4">
+      <h1 v-if="dungeonIndex === undefined">
+        Minigames from World {{ worldIndex }}
+      </h1>
+      <h1 v-else>
+        Minigames from World World {{ worldIndex }}, Dungeon {{ dungeonIndex }}
+      </h1>
+      <b-card v-for="task in minigames" :key="task.id" class="mt-1">
+        <b-row>
+          <b-col>{{ task.index }}</b-col>
+          <b-col>
+            <b-form-select
+              v-model="task.game"
+              :options="availableMinigames"
+              @input="changedMinigame(task)"
+            ></b-form-select>
+          </b-col>
+          <b-col>
+            <b-button
+              variant="info"
+              size="small"
+              @click="editMinigameConfiguration(task)"
+            >
+              <em class="bi bi-pencil-square"></em>
+              Edit
+            </b-button>
+          </b-col>
+        </b-row>
+      </b-card>
+    </div>
+  </b-overlay>
   <EditMinigameConfigurationModal
     :showModal="showEditModal"
     :minigame="editedMinigame"
