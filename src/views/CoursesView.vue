@@ -26,12 +26,6 @@ let cloneNameInput = ref();
 let cloneDescriptionInput = ref();
 let cloneSemesterInput = ref();
 let cloneCourseId = ref();
-
-let showCloneCourse = ref(false);
-let cloneNameInput = ref();
-let cloneDescriptionInput = ref();
-let cloneSemesterInput = ref();
-let cloneCourseId = ref();
 let currentFocus = ref(-1);
 let courseItems = ref(Array<ICourseItem>());
 
@@ -173,33 +167,6 @@ function handleCloneOk() {
         active: response.data.active,
         _rowVariant: "",
       });
-      toast.success(`Course ${response.data.courseName} is created!`);
-    })
-    .catch((error) => {
-      toast.error(`Course ${nameInput.value} could not be created created!`);
-      console.log(error);
-    });
-}
-
-function handleCloneOk() {
-  console.log(
-    "create Course name: " +
-      cloneNameInput.value +
-      ", description: " +
-      cloneDescriptionInput.value +
-      ", in the semester" +
-      cloneSemesterInput.value
-  );
-  postCloneCourse(
-    {
-      courseName: cloneNameInput.value,
-      description: cloneDescriptionInput.value,
-      semester: cloneSemesterInput.value,
-    },
-    cloneCourseId.value
-  )
-    .then((response) => {
-      courses.value.push(response.data);
       toast.success(`Course ${response.data.courseName} is created!`);
     })
     .catch((error) => {
@@ -419,7 +386,7 @@ function resetFocus(row: ICourse) {
 .invisible-button {
   background-color: transparent;
   border-color: transparent;
-  outline-width: 0px;
+  outline-width: 0;
   margin-left: 5px;
 }
 </style>
