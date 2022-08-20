@@ -21,6 +21,11 @@ const toast = useToast();
 let nameInput = ref();
 let descriptionInput = ref();
 let semesterInput = ref();
+let showCloneCourse = ref(false);
+let cloneNameInput = ref();
+let cloneDescriptionInput = ref();
+let cloneSemesterInput = ref();
+let cloneCourseId = ref();
 
 let showCloneCourse = ref(false);
 let cloneNameInput = ref();
@@ -101,6 +106,10 @@ const fields = [
     key: "semester",
     label: "Semester",
   },
+  {
+    key: "clone",
+    label: "Clone",
+  },
 ];
 
 loadCourses();
@@ -164,6 +173,33 @@ function handleCloneOk() {
         active: response.data.active,
         _rowVariant: "",
       });
+      toast.success(`Course ${response.data.courseName} is created!`);
+    })
+    .catch((error) => {
+      toast.error(`Course ${nameInput.value} could not be created created!`);
+      console.log(error);
+    });
+}
+
+function handleCloneOk() {
+  console.log(
+    "create Course name: " +
+      cloneNameInput.value +
+      ", description: " +
+      cloneDescriptionInput.value +
+      ", in the semester" +
+      cloneSemesterInput.value
+  );
+  postCloneCourse(
+    {
+      courseName: cloneNameInput.value,
+      description: cloneDescriptionInput.value,
+      semester: cloneSemesterInput.value,
+    },
+    cloneCourseId.value
+  )
+    .then((response) => {
+      courses.value.push(response.data);
       toast.success(`Course ${response.data.courseName} is created!`);
     })
     .catch((error) => {
