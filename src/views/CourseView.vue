@@ -190,20 +190,12 @@ function deleteCurrentCourse() {
     title="Delete Course confirmation"
     v-model="showDeleteConfirmation"
     header-bg-variant="danger"
+    ok-title="Delete"
+    ok-variant="danger"
+    @ok="deleteCurrentCourse"
     v-if="course != null"
   >
     Are you sure you want to delete course <b>{{ course.courseName }}</b> of
     semester {{ course.semester }}?
-    <template v-slot:footer>
-      <b-button
-        variant="outline-secondary"
-        @click="showDeleteConfirmation = false"
-      >
-        Cancel
-      </b-button>
-      <b-button variant="danger" @click="deleteCurrentCourse">
-        Delete
-      </b-button>
-    </template>
   </b-modal>
 </template>
