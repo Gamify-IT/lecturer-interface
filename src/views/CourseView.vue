@@ -116,7 +116,7 @@ function toggleCourseSwitch() {
 
 const showDeleteConfirmation = ref(false);
 
-function confirmDeleteCourse() {
+function deleteCurrentCourse() {
   showDeleteConfirmation.value = false;
   deleteCourse(course.value.id)
     .then((response) => {
@@ -163,13 +163,13 @@ function confirmDeleteCourse() {
         @cancel="cancelEditSemester"
         id="course-semester"
       />
-      <h4>active:</h4>
       <b-form-checkbox
         v-model="course.active"
         @change="toggleCourseSwitch"
         name="check-button"
         switch
-      ></b-form-checkbox>
+        >active</b-form-checkbox
+      >
     </div>
     <div v-else>
       <div
@@ -201,7 +201,7 @@ function confirmDeleteCourse() {
       >
         Cancel
       </b-button>
-      <b-button variant="danger" @click="confirmDeleteCourse">
+      <b-button variant="danger" @click="deleteCurrentCourse">
         Delete
       </b-button>
     </template>
