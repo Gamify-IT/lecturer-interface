@@ -114,10 +114,7 @@ function toggleCourseSwitch() {
   });
 }
 
-const showDeleteConfirmation = ref(false);
-
 function deleteCurrentCourse() {
-  showDeleteConfirmation.value = false;
   deleteCourse(course.value.id)
     .then((response) => {
       toast.success(
@@ -138,7 +135,7 @@ function deleteCurrentCourse() {
       <b-button
         variant="danger"
         size="small"
-        @click="showDeleteConfirmation = true"
+        v-b-modal.delete-confirmation-modal
       >
         Delete Course
       </b-button>
@@ -187,8 +184,8 @@ function deleteCurrentCourse() {
     </div>
   </div>
   <b-modal
+    id="delete-confirmation-modal"
     title="Delete Course confirmation"
-    v-model="showDeleteConfirmation"
     header-bg-variant="danger"
     ok-title="Delete"
     ok-variant="danger"
