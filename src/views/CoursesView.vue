@@ -1,28 +1,18 @@
 <script setup lang="ts">
 import { ICourse } from "@/ts/models";
-import {
-  getCourses,
-  postCloneCourse,
-  postCourse,
-} from "@/ts/course-rest-client";
+import { getCourses } from "@/ts/course-rest-client";
 import { ref } from "vue";
 import { useRouter } from "vue-router";
-import { useToast } from "vue-toastification";
+import CreateCourseModal from "@/components/CreateCourseModal.vue";
+import CloneCourseModal from "@/components/CloneCourseModal.vue";
 
 const courses = ref(Array<ICourse>());
 
 const router = useRouter();
 
-const toast = useToast();
-
-let nameInput = ref();
-let descriptionInput = ref();
-let semesterInput = ref();
-let showCloneCourse = ref(false);
-let cloneNameInput = ref();
-let cloneDescriptionInput = ref();
-let cloneSemesterInput = ref();
-let cloneCourseId = ref();
+let showCreateModal = ref(false);
+let showCloneModal = ref(false);
+let currentCourse = ref();
 
 async function loadCourses() {
   getCourses()
@@ -64,70 +54,24 @@ const fields = [
 
 loadCourses();
 
-function handleOk() {
-  console.log(
-    "create Course name: " +
-      nameInput.value +
-      ", description: " +
-      descriptionInput.value +
-      ", in the semester" +
-      semesterInput.value
-  );
-  postCourse({
-    courseName: nameInput.value,
-    description: descriptionInput.value,
-    semester: semesterInput.value,
-  })
-    .then((response) => {
-      courses.value.push(response.data);
-      toast.success(`Course ${response.data.courseName} is created!`);
-    })
-    .catch((error) => {
-      toast.error(`Course ${nameInput.value} could not be created created!`);
-      console.log(error);
-    });
+function showCreateModalFun() {
+  console.log("CreateModal");
+  showCreateModal.value = true;
 }
-
-function handleCloneOk() {
-  console.log(
-    "create Course name: " +
-      cloneNameInput.value +
-      ", description: " +
-      cloneDescriptionInput.value +
-      ", in the semester" +
-      cloneSemesterInput.value
-  );
-  postCloneCourse(
-    {
-      courseName: cloneNameInput.value,
-      description: cloneDescriptionInput.value,
-      semester: cloneSemesterInput.value,
-    },
-    cloneCourseId.value
-  )
-    .then((response) => {
-      courses.value.push(response.data);
-      toast.success(`Course ${response.data.courseName} is created!`);
-    })
-    .catch((error) => {
-      toast.error(`Course ${nameInput.value} could not be created created!`);
-      console.log(error);
-    });
-}
-
-function resetModal() {
-  nameInput.value = "";
-  descriptionInput.value = "";
-  semesterInput.value = "";
-}
-
 function startClone(row: ICourse) {
-  console.log(row);
-  cloneNameInput.value = row.courseName;
-  cloneDescriptionInput.value = row.description;
-  cloneSemesterInput.value = row.semester;
-  cloneCourseId.value = row.id;
-  showCloneCourse.value = true;
+  currentCourse.value = row;
+  showCloneModal.value = true;
+}
+function finishCreate(course: ICourse) {
+  courses.value.push(course);
+  showCreateModal.value = false;
+}
+function finishClone(course: ICourse) {
+  courses.value.push(course);
+  showCloneModal.value = false;
+}
+function closedCloneModal() {
+  showCloneModal.value = false;
 }
 </script>
 
@@ -160,62 +104,16 @@ function startClone(row: ICourse) {
         </div>
       </template>
     </b-table>
-    <b-button variant="success" v-b-modal.create-course>
+    <b-button variant="success" @click="showCreateModalFun">
       create new course
     </b-button>
-    <b-modal
-      title="Create course"
-      id="create-course"
-      @show="resetModal"
-      @ok="handleOk"
-    >
-      <form ref="form" @submit.stop.prevent="">
-        <b-form-group label="Name" label-for="name">
-          <b-form-input id="name" v-model="nameInput"></b-form-input>
-        </b-form-group>
-
-        <b-form-group label="Description" label-for="description">
-          <b-form-input
-            id="description"
-            v-model="descriptionInput"
-          ></b-form-input>
-        </b-form-group>
-        <b-form-group
-          label="Semester in the format (WS/SS)-year(22)"
-          label-for="semester"
-        >
-          <b-form-input id="semester" v-model="semesterInput"></b-form-input>
-        </b-form-group>
-      </form>
-    </b-modal>
-    <b-modal
-      title="Clone course"
-      id="clone-course"
-      v-model="showCloneCourse"
-      @ok="handleCloneOk"
-    >
-      <form ref="form" @submit.stop.prevent="">
-        <b-form-group label="Name" label-for="name">
-          <b-form-input id="name" v-model="cloneNameInput"></b-form-input>
-        </b-form-group>
-
-        <b-form-group label="Description" label-for="description">
-          <b-form-input
-            id="description"
-            v-model="cloneDescriptionInput"
-          ></b-form-input>
-        </b-form-group>
-        <b-form-group
-          label="Semester in the format (WS/SS)-year(22)"
-          label-for="semester"
-        >
-          <b-form-input
-            id="semester"
-            v-model="cloneSemesterInput"
-          ></b-form-input>
-        </b-form-group>
-      </form>
-    </b-modal>
+    <CreateCourseModal :showModal="showCreateModal" @created="finishCreate" />
+    <CloneCourseModal
+      :course="currentCourse"
+      :show-modal="showCloneModal"
+      @cloned="finishClone"
+      @closedModal="closedCloneModal"
+    />
   </div>
 </template>
 

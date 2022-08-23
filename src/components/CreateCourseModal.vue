@@ -1,0 +1,89 @@
+<script setup lang="ts">
+import { defineEmits } from "vue/dist/vue";
+import { ref } from "vue";
+import { postCourse } from "@/ts/course-rest-client";
+import { useToast } from "vue-toastification";
+import { ICourse } from "@/ts/models";
+import { defineProps, watch } from "vue";
+
+const props = defineProps<{
+  showModal: boolean;
+}>();
+
+let nameInput = ref();
+let descriptionInput = ref();
+let semesterInput = ref();
+let showModal = ref(props.showModal);
+const toast = useToast();
+
+const emit = defineEmits<{
+  (e: "created", course: ICourse): void;
+}>();
+
+watch(
+  () => props.showModal,
+  (newBoolean) => {
+    console.log("Test");
+    showModal.value = newBoolean;
+  },
+  { deep: true }
+);
+
+function handleOk() {
+  console.log(
+    "create Course name: " +
+      nameInput.value +
+      ", description: " +
+      descriptionInput.value +
+      ", in the semester" +
+      semesterInput.value
+  );
+  postCourse({
+    courseName: nameInput.value,
+    description: descriptionInput.value,
+    semester: semesterInput.value,
+  })
+    .then((response) => {
+      emit("created", response.data);
+      toast.success(`Course ${response.data.courseName} is created!`);
+    })
+    .catch((error) => {
+      toast.error(`Course ${nameInput.value} could not be created created!`);
+      console.log(error);
+    });
+}
+function resetModal() {
+  nameInput.value = "";
+  descriptionInput.value = "";
+  semesterInput.value = "";
+}
+</script>
+
+<template>
+  <b-modal
+    v-model="showModal"
+    title="Create course"
+    id="create-course"
+    @show="resetModal"
+    @ok="handleOk"
+  >
+    <form ref="form" @submit.stop.prevent="">
+      <b-form-group label="Name" label-for="name">
+        <b-form-input id="name" v-model="nameInput"></b-form-input>
+      </b-form-group>
+
+      <b-form-group label="Description" label-for="description">
+        <b-form-input
+          id="description"
+          v-model="descriptionInput"
+        ></b-form-input>
+      </b-form-group>
+      <b-form-group
+        label="Semester in the format (WS/SS)-year(22)"
+        label-for="semester"
+      >
+        <b-form-input id="semester" v-model="semesterInput"></b-form-input>
+      </b-form-group>
+    </form>
+  </b-modal>
+</template>
