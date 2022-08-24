@@ -73,6 +73,9 @@ function finishClone(course: ICourse) {
 function closedCloneModal() {
   showCloneModal.value = false;
 }
+function closedCreateModal() {
+  showCreateModal.value = false;
+}
 </script>
 
 <template>
@@ -107,7 +110,11 @@ function closedCloneModal() {
     <b-button variant="success" @click="showCreateModalFun">
       create new course
     </b-button>
-    <CreateCourseModal :showModal="showCreateModal" @created="finishCreate" />
+    <CreateCourseModal
+      :showModal="showCreateModal"
+      @created="finishCreate"
+      @closedModal="closedCreateModal"
+    />
     <CloneCourseModal
       :course="currentCourse"
       :show-modal="showCloneModal"

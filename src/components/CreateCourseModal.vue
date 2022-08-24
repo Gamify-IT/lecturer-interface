@@ -10,14 +10,16 @@ const props = defineProps<{
   showModal: boolean;
 }>();
 
-let nameInput = ref();
-let descriptionInput = ref();
-let semesterInput = ref();
+let nameInput = ref("");
+let descriptionInput = ref("");
+let semesterInput = ref("");
 let showModal = ref(props.showModal);
+let error = ref("");
 const toast = useToast();
 
 const emit = defineEmits<{
   (e: "created", course: ICourse): void;
+  (e: "closedModal"): void;
 }>();
 
 watch(
@@ -29,33 +31,50 @@ watch(
   { deep: true }
 );
 
+function validateSemester(semester: string): boolean {
+  const rExp = /^(WS|SS)-\d\d+$/;
+  return rExp.test(semester);
+}
+
 function handleOk() {
-  console.log(
-    "create Course name: " +
-      nameInput.value +
-      ", description: " +
-      descriptionInput.value +
-      ", in the semester" +
-      semesterInput.value
-  );
-  postCourse({
-    courseName: nameInput.value,
-    description: descriptionInput.value,
-    semester: semesterInput.value,
-  })
-    .then((response) => {
-      emit("created", response.data);
-      toast.success(`Course ${response.data.courseName} is created!`);
+  if (validateSemester(semesterInput.value)) {
+    console.log(
+      `create course with the name "${nameInput.value}",
+  description "${descriptionInput.value}",
+  in the semester "${semesterInput.value}"`
+    );
+    emit("closedModal");
+    postCourse({
+      courseName: nameInput.value,
+      description: descriptionInput.value,
+      semester: semesterInput.value,
     })
-    .catch((error) => {
-      toast.error(`Course ${nameInput.value} could not be created created!`);
-      console.log(error);
-    });
+      .then((response) => {
+        emit("created", response.data);
+        toast.success(`Course ${response.data.courseName} is created!`);
+      })
+      .catch((error) => {
+        toast.error(`Course ${nameInput.value} could not be created created!`);
+        console.log(error);
+      });
+  } else {
+    error.value = "The semester must be in the format (SS/WS)-year(22)";
+  }
 }
 function resetModal() {
   nameInput.value = "";
   descriptionInput.value = "";
   semesterInput.value = "";
+}
+function test() {
+  console.log("TestFunction");
+}
+function handleCancel() {
+  emit("closedModal");
+}
+function handleHidden() {
+  error.value = "";
+  emit("closedModal");
 }
 </script>
 
@@ -65,7 +84,7 @@ function resetModal() {
     title="Create course"
     id="create-course"
     @show="resetModal"
-    @ok="handleOk"
+    @hidden="handleHidden"
   >
     <form ref="form" @submit.stop.prevent="">
       <b-form-group label="Name" label-for="name">
@@ -84,6 +103,25 @@ function resetModal() {
       >
         <b-form-input id="semester" v-model="semesterInput"></b-form-input>
       </b-form-group>
+      <div class="warning" v-if="error">{{ error }}</div>
     </form>
+    <template v-slot:footer>
+      <b-button
+        type="button"
+        class="btn"
+        variant="secondary"
+        @click="handleCancel"
+      >
+        cancel
+      </b-button>
+      <b-button type="button" class="btn" variant="primary" @click="handleOk">
+        ok
+      </b-button>
+    </template>
   </b-modal>
 </template>
+<style>
+.warning {
+  color: red;
+}
+</style>

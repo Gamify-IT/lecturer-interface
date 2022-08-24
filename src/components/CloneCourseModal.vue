@@ -12,9 +12,10 @@ const props = defineProps<{
 }>();
 let showModal = ref(props.showModal);
 let course = ref(props.course);
-let nameInput = ref();
-let descriptionInput = ref();
-let semesterInput = ref();
+let nameInput = ref("");
+let descriptionInput = ref("");
+let semesterInput = ref("");
+let error = ref("");
 const toast = useToast();
 
 const emit = defineEmits<{
@@ -38,26 +39,36 @@ watch(
   }
 );
 
+function validateSemester(semester: string): boolean {
+  const rExp = /^(WS|SS)-\d\d$/;
+  return rExp.test(semester);
+}
+
 function handleOk() {
-  console.log(`clone course with new name "${nameInput.value}",
+  if (validateSemester(semesterInput.value)) {
+    console.log(`clone course with new name "${nameInput.value}",
   description "${descriptionInput.value}",
   in the semester "${semesterInput.value}"`);
-  postCloneCourse(
-    {
-      courseName: nameInput.value,
-      description: descriptionInput.value,
-      semester: semesterInput.value,
-    },
-    course.value.id
-  )
-    .then((response) => {
-      emit("cloned", response.data);
-      toast.success(`Course ${response.data.courseName} is created!`);
-    })
-    .catch((error) => {
-      toast.error(`Course ${course.value.id} could not be created cloned!`);
-      console.log(error);
-    });
+    postCloneCourse(
+      {
+        courseName: nameInput.value,
+        description: descriptionInput.value,
+        semester: semesterInput.value,
+      },
+      course.value.id
+    )
+      .then((response) => {
+        emit("cloned", response.data);
+        toast.success(`Course ${response.data.courseName} is created!`);
+      })
+      .catch((error) => {
+        toast.error(`Course ${course.value.id} could not be created cloned!`);
+        console.log(error);
+      });
+  } else {
+    console.log("error");
+    error.value = "The semester must be in the format (SS/WS)-year(22)";
+  }
 }
 function startClone(currentCourse: ICourse) {
   nameInput.value = currentCourse.courseName;
@@ -65,6 +76,10 @@ function startClone(currentCourse: ICourse) {
   semesterInput.value = currentCourse.semester;
 }
 function hiddenModal() {
+  error.value = "";
+  emit("closedModal");
+}
+function handleCancel() {
   emit("closedModal");
 }
 </script>
@@ -94,6 +109,25 @@ function hiddenModal() {
       >
         <b-form-input id="semester" v-model="semesterInput"></b-form-input>
       </b-form-group>
+      <div class="warning" v-if="error">{{ error }}</div>
     </form>
+    <template v-slot:footer>
+      <b-button
+        type="button"
+        class="btn"
+        variant="secondary"
+        @click="handleCancel"
+      >
+        cancel
+      </b-button>
+      <b-button type="button" class="btn" variant="primary" @click="handleOk">
+        ok
+      </b-button>
+    </template>
   </b-modal>
 </template>
+<style>
+.warning {
+  color: red;
+}
+</style>
