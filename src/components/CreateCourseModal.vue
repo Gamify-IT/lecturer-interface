@@ -66,9 +66,6 @@ function resetModal() {
   descriptionInput.value = "";
   semesterInput.value = "";
 }
-function test() {
-  console.log("TestFunction");
-}
 function handleCancel() {
   emit("closedModal");
 }
