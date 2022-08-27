@@ -97,7 +97,7 @@ watch(
     :dungeonIndex="undefined"
     :showModal="showMapModal"
     modalTitle="Dungeon spots"
-    :mapType="MapType.NPC"
+    :mapType="MapType.DUNGEON"
     @closedModal="showMapModal = false"
   />
 </template>
