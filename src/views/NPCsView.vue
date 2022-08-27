@@ -1,17 +1,20 @@
 <script setup lang="ts">
-import { INPC, IWorld } from "@/ts/models";
+import { INPC, IWorld, MapType } from "@/ts/models";
 import { putNPC } from "@/ts/npc-rest-client";
 import { ref, watch } from "vue";
 import { useRoute } from "vue-router";
 import { useToast } from "vue-toastification";
 import NPCEditModal from "@/components/EditNPCModal.vue";
 import { getArea } from "@/ts/area-rest-client";
+import MapImageModal from "@/components/MapImageModal.vue";
 
 const toast = useToast();
 const route = useRoute();
 const courseId = ref(route.params.courseId);
 const worldIndex = ref(route.params.worldIndex);
 const dungeonIndex = ref(route.params.dungeonIndex);
+
+const showMapModal = ref(false);
 
 const editedNPC = ref();
 const showEditModal = ref(false);
@@ -85,6 +88,7 @@ function closedEditModal() {
     <h1 v-else>
       NPCs from World World {{ worldIndex }}, Dungeon {{ dungeonIndex }}
     </h1>
+    <b-button @click="showMapModal = true">Show Map</b-button>
     <b-card v-for="npc in npcs" :key="npc.id" class="mt-1">
       <b-row>
         <b-col>{{ npc.index }}</b-col>
@@ -97,6 +101,14 @@ function closedEditModal() {
       </b-row>
     </b-card>
   </div>
+  <MapImageModal
+    :worldIndex="worldIndex"
+    :dungeonIndex="dungeonIndex"
+    :showModal="showMapModal"
+    modalTitle="NPC spots"
+    :mapType="MapType.NPC"
+    @closedModal="showMapModal = false"
+  />
   <NPCEditModal
     :showModal="showEditModal"
     :npc="editedNPC"

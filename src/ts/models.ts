@@ -70,6 +70,13 @@ export interface IChickenshockQuestion {
   wrongAnswers: string[];
 }
 
+export enum MapType {
+  NPC,
+  MINIGAME,
+  DUNGEON,
+  RAW,
+}
+
 export enum Minigame {
   NONE = "NONE",
   CHICKENSHOCK = "CHICKENSHOCK",
