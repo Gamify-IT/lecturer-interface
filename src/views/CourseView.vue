@@ -8,8 +8,11 @@ import EditableStringAttribute from "@/components/EditableStringAttribute.vue";
 const route = useRoute();
 const id = route.params.id as string;
 const course = ref();
+const errorText = ref("");
+const loading = ref(false);
 
 async function loadCourse(stringId: string) {
+  loading.value = true;
   console.log("load course");
   console.log(stringId);
   let id = parseInt(stringId);
@@ -25,6 +28,10 @@ async function loadCourse(stringId: string) {
     })
     .catch((error) => {
       console.log(error);
+      errorText.value = "Course with id " + id + " not found!";
+    })
+    .finally(() => {
+      loading.value = false;
     });
 }
 
@@ -115,58 +122,60 @@ function toggleCourseSwitch() {
 </script>
 
 <template>
-  <div class="container mt-4">
-    <div v-if="course != null" class="">
-      <b-col>
-        <EditableStringAttribute
-          prefix="Name"
-          :value="course.courseName"
-          @submit="saveCourseName"
-          @cancel="cancelEditCourseName"
-          id="course-name"
-        />
-      </b-col>
-      <b-col>
-        <EditableStringAttribute
-          prefix="Description"
-          :value="course.description"
-          @submit="saveDescription"
-          @cancel="cancelEditDescription"
-          id="course-description"
-        />
-      </b-col>
-      <b-col>
-        <EditableStringAttribute
-          prefix="Semester"
-          :value="course.semester"
-          @submit="saveSemester"
-          @cancel="cancelEditSemester"
-          id="course-semester"
-        />
-      </b-col>
-      <b-col>
-        <h4>active:</h4>
-        <b-form-checkbox
-          v-model="course.active"
-          @change="toggleCourseSwitch"
-          name="check-button"
-          switch
-        ></b-form-checkbox>
-      </b-col>
-    </div>
-    <div v-else>
-      <div
-        class="alert alert-danger alert-dismissible d-flex align-items-center fade show"
-      >
-        <em class="bi-exclamation-octagon-fill"></em>
-        <strong class="mx-2">Error!</strong>
-        Course with id {{ id }} not found!
-        <button
-          type="button"
-          class="btn-close"
-          data-bs-dismiss="alert"
-        ></button>
+  <b-overlay :show="loading" rounded="sm">
+    <div class="container mt-4">
+      <div v-if="course != null" class="">
+        <b-col>
+          <EditableStringAttribute
+            prefix="Name"
+            :value="course.courseName"
+            @submit="saveCourseName"
+            @cancel="cancelEditCourseName"
+            id="course-name"
+          />
+        </b-col>
+        <b-col>
+          <EditableStringAttribute
+            prefix="Description"
+            :value="course.description"
+            @submit="saveDescription"
+            @cancel="cancelEditDescription"
+            id="course-description"
+          />
+        </b-col>
+        <b-col>
+          <EditableStringAttribute
+            prefix="Semester"
+            :value="course.semester"
+            @submit="saveSemester"
+            @cancel="cancelEditSemester"
+            id="course-semester"
+          />
+        </b-col>
+        <b-col>
+          <h4>active:</h4>
+          <b-form-checkbox
+            v-model="course.active"
+            @change="toggleCourseSwitch"
+            name="check-button"
+            switch
+          ></b-form-checkbox>
+        </b-col>
+      </div>
+      <div v-if="errorText">
+        <div
+          class="alert alert-danger alert-dismissible d-flex align-items-center fade show"
+        >
+          <em class="bi-exclamation-octagon-fill"></em>
+          <strong class="mx-2">Error!</strong>
+          {{ errorText }}
+          <button
+            type="button"
+            class="btn-close"
+            data-bs-dismiss="alert"
+          ></button>
+        </div>
       </div>
     </div>
-  </div>
+  </b-overlay>
 </template>

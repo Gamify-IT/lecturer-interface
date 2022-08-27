@@ -5,7 +5,7 @@ import {
   postCloneCourse,
   postCourse,
 } from "@/ts/course-rest-client";
-import { ref, watch } from "vue";
+import { onMounted, ref, watch } from "vue";
 import { useRouter } from "vue-router";
 import { useToast } from "vue-toastification";
 import { BCol, BFormInput } from "bootstrap-vue-3";
@@ -75,6 +75,8 @@ async function loadCourses() {
     })
     .finally(() => {
       loading.value = false;
+      let currentCourseId = getFirstCourse();
+      document.getElementById("invisible-button" + currentCourseId)?.focus();
     });
 }
 

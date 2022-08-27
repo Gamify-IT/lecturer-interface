@@ -12,6 +12,7 @@ const loading = ref(false);
 const courseId = ref(parseInt(route.params.courseId as string));
 const worldIndex = ref(parseInt(route.params.worldIndex as string));
 const world = ref();
+const errorText = ref();
 
 loadSelectedWorld(courseId.value, worldIndex.value);
 
@@ -31,6 +32,12 @@ function loadSelectedWorld(
     })
     .catch((error) => {
       console.log(error);
+      errorText.value =
+        "World in course " +
+        courseId.value +
+        " with index " +
+        worldIndex.value +
+        " not found;";
     })
     .finally(() => (loading.value = false));
 }
@@ -82,13 +89,13 @@ watch(
         </b-table-simple>
       </div>
     </div>
-    <div v-else class="container mt-5 error">
+    <div v-if="errorText" class="container mt-5 error">
       <div
         class="alert alert-danger alert-dismissible d-flex align-items-center fade show"
       >
         <em class="bi-exclamation-octagon-fill"></em>
         <strong class="mx-2">Error!</strong>
-        World in course {{ courseId }} with index {{ worldIndex }} not found;
+        {{ errorText }}
         <button
           type="button"
           class="btn-close"
