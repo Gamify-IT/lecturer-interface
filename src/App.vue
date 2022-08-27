@@ -4,6 +4,7 @@ import { ref } from "vue";
 
 const upClicked = ref();
 const downClicked = ref();
+const navigationFocus = ref(true);
 </script>
 
 <template>
@@ -15,7 +16,11 @@ const downClicked = ref();
     @keyup.up="upClicked = false"
     @keyup.down="downClicked = false"
   >
-    <CourseSidebarMenu />
+    <CourseSidebarMenu
+      :downClicked="downClicked"
+      :up-clicked="upClicked"
+      :inFocus="navigationFocus"
+    />
     <!-- route outlet -->
     <!-- component matched by the route will render here -->
     <div class="router-view-wrapper">

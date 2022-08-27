@@ -256,26 +256,22 @@ function getFirstCourse(): string {
 }
 
 function startFocus(row: ICourse) {
-  courseItems.value.forEach((courseItem) => {
+  for (let courseItem of courseItems.value) {
     if (courseItem.id == row.id) {
       courseItem._rowVariant = "dark";
+      break;
     }
-  });
+  }
   currentFocus.value = row.id;
-  console.log(currentFocus.value);
-  courses.value.forEach((value) => {
-    if (value.id == row.id) {
-      value.id = row.id;
-    }
-  });
 }
 
 function resetFocus(row: ICourse) {
-  courseItems.value.forEach((courseItem) => {
+  for (let courseItem of courseItems.value) {
     if (courseItem.id == row.id) {
       courseItem._rowVariant = "";
+      break;
     }
-  });
+  }
   currentFocus.value = -1;
   console.log(currentFocus.value);
 }

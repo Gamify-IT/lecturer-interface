@@ -1,15 +1,52 @@
 <script setup lang="ts">
-import { ref, watch } from "vue";
+import { defineProps, onMounted, ref, watch } from "vue";
 import "vue-sidebar-menu/dist/vue-sidebar-menu.css";
-import { ICourse, IDungeon, IWorld } from "@/ts/models";
+import { ICourse, IDungeon, ITask, IWorld } from "@/ts/models";
 
 import { computed } from "vue";
 import { useRouter } from "vue-router";
 import { getCourse } from "@/ts/course-rest-client";
 
+const props = defineProps({
+  upClicked: Boolean,
+  downClicked: Boolean,
+  inFocus: Boolean,
+});
+
+watch(
+  () => props.inFocus,
+  (newBoolean) => {
+    inFocus.value = newBoolean;
+  },
+  { deep: true }
+);
+
+watch(
+  () => props.upClicked,
+  (newBoolean) => {
+    if (newBoolean) {
+      sideBarUp();
+    }
+  },
+  { deep: true }
+);
+
+watch(
+  () => props.downClicked,
+  (newBoolean) => {
+    if (newBoolean) {
+      sideBarDown();
+    }
+  },
+  { deep: true }
+);
+
 const router = useRouter();
 let course: ICourse;
 const menu = ref([]);
+const inFocus = ref(false);
+let currentElement = ref();
+let currentElementId = ref();
 
 const sidebarActive = [
   "course",
@@ -171,6 +208,78 @@ async function getCourseIdFromRouter(): Promise<number> {
   return 0;
 }
 
+function sideBarUp() {
+  if (showSideBarComputed.value) {
+    let elements = document.getElementsByClassName("vsm--link");
+    let previousElement = elements.item(elements.length - 1);
+    let foundElement = false;
+    if (currentElement.value == null) {
+      currentElement.value = previousElement;
+      currentElement.value.focus();
+      currentElementId.value = elements.length - 1;
+      foundElement = true;
+    } else {
+      for (let i = 0; i < elements.length; i++) {
+        if (currentElement.value == elements.item(i)) {
+          currentElement.value = previousElement;
+          if (i - 1 >= 0) {
+            currentElementId.value = i - 1;
+          } else {
+            currentElementId.value = elements.length - 1;
+          }
+          currentElement.value.focus();
+          console.log(currentElement.value);
+          foundElement = true;
+          break;
+        } else {
+          previousElement = elements.item(i);
+        }
+      }
+    }
+    if (!foundElement) {
+      currentElement.value = elements.item(currentElementId.value);
+      currentElement.value.focus();
+    }
+    console.log("up");
+  }
+}
+
+function sideBarDown() {
+  if (showSideBarComputed.value) {
+    let elements = document.getElementsByClassName("vsm--link");
+    let firstElement = elements.item(0);
+    let foundElement = false;
+    if (currentElement.value == null) {
+      currentElement.value = firstElement;
+      currentElement.value.focus();
+      foundElement = true;
+      currentElementId.value = 0;
+    } else {
+      for (let i = 0; i < elements.length; i++) {
+        if (currentElement.value == elements.item(i)) {
+          if (i + 1 < elements.length) {
+            currentElement.value = elements.item(i + 1);
+            currentElementId.value = i + 1;
+          } else {
+            currentElement.value = firstElement;
+            currentElementId.value = 0;
+          }
+          currentElement.value.focus();
+          console.log(currentElement.value);
+          break;
+        }
+      }
+    }
+    if (!foundElement) {
+      currentElement.value = elements.item(currentElementId.value);
+      currentElement.value.focus();
+    }
+    console.log("down");
+  }
+}
+function test() {
+  console.log("Test");
+}
 update();
 </script>
 
@@ -179,7 +288,9 @@ update();
     :menu="menu"
     :relative="true"
     :showOneChild="true"
+    :id="`sidebar`"
     v-if="showSideBarComputed"
+    @focusin="test"
   >
   </sidebar-menu>
 </template>
@@ -192,6 +303,11 @@ update();
 
 .v-sidebar-menu {
   height: 100%;
+}
+
+.v-sidebar-menu .vsm--link:focus {
+  box-shadow: 0px 0px 0px 2px #ffffff;
+  border-radius: 2px;
 }
 
 .router-view-wrapper {
