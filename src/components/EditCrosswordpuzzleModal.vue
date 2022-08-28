@@ -106,6 +106,10 @@ function handleOk() {
         parseInt(dungeonIndex.value),
         minigame.value
       );
+    })
+    .catch((error) => {
+      toast.error("There was an error updating the minigame configuration.");
+      console.log(error);
     });
 }
 
@@ -181,16 +185,16 @@ function removeQuestion(questionText: string) {
     </b-form-group>
     <h6>Add Question</h6>
     <b-form-group>
-      <label for="current-question-text">Question:</label>
+      <label for="current-question">Question:</label>
       <b-form-input
-        id="current-question-text"
+        id="current-question"
         label="Question"
         v-model="currentEditingQuestion.questionText"
         :state="!containsQuestion(currentEditingQuestion.questionText)"
-        aria-describedby="current-question-text-feedback"
-        placeholder="Enter the question"
+        aria-describedby="current-question-feedback"
+        placeholder="Enter a question"
       ></b-form-input>
-      <b-form-invalid-feedback id="current-question-text-feedback">
+      <b-form-invalid-feedback id="current-question-feedback">
         The Question already exists.
       </b-form-invalid-feedback>
       <label for="current-question-answer">Answer:</label>

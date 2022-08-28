@@ -86,13 +86,13 @@ function changedMinigame(task: ITask) {
 function editMinigameConfiguration(task: ITask) {
   editedMinigame.value = task;
   console.log("Want to edit minigame " + task.id);
-  if (task.game == "NONE") {
+  if (task.game == Minigame.NONE) {
     showEditModal.value = true;
   }
-  if (task.game == "CHICKENSHOCK") {
+  if (task.game == Minigame.CHICKENSHOCK) {
     showChickenshockModal.value = true;
   }
-  if (task.game == "CROSSWORDPUZZLE") {
+  if (task.game == Minigame.CROSSWORDPUZZLE) {
     showCrosswordpuzzleModal.value = true;
   }
 }
