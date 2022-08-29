@@ -86,14 +86,21 @@ function changedMinigame(task: ITask) {
 function editMinigameConfiguration(task: ITask) {
   editedMinigame.value = task;
   console.log("Want to edit minigame " + task.id);
-  if (task.game == Minigame.NONE) {
-    showEditModal.value = true;
-  }
-  if (task.game == Minigame.CHICKENSHOCK) {
-    showChickenshockModal.value = true;
-  }
-  if (task.game == Minigame.CROSSWORDPUZZLE) {
-    showCrosswordpuzzleModal.value = true;
+  switch (task.game) {
+    case Minigame.NONE:
+      showEditModal.value = true;
+      break;
+    case Minigame.CHICKENSHOCK:
+      showChickenshockModal.value = true;
+      break;
+    case Minigame.CROSSWORDPUZZLE:
+      showCrosswordpuzzleModal.value = true;
+      break;
+    default:
+      console.log(
+        "This minigame is currently not supported to be edited here."
+      );
+      break;
   }
 }
 
