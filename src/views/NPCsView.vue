@@ -4,6 +4,7 @@ import { putNPC } from "@/ts/npc-rest-client";
 import { ref, watch } from "vue";
 import { useRoute } from "vue-router";
 import { useToast } from "vue-toastification";
+import EditableStringAttribute from "@/components/EditableStringAttribute.vue";
 import NPCEditModal from "@/components/EditNPCModal.vue";
 import { getArea } from "@/ts/area-rest-client";
 
@@ -73,6 +74,23 @@ function updateNPC(npc: INPC) {
     });
 }
 
+function saveDescription(npc: INPC, description: string) {
+  npc.description = description;
+  putNPC(courseId.value, worldIndex.value, dungeonIndex.value, npc.index, npc)
+    .then(() => {
+      toast.success(`Description of NPC with index ${npc.index} was updated!`);
+    })
+    .catch(() => {
+      toast.error(
+        `Description of NPC with index ${npc.index} could not be updated!`
+      );
+    });
+}
+
+function cancelEditDescription() {
+  toast.warning(`Description in NPC was not updated!`);
+}
+
 function closedEditModal() {
   console.log("Parent got info that modal was closed");
   showEditModal.value = false;
@@ -87,8 +105,16 @@ function closedEditModal() {
     </h1>
     <b-card v-for="npc in npcs" :key="npc.id" class="mt-1">
       <b-row>
-        <b-col>{{ npc.index }}</b-col>
+        <b-col sm="2">{{ npc.index }}</b-col>
         <b-col>
+          <EditableStringAttribute
+            prefix="Description"
+            :value="npc.description"
+            @submit="(newDescription) => saveDescription(npc, newDescription)"
+            @cancel="cancelEditDescription"
+          />
+        </b-col>
+        <b-col sm="2">
           <b-button variant="info" size="small" @click="editNPC(npc)">
             <em class="bi bi-pencil-square"></em>
             Edit
