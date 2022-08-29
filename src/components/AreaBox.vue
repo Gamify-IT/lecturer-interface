@@ -60,6 +60,9 @@ function toggledAreaSwitch(toggledArea: IArea) {
       console.log(error);
     });
 }
+function toggleAreaSwitch(area: IArea) {
+  document.getElementById("checkbox" + area.id)?.click();
+}
 </script>
 
 <template>
@@ -76,10 +79,13 @@ function toggledAreaSwitch(toggledArea: IArea) {
   </b-td>
   <b-td>
     <b-form-checkbox
+      :id="`checkbox` + area.id"
       v-model="area.active"
       @change="toggledAreaSwitch(area)"
+      @keydown.enter="toggleAreaSwitch(area)"
       name="check-button"
       switch
+      class="b-form-checkbox-area-box"
     >
     </b-form-checkbox>
   </b-td>

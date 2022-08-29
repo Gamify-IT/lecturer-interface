@@ -17,6 +17,9 @@ watch(
   () => props.inFocus,
   (newBoolean) => {
     inFocus.value = newBoolean;
+    if (newBoolean) {
+      currentElement.value.focus();
+    }
   },
   { deep: true }
 );
@@ -25,7 +28,7 @@ watch(
   () => props.upClicked,
   (newBoolean) => {
     if (newBoolean) {
-      sideBarUp();
+      clickUp();
     }
   },
   { deep: true }
@@ -35,7 +38,7 @@ watch(
   () => props.downClicked,
   (newBoolean) => {
     if (newBoolean) {
-      sideBarDown();
+      clickDown();
     }
   },
   { deep: true }
@@ -44,7 +47,7 @@ watch(
 const router = useRouter();
 let course: ICourse;
 const menu = ref([]);
-const inFocus = ref(false);
+const inFocus = ref(true);
 let currentElement = ref();
 let currentElementId = ref();
 
@@ -208,8 +211,8 @@ async function getCourseIdFromRouter(): Promise<number> {
   return 0;
 }
 
-function sideBarUp() {
-  if (showSideBarComputed.value) {
+function clickUp() {
+  if (showSideBarComputed.value && inFocus.value) {
     let elements = document.getElementsByClassName("vsm--link");
     let previousElement = elements.item(elements.length - 1);
     let foundElement = false;
@@ -240,12 +243,11 @@ function sideBarUp() {
       currentElement.value = elements.item(currentElementId.value);
       currentElement.value.focus();
     }
-    console.log("up");
   }
 }
 
-function sideBarDown() {
-  if (showSideBarComputed.value) {
+function clickDown() {
+  if (showSideBarComputed.value && inFocus.value) {
     let elements = document.getElementsByClassName("vsm--link");
     let firstElement = elements.item(0);
     let foundElement = false;
@@ -274,11 +276,7 @@ function sideBarDown() {
       currentElement.value = elements.item(currentElementId.value);
       currentElement.value.focus();
     }
-    console.log("down");
   }
-}
-function test() {
-  console.log("Test");
 }
 update();
 </script>
@@ -290,7 +288,6 @@ update();
     :showOneChild="true"
     :id="`sidebar`"
     v-if="showSideBarComputed"
-    @focusin="test"
   >
   </sidebar-menu>
 </template>

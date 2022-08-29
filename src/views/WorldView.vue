@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { IDungeon } from "@/ts/models";
 import { getWorld } from "@/ts/world-rest-client";
-import { ref, watch } from "vue";
+import { defineEmits, ref, watch } from "vue";
 import { useRoute } from "vue-router";
 import AreaBox from "../components/AreaBox.vue";
 import { useToast } from "vue-toastification";
@@ -13,6 +13,162 @@ const courseId = ref(parseInt(route.params.courseId as string));
 const worldIndex = ref(parseInt(route.params.worldIndex as string));
 const world = ref();
 const errorText = ref();
+const inFocus = ref(false);
+const editTopicName = ref(true);
+const firstFocus = ref(false);
+const currentAreaId = ref(0);
+
+const emit = defineEmits<{
+  (e: "return"): void;
+}>();
+
+const props = defineProps({
+  upClicked: Boolean,
+  downClicked: Boolean,
+  inFocus: Boolean,
+  leftClicked: Boolean,
+  rightClicked: Boolean,
+});
+
+watch(
+  () => props.inFocus,
+  (newBoolean) => {
+    inFocus.value = newBoolean;
+    editTopicName.value = true;
+  },
+  { deep: true }
+);
+
+watch(
+  () => props.upClicked,
+  (newBoolean) => {
+    if (newBoolean) {
+      clickUp();
+    }
+  },
+  { deep: true }
+);
+
+watch(
+  () => props.downClicked,
+  (newBoolean) => {
+    if (newBoolean) {
+      clickDown();
+    }
+  },
+  { deep: true }
+);
+
+watch(
+  () => props.leftClicked,
+  (newBoolean) => {
+    if (newBoolean) {
+      clickLeft();
+    }
+  },
+  { deep: true }
+);
+
+watch(
+  () => props.rightClicked,
+  (newBoolean) => {
+    if (newBoolean) {
+      clickRight();
+    }
+  },
+  { deep: true }
+);
+
+function clickLeft() {
+  if (inFocus.value && editTopicName.value) {
+    emit("return");
+    console.log("left");
+    firstFocus.value = false;
+    document
+      .getElementsByClassName("b-form-checkbox-area-box")
+      .item(currentAreaId.value)
+      ?.focus();
+  } else {
+    editTopicName.value = true;
+    document
+      .getElementsByClassName("btn-light")
+      .item(currentAreaId.value)
+      ?.focus();
+  }
+}
+
+function clickRight() {
+  if (inFocus.value) {
+    console.log("right");
+    if (editTopicName.value && firstFocus.value) {
+      editTopicName.value = false;
+      document
+        .getElementsByClassName("b-form-checkbox-area-box")
+        .item(currentAreaId.value)
+        ?.focus();
+    } else {
+      document
+        .getElementsByClassName("btn-light")
+        .item(currentAreaId.value)
+        ?.focus();
+    }
+    firstFocus.value = true;
+  }
+}
+
+function clickUp() {
+  if (inFocus.value) {
+    console.log("up");
+    if (editTopicName.value) {
+      let elements = document.getElementsByClassName("btn-light");
+      if (currentAreaId.value > 0) {
+        currentAreaId.value--;
+        elements.item(currentAreaId.value)?.focus();
+      } else {
+        currentAreaId.value = elements.length - 1;
+        elements.item(currentAreaId.value)?.focus();
+      }
+    } else {
+      let elements = document.getElementsByClassName(
+        "b-form-checkbox-area-box"
+      );
+      if (currentAreaId.value > 0) {
+        currentAreaId.value--;
+        elements.item(currentAreaId.value)?.focus();
+      } else {
+        currentAreaId.value = elements.length - 1;
+        elements.item(currentAreaId.value)?.focus();
+      }
+    }
+  }
+}
+
+function clickDown() {
+  if (inFocus.value) {
+    console.log("down");
+    if (editTopicName.value) {
+      let elements = document.getElementsByClassName("btn-light");
+      if (currentAreaId.value < elements.length - 1) {
+        currentAreaId.value++;
+        elements.item(currentAreaId.value)?.focus();
+      } else {
+        currentAreaId.value = 0;
+        elements.item(currentAreaId.value)?.focus();
+      }
+    } else {
+      let elements = document.getElementsByClassName(
+        "b-form-checkbox-area-box"
+      );
+      if (currentAreaId.value < elements.length - 1) {
+        currentAreaId.value++;
+        elements.item(currentAreaId.value)?.focus();
+      } else {
+        currentAreaId.value = 0;
+        elements.item(currentAreaId.value)?.focus();
+      }
+    }
+  }
+}
 
 loadSelectedWorld(courseId.value, worldIndex.value);
 

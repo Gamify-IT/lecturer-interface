@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ITask, Minigame } from "@/ts/models";
 import { getMinigames, putMinigame } from "@/ts/minigame-rest-client";
-import { ref, watch } from "vue";
+import { defineEmits, ref, watch } from "vue";
 import { useRoute } from "vue-router";
 import { useToast } from "vue-toastification";
 import EditMinigameConfigurationModal from "@/components/EditMinigameConfigurationModal.vue";
@@ -19,6 +19,10 @@ const dungeonIndex = ref(route.params.dungeonIndex as string);
 const editedMinigame = ref();
 const showEditModal = ref(false);
 const showChickenshockModal = ref(false);
+const editMinigameTask = ref(true);
+const firstFocus = ref(false);
+const currentMinigameId = ref(1);
+const inFocus = ref(false);
 
 watch(
   () => [
@@ -34,6 +38,159 @@ watch(
   },
   { deep: true }
 );
+
+const emit = defineEmits<{
+  (e: "return"): void;
+}>();
+
+const props = defineProps({
+  upClicked: Boolean,
+  downClicked: Boolean,
+  inFocus: Boolean,
+  leftClicked: Boolean,
+  rightClicked: Boolean,
+});
+
+watch(
+  () => props.inFocus,
+  (newBoolean) => {
+    inFocus.value = newBoolean;
+    editMinigameTask.value = true;
+  },
+  { deep: true }
+);
+
+watch(
+  () => props.upClicked,
+  (newBoolean) => {
+    if (newBoolean) {
+      clickUp();
+    }
+  },
+  { deep: true }
+);
+
+watch(
+  () => props.downClicked,
+  (newBoolean) => {
+    if (newBoolean) {
+      clickDown();
+    }
+  },
+  { deep: true }
+);
+
+watch(
+  () => props.leftClicked,
+  (newBoolean) => {
+    if (newBoolean) {
+      clickLeft();
+    }
+  },
+  { deep: true }
+);
+
+watch(
+  () => props.rightClicked,
+  (newBoolean) => {
+    if (newBoolean) {
+      clickRight();
+    }
+  },
+  { deep: true }
+);
+
+function clickLeft() {
+  if (inFocus.value && editMinigameTask.value) {
+    emit("return");
+    console.log("left");
+    firstFocus.value = false;
+    document
+      .getElementById("minigameSelect" + currentMinigameId.value)
+      ?.focus();
+  } else {
+    editMinigameTask.value = true;
+    document
+      .getElementById("minigameSelect" + currentMinigameId.value)
+      ?.focus();
+  }
+}
+
+function clickRight() {
+  if (inFocus.value) {
+    console.log("right");
+    if (editMinigameTask.value && firstFocus.value) {
+      editMinigameTask.value = false;
+      document
+        .getElementById("editMinigameButton" + currentMinigameId.value)
+        ?.focus();
+    } else {
+      document
+        .getElementById("minigameSelect" + currentMinigameId.value)
+        ?.focus();
+      console.log("test");
+    }
+    firstFocus.value = true;
+  }
+}
+
+function clickUp() {
+  if (inFocus.value) {
+    console.log("up");
+    if (currentMinigameId.value > 1) {
+      currentMinigameId.value--;
+      if (editMinigameTask.value) {
+        document
+          .getElementById("minigameSelect" + currentMinigameId.value)
+          ?.focus();
+      } else {
+        document
+          .getElementById("editMinigameButton" + currentMinigameId.value)
+          ?.focus();
+      }
+    } else {
+      currentMinigameId.value = minigames.value.length;
+      if (editMinigameTask.value) {
+        document
+          .getElementById("minigameSelect" + currentMinigameId.value)
+          ?.focus();
+      } else {
+        document
+          .getElementById("editMinigameButton" + currentMinigameId.value)
+          ?.focus();
+      }
+    }
+  }
+}
+
+function clickDown() {
+  if (inFocus.value) {
+    console.log("down");
+    if (currentMinigameId.value < minigames.value.length) {
+      currentMinigameId.value++;
+      if (editMinigameTask.value) {
+        document
+          .getElementById("minigameSelect" + currentMinigameId.value)
+          ?.focus();
+      } else {
+        document
+          .getElementById("editMinigameButton" + currentMinigameId.value)
+          ?.focus();
+      }
+    } else {
+      currentMinigameId.value = 1;
+      if (editMinigameTask.value) {
+        document
+          .getElementById("minigameSelect" + currentMinigameId.value)
+          ?.focus();
+      } else {
+        document
+          .getElementById("editMinigameButton" + currentMinigameId.value)
+          ?.focus();
+      }
+    }
+  }
+}
 
 const minigames = ref(Array<ITask>());
 
@@ -123,9 +280,14 @@ function closedEditModal() {
           <b-col>{{ task.index }}</b-col>
           <b-col>
             <b-form-select
+              :id="`minigameSelect` + task.index"
               v-model="task.game"
               :options="availableMinigames"
               @input="changedMinigame(task)"
+              @keydown.up.prevent
+              @keydown.down.prevent
+              @keydown.right.prevent
+              @keydown.left.prevent
             ></b-form-select>
           </b-col>
           <b-col>
@@ -133,6 +295,7 @@ function closedEditModal() {
               variant="info"
               size="small"
               @click="editMinigameConfiguration(task)"
+              :id="`editMinigameButton` + task.index"
             >
               <em class="bi bi-pencil-square"></em>
               Edit

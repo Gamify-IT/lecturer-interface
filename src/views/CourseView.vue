@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { getCourse, putCourse } from "@/ts/course-rest-client";
-import { ref } from "vue";
+import { defineEmits, nextTick, ref, watch } from "vue";
 import { useRoute } from "vue-router";
 import { useToast } from "vue-toastification";
 import EditableStringAttribute from "@/components/EditableStringAttribute.vue";
@@ -10,6 +10,158 @@ const id = route.params.id as string;
 const course = ref();
 const errorText = ref("");
 const loading = ref(false);
+const inFocus = ref(false);
+let currentElement = ref();
+
+const emit = defineEmits<{
+  (e: "return"): void;
+}>();
+
+const props = defineProps({
+  upClicked: Boolean,
+  downClicked: Boolean,
+  inFocus: Boolean,
+  leftClicked: Boolean,
+  rightClicked: Boolean,
+});
+
+watch(
+  () => props.inFocus,
+  (newBoolean) => {
+    inFocus.value = newBoolean;
+  },
+  { deep: true }
+);
+
+watch(
+  () => props.upClicked,
+  (newBoolean) => {
+    if (newBoolean) {
+      clickUp();
+    }
+  },
+  { deep: true }
+);
+
+watch(
+  () => props.downClicked,
+  (newBoolean) => {
+    if (newBoolean) {
+      clickDown();
+    }
+  },
+  { deep: true }
+);
+
+watch(
+  () => props.leftClicked,
+  (newBoolean) => {
+    if (newBoolean) {
+      clickLeft();
+    }
+  },
+  { deep: true }
+);
+
+watch(
+  () => props.rightClicked,
+  (newBoolean) => {
+    if (newBoolean) {
+      clickRight();
+    }
+  },
+  { deep: true }
+);
+
+function clickLeft() {
+  if (inFocus.value) {
+    emit("return");
+    console.log("left");
+  }
+}
+
+function clickRight() {
+  if (inFocus.value) {
+    console.log("right");
+    if (currentElement.value == null) {
+      currentElement.value = document.getElementsByTagName("button").item(1);
+    }
+    currentElement.value.focus();
+  }
+}
+
+function clickUp() {
+  if (inFocus.value) {
+    console.log("up");
+    let elements = document.getElementsByClassName("btn-light");
+    let previousElement = document.getElementById("active-toggle");
+    let focused = false;
+    if (currentElement.value == null) {
+      currentElement.value = previousElement;
+      focused = true;
+    } else {
+      for (let i = 0; i < elements.length; i++) {
+        if (currentElement.value == elements.item(i)) {
+          currentElement.value = previousElement;
+          currentElement.value.focus();
+          focused = true;
+          console.log(currentElement.value);
+          break;
+        } else if (currentElement.value == previousElement) {
+          currentElement.value = elements.item(elements.length - 1);
+          console.log(currentElement.value);
+          currentElement.value.focus();
+          focused = true;
+          break;
+        } else {
+          previousElement = elements.item(i);
+        }
+      }
+    }
+    if (!focused) {
+      currentElement.value = document.getElementById("active-toggle");
+      currentElement.value.focus();
+    }
+  }
+}
+
+function clickDown() {
+  if (inFocus.value) {
+    console.log("down");
+    let elements = document.getElementsByClassName("btn-light");
+    let firstElement = elements.item(0);
+    const toggleElement = document.getElementById("active-toggle");
+    let focused = false;
+    if (currentElement.value == null) {
+      currentElement.value = firstElement;
+      focused = true;
+    } else {
+      for (let i = 0; i < elements.length; i++) {
+        if (currentElement.value == elements.item(i)) {
+          if (i + 1 < elements.length) {
+            currentElement.value = elements.item(i + 1);
+          } else {
+            currentElement.value = toggleElement;
+          }
+          currentElement.value.focus();
+          focused = true;
+          console.log(currentElement.value);
+          break;
+        } else if (currentElement.value == toggleElement) {
+          currentElement.value = firstElement;
+          console.log(currentElement.value);
+          currentElement.value.focus();
+          focused = true;
+          break;
+        }
+      }
+    }
+    if (!focused) {
+      currentElement.value = firstElement;
+      currentElement.value.focus();
+    }
+  }
+}
 
 async function loadCourse(stringId: string) {
   loading.value = true;
@@ -75,6 +227,7 @@ function saveDescription(description: string) {
         `Description of course ${course.value.courseName} could not be updated!`
       );
     });
+  console.log(currentElement.value);
 }
 
 function cancelEditDescription() {
@@ -107,7 +260,7 @@ function cancelEditSemester() {
   );
 }
 
-function toggleCourseSwitch() {
+function toggledCourseSwitch() {
   putCourse(course.value).then((response) => {
     course.value = response.data;
     if (course.value.active) {
@@ -118,6 +271,10 @@ function toggleCourseSwitch() {
       console.log(course.value.active);
     }
   });
+}
+
+function toggleCourseSwitch() {
+  document.getElementById("active-toggle")?.click();
 }
 </script>
 
@@ -156,8 +313,10 @@ function toggleCourseSwitch() {
           <h4>active:</h4>
           <b-form-checkbox
             v-model="course.active"
-            @change="toggleCourseSwitch"
+            @change="toggledCourseSwitch"
             name="check-button"
+            id="active-toggle"
+            @keydown.enter="toggleCourseSwitch"
             switch
           ></b-form-checkbox>
         </b-col>
