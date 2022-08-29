@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import config from "@/config";
 import { defineProps, defineEmits, ref, watch } from "vue";
 import { MapType } from "@/ts/models";
 
@@ -60,13 +61,11 @@ function getFileName(): string | undefined {
 }
 
 function getImage(): string {
-  if (props.dungeonIndex == undefined) {
-    return `https://raw.githubusercontent.com/Gamify-IT/docs/main/user-manuals/maps/world${
-      props.worldIndex
-    }/${getFileName()}`;
-  } else {
-    return `https://raw.githubusercontent.com/Gamify-IT/docs/main/user-manuals/maps/world${props.worldIndex}-dungeon${props.dungeonIndex}/raw.webp`;
-  }
+  return `https://raw.githubusercontent.com/Gamify-IT/docs/${
+    config.mapCommitHash
+  }/user-manuals/maps/world${props.worldIndex}${
+    props.dungeonIndex ? "-dungeon" + props.dungeonIndex : ""
+  }/${getFileName()}`;
 }
 </script>
 
