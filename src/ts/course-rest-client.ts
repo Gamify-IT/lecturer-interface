@@ -21,7 +21,7 @@ export async function postCloneCourse(
   initialData: CourseInitialData,
   id: number
 ): Promise<AxiosResponse> {
-  return axios.post(`${config.apiBaseUrl}/courses/clones/${id}`, initialData);
+  return axios.post(`${config.apiBaseUrl}/courses/${id}/clone`, initialData);
 }
 
 export async function putCourse(course: ICourse): Promise<AxiosResponse> {

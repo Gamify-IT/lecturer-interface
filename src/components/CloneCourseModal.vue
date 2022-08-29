@@ -62,7 +62,7 @@ function handleOk() {
         toast.success(`Course ${response.data.courseName} is created!`);
       })
       .catch((error) => {
-        toast.error(`Course ${course.value.id} could not be created cloned!`);
+        toast.error(`Course ${course.value.id} could not be cloned!`);
         console.log(error);
       });
   } else {
