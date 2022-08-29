@@ -2,10 +2,14 @@
 import { getCourse, putCourse } from "@/ts/course-rest-client";
 import { defineEmits, nextTick, ref, watch } from "vue";
 import { useRoute } from "vue-router";
+import { getCourse, putCourse, deleteCourse } from "@/ts/course-rest-client";
+import { ref } from "vue";
+import { useRoute, useRouter } from "vue-router";
 import { useToast } from "vue-toastification";
 import EditableStringAttribute from "@/components/EditableStringAttribute.vue";
 
 const route = useRoute();
+const router = useRouter();
 const id = route.params.id as string;
 const course = ref();
 const errorText = ref("");
@@ -275,8 +279,23 @@ function toggledCourseSwitch() {
   });
 }
 
+
 function toggleCourseSwitch() {
   document.getElementById("active-toggle")?.click();
+}
+
+function deleteCurrentCourse() {
+  deleteCourse(course.value.id)
+    .then(() => {
+      toast.success(
+        `Course ${course.value.courseName} was deleted sucessfully!`
+      );
+      router.push("/");
+    })
+    .catch((error) => {
+      console.log(error);
+      toast.error(`Course ${course.value.courseName} could not be deleted!`);
+    });
 }
 </script>
 
@@ -284,6 +303,20 @@ function toggleCourseSwitch() {
   <b-overlay :show="loading" rounded="sm">
     <div class="container mt-4">
       <div v-if="course != null" class="">
+      <b-button
+        variant="danger"
+        size="small"
+        v-b-modal.delete-confirmation-modal
+      >
+        Delete Course
+      </b-button>
+      <EditableStringAttribute
+        prefix="Name"
+        :value="course.courseName"
+        @submit="saveCourseName"
+        @cancel="cancelEditCourseName"
+        id="course-name"
+      />
         <b-col>
           <EditableStringAttribute
             prefix="Name"
@@ -339,4 +372,16 @@ function toggleCourseSwitch() {
       </div>
     </div>
   </b-overlay>
+  <b-modal
+    id="delete-confirmation-modal"
+    title="Delete Course confirmation"
+    header-bg-variant="danger"
+    ok-title="Delete"
+    ok-variant="danger"
+    @ok="deleteCurrentCourse"
+    v-if="course != null"
+  >
+    Are you sure you want to delete course <b>{{ course.courseName }}</b> of
+    semester {{ course.semester }}?
+  </b-modal>
 </template>
