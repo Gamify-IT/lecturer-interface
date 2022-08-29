@@ -1,4 +1,6 @@
 <script setup lang="ts">
+// compatible crosswordpuzzle versions: v0.0.6
+const compatibleVersions = ["v0.0.6"];
 import { defineProps, defineEmits, ref, watch } from "vue";
 import {
   ITask,
@@ -167,6 +169,12 @@ function removeQuestion(questionText: string) {
     @show="loadModal"
     @abort="resetModal"
   >
+    <template v-slot:title>
+      Edit Crosswordpuzzle configuration
+      <b-col style="font-size: 12px">
+        Compatible versions: {{ compatibleVersions }}</b-col
+      >
+    </template>
     <b-form-group>
       <b-table :fields="fields" :items="configuration.questions">
         <template #cell(remove)="data">
