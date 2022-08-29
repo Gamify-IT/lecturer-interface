@@ -105,7 +105,7 @@ function closedEditModal() {
     </h1>
     <b-card v-for="npc in npcs" :key="npc.id" class="mt-1">
       <b-row>
-        <b-col>{{ npc.index }}</b-col>
+        <b-col sm="2">{{ npc.index }}</b-col>
         <b-col>
           <EditableStringAttribute
             prefix="Description"
@@ -114,7 +114,7 @@ function closedEditModal() {
             @cancel="cancelEditDescription"
           />
         </b-col>
-        <b-col>
+        <b-col sm="2">
           <b-button variant="info" size="small" @click="editNPC(npc)">
             <em class="bi bi-pencil-square"></em>
             Edit

@@ -133,8 +133,8 @@ function closedEditModal() {
     </h1>
     <b-card v-for="task in minigames" :key="task.id" class="mt-1">
       <b-row>
-        <b-col>{{ task.index }}</b-col>
-        <b-col>
+        <b-col sm="2">{{ task.index }}</b-col>
+        <b-col sm="5">
           <EditableStringAttribute
             prefix="Description"
             :value="task.description"
@@ -142,14 +142,14 @@ function closedEditModal() {
             @cancel="cancelEditDescription"
           />
         </b-col>
-        <b-col>
+        <b-col sm="3">
           <b-form-select
             v-model="task.game"
             :options="availableMinigames"
             @input="changedMinigame(task)"
           ></b-form-select>
         </b-col>
-        <b-col>
+        <b-col sm="2">
           <b-button
             variant="info"
             size="small"
