@@ -173,10 +173,12 @@ async function loadCourse(stringId: string) {
     return;
   }
   getCourse(id)
-    .then((response) => {
+    .then(async (response) => {
       const result = response.data;
       course.value = result;
       console.log(result);
+      await nextTick();
+      document.getElementsByClassName("vsm--link").item(0)?.focus();
     })
     .catch((error) => {
       console.log(error);

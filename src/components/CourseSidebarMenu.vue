@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { defineProps, onMounted, ref, watch } from "vue";
+import { defineProps, nextTick, onMounted, ref, watch } from "vue";
 import "vue-sidebar-menu/dist/vue-sidebar-menu.css";
 import { ICourse, IDungeon, ITask, IWorld } from "@/ts/models";
 
@@ -72,13 +72,19 @@ watch(
   { deep: true }
 );
 
-function loadCourse(id: number) {
+async function loadCourse(id: number) {
   getCourse(id)
-    .then((response) => {
+    .then(async (response) => {
       const result: ICourse = response.data;
       course = result;
       console.log(course);
       loadMenu();
+      await nextTick();
+      currentElement.value = document
+        .getElementsByClassName("vsm--link")
+        .item(0);
+      currentElementId.value = 0;
+      currentElement.value.focus();
     })
     .catch((error) => {
       console.log(error);
@@ -231,7 +237,6 @@ function clickUp() {
             currentElementId.value = elements.length - 1;
           }
           currentElement.value.focus();
-          console.log(currentElement.value);
           foundElement = true;
           break;
         } else {
@@ -267,7 +272,6 @@ function clickDown() {
             currentElementId.value = 0;
           }
           currentElement.value.focus();
-          console.log(currentElement.value);
           break;
         }
       }
