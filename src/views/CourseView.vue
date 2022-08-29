@@ -51,7 +51,7 @@ function saveCourseName(courseName: string) {
 }
 
 function cancelEditCourseName() {
-  toast.warning(`Name of course ${course.value.description} was not updated!`);
+  toast.warning(`Name of course ${course.value.courseName} was not updated!`);
 }
 
 function saveDescription(description: string) {
@@ -73,7 +73,7 @@ function saveDescription(description: string) {
 
 function cancelEditDescription() {
   toast.warning(
-    `Description of course ${course.value.description} was not updated!`
+    `Description of course ${course.value.courseName} was not updated!`
   );
 }
 
