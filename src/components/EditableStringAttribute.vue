@@ -72,7 +72,7 @@ async function cancelEdit() {
       <em class="bi bi-pencil-square"></em>
     </b-button>
   </h5>
-  <b-col sm="6" v-else>
+  <b-col v-else>
     <b-input-group
       :prepend="prefix"
       @keydown.enter="saveEdit"

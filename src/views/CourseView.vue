@@ -217,7 +217,7 @@ function saveCourseName(courseName: string) {
 }
 
 function cancelEditCourseName() {
-  toast.warning(`Name of course ${course.value.description} was not updated!`);
+  toast.warning(`Name of course ${course.value.courseName} was not updated!`);
 }
 
 function saveDescription(description: string) {
@@ -240,7 +240,7 @@ function saveDescription(description: string) {
 
 function cancelEditDescription() {
   toast.warning(
-    `Description of course ${course.value.description} was not updated!`
+    `Description of course ${course.value.courseName} was not updated!`
   );
 }
 
@@ -304,21 +304,16 @@ function deleteCurrentCourse() {
   <b-overlay :show="loading" rounded="sm">
     <div class="container mt-4">
       <div v-if="course != null" class="">
-        <b-button
-          variant="danger"
-          size="small"
-          v-b-modal.delete-confirmation-modal
-          id="deleteButton"
-        >
-          Delete Course
-        </b-button>
-        <EditableStringAttribute
-          prefix="Name"
-          :value="course.courseName"
-          @submit="saveCourseName"
-          @cancel="cancelEditCourseName"
-          id="course-name"
-        />
+        <b-col>
+          <b-button
+            variant="danger"
+            size="small"
+            v-b-modal.delete-confirmation-modal
+            id="deleteButton"
+          >
+            Delete Course
+          </b-button>
+        </b-col>
         <b-col>
           <EditableStringAttribute
             prefix="Name"
@@ -326,6 +321,7 @@ function deleteCurrentCourse() {
             @submit="saveCourseName"
             @cancel="cancelEditCourseName"
             id="course-name"
+            sm="6"
           />
         </b-col>
         <b-col>
@@ -335,6 +331,7 @@ function deleteCurrentCourse() {
             @submit="saveDescription"
             @cancel="cancelEditDescription"
             id="course-description"
+            sm="6"
           />
         </b-col>
         <b-col>

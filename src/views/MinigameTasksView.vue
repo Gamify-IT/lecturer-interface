@@ -4,6 +4,7 @@ import { getMinigames, putMinigame } from "@/ts/minigame-rest-client";
 import { defineEmits, ref, watch } from "vue";
 import { useRoute } from "vue-router";
 import { useToast } from "vue-toastification";
+import EditableStringAttribute from "@/components/EditableStringAttribute.vue";
 import EditMinigameConfigurationModal from "@/components/EditMinigameConfigurationModal.vue";
 import EditChickenshockConfigurationModal from "@/components/EditChickenshockConfigurationModal.vue";
 
@@ -253,6 +254,23 @@ function editMinigameConfiguration(task: ITask) {
   }
 }
 
+function saveDescription(task: ITask, description: string) {
+  task.description = description;
+  putMinigame(
+    parseInt(courseId.value),
+    parseInt(worldIndex.value),
+    parseInt(dungeonIndex.value),
+    task
+  ).then((response) => {
+    task = response.data;
+    toast.success(`Description in Task was updated!`);
+  });
+}
+
+function cancelEditDescription() {
+  toast.warning(`Description in Task was not updated!`);
+}
+
 function updateMinigameConfiguration(task: ITask) {
   console.log("Pressed submit button in configuration modal");
   toast.success(`Configuration of minigame ${task.index} was saved!`);
@@ -267,44 +285,44 @@ function closedEditModal() {
 </script>
 
 <template>
-  <b-overlay :show="loading" rounded="sm">
-    <div class="container mt-4">
-      <h1 v-if="dungeonIndex === undefined">
-        Minigames from World {{ worldIndex }}
-      </h1>
-      <h1 v-else>
-        Minigames from World World {{ worldIndex }}, Dungeon {{ dungeonIndex }}
-      </h1>
-      <b-card v-for="task in minigames" :key="task.id" class="mt-1">
-        <b-row>
-          <b-col>{{ task.index }}</b-col>
-          <b-col>
-            <b-form-select
-              :id="`minigameSelect` + task.index"
-              v-model="task.game"
-              :options="availableMinigames"
-              @input="changedMinigame(task)"
-              @keydown.up.prevent
-              @keydown.down.prevent
-              @keydown.right.prevent
-              @keydown.left.prevent
-            ></b-form-select>
-          </b-col>
-          <b-col>
-            <b-button
-              variant="info"
-              size="small"
-              @click="editMinigameConfiguration(task)"
-              :id="`editMinigameButton` + task.index"
-            >
-              <em class="bi bi-pencil-square"></em>
-              Edit
-            </b-button>
-          </b-col>
-        </b-row>
-      </b-card>
-    </div>
-  </b-overlay>
+  <div class="container mt-4">
+    <h1 v-if="dungeonIndex === undefined">
+      Minigames from World {{ worldIndex }}
+    </h1>
+    <h1 v-else>
+      Minigames from World World {{ worldIndex }}, Dungeon {{ dungeonIndex }}
+    </h1>
+    <b-card v-for="task in minigames" :key="task.id" class="mt-1">
+      <b-row>
+        <b-col sm="2">{{ task.index }}</b-col>
+        <b-col sm="5">
+          <EditableStringAttribute
+            prefix="Description"
+            :value="task.description"
+            @submit="(newDescription) => saveDescription(task, newDescription)"
+            @cancel="cancelEditDescription"
+          />
+        </b-col>
+        <b-col sm="3">
+          <b-form-select
+            v-model="task.game"
+            :options="availableMinigames"
+            @input="changedMinigame(task)"
+          ></b-form-select>
+        </b-col>
+        <b-col sm="2">
+          <b-button
+            variant="info"
+            size="small"
+            @click="editMinigameConfiguration(task)"
+          >
+            <em class="bi bi-pencil-square"></em>
+            Edit
+          </b-button>
+        </b-col>
+      </b-row>
+    </b-card>
+  </div>
   <EditMinigameConfigurationModal
     :showModal="showEditModal"
     :minigame="editedMinigame"

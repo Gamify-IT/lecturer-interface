@@ -75,6 +75,7 @@ function toggleAreaSwitch(area: IArea) {
       :value="area.topicName"
       @submit="saveTopicName"
       @cancel="cancelEditTopicName"
+      sm="8"
     />
   </b-td>
   <b-td>
