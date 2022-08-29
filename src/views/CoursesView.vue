@@ -1,15 +1,11 @@
 <script setup lang="ts">
 import { ICourse, ICourseItem } from "@/ts/models";
-import {
-  getCourses,
-  postCloneCourse,
-  postCourse,
-} from "@/ts/course-rest-client";
-import { onMounted, ref, watch } from "vue";
+import { getCourses } from "@/ts/course-rest-client";
+import { ref, watch } from "vue";
 import { useRouter } from "vue-router";
-import { useToast } from "vue-toastification";
-import { BCol, BFormInput } from "bootstrap-vue-3";
-
+import { BCol } from "bootstrap-vue-3";
+import CreateCourseModal from "@/components/CreateCourseModal.vue";
+import CloneCourseModal from "@/components/CloneCourseModal.vue";
 
 const loading = ref(false);
 
@@ -17,16 +13,6 @@ const courses = ref(Array<ICourse>());
 
 const router = useRouter();
 
-const toast = useToast();
-
-let nameInput = ref();
-let descriptionInput = ref();
-let semesterInput = ref();
-let showCloneCourse = ref(false);
-let cloneNameInput = ref();
-let cloneDescriptionInput = ref();
-let cloneSemesterInput = ref();
-let cloneCourseId = ref();
 let currentFocus = ref(-1);
 let courseItems = ref(Array<ICourseItem>());
 
@@ -114,79 +100,6 @@ const fields = [
 
 loadCourses();
 
-function handleOk() {
-  console.log(
-    "create Course name: " +
-      nameInput.value +
-      ", description: " +
-      descriptionInput.value +
-      ", in the semester" +
-      semesterInput.value
-  );
-  postCourse({
-    courseName: nameInput.value,
-    description: descriptionInput.value,
-    semester: semesterInput.value,
-  })
-    .then((response) => {
-      courses.value.push(response.data);
-      courseItems.value.push({
-        id: response.data.id,
-        semester: response.data.semester,
-        courseName: response.data.courseName,
-        description: response.data.description,
-        active: response.data.active,
-        _rowVariant: "",
-      });
-      toast.success(`Course ${response.data.courseName} is created!`);
-    })
-    .catch((error) => {
-      toast.error(`Course ${nameInput.value} could not be created created!`);
-      console.log(error);
-    });
-}
-
-function handleCloneOk() {
-  console.log(
-    "create Course name: " +
-      cloneNameInput.value +
-      ", description: " +
-      cloneDescriptionInput.value +
-      ", in the semester" +
-      cloneSemesterInput.value
-  );
-  postCloneCourse(
-    {
-      courseName: cloneNameInput.value,
-      description: cloneDescriptionInput.value,
-      semester: cloneSemesterInput.value,
-    },
-    cloneCourseId.value
-  )
-    .then((response) => {
-      courses.value.push(response.data);
-      courseItems.value.push({
-        id: response.data.id,
-        semester: response.data.semester,
-        courseName: response.data.courseName,
-        description: response.data.description,
-        active: response.data.active,
-        _rowVariant: "",
-      });
-      toast.success(`Course ${response.data.courseName} is created!`);
-    })
-    .catch((error) => {
-      toast.error(`Course ${nameInput.value} could not be created created!`);
-      console.log(error);
-    });
-}
-
-function resetModal() {
-  nameInput.value = "";
-  descriptionInput.value = "";
-  semesterInput.value = "";
-}
-
 function showCreateModalFun() {
   console.log("CreateModal");
   showCreateModal.value = true;
@@ -198,10 +111,26 @@ function startClone(row: ICourse) {
 }
 function finishCreate(course: ICourse) {
   courses.value.push(course);
+  courseItems.value.push({
+    id: course.id,
+    semester: course.semester,
+    courseName: course.courseName,
+    description: course.description,
+    active: course.active,
+    _rowVariant: "",
+  });
   showCreateModal.value = false;
 }
 function finishClone(course: ICourse) {
   courses.value.push(course);
+  courseItems.value.push({
+    id: course.id,
+    semester: course.semester,
+    courseName: course.courseName,
+    description: course.description,
+    active: course.active,
+    _rowVariant: "",
+  });
   showCloneModal.value = false;
 }
 function closedCloneModal() {
