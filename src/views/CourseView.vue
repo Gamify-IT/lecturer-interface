@@ -1,9 +1,6 @@
 <script setup lang="ts">
-import { getCourse, putCourse } from "@/ts/course-rest-client";
 import { defineEmits, nextTick, ref, watch } from "vue";
-import { useRoute } from "vue-router";
 import { getCourse, putCourse, deleteCourse } from "@/ts/course-rest-client";
-import { ref } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useToast } from "vue-toastification";
 import EditableStringAttribute from "@/components/EditableStringAttribute.vue";
@@ -88,7 +85,7 @@ function clickRight() {
   if (inFocus.value) {
     console.log("right");
     if (currentElement.value == null) {
-      currentElement.value = document.getElementsByTagName("button").item(1);
+      currentElement.value = document.getElementById("deleteButton");
     }
     currentElement.value.focus();
   }
@@ -96,8 +93,8 @@ function clickRight() {
 
 function clickUp() {
   if (inFocus.value) {
-    console.log("up");
     let elements = document.getElementsByClassName("btn-light");
+    let firstElement = document.getElementById("deleteButton");
     let previousElement = document.getElementById("active-toggle");
     let focused = false;
     if (currentElement.value == null) {
@@ -106,14 +103,18 @@ function clickUp() {
     } else {
       for (let i = 0; i < elements.length; i++) {
         if (currentElement.value == elements.item(i)) {
-          currentElement.value = previousElement;
-          currentElement.value.focus();
-          focused = true;
-          console.log(currentElement.value);
+          if (i == 0) {
+            currentElement.value = firstElement;
+            currentElement.value.focus();
+            focused = true;
+          } else {
+            currentElement.value = previousElement;
+            currentElement.value.focus();
+            focused = true;
+          }
           break;
         } else if (currentElement.value == previousElement) {
           currentElement.value = elements.item(elements.length - 1);
-          console.log(currentElement.value);
           currentElement.value.focus();
           focused = true;
           break;
@@ -131,9 +132,8 @@ function clickUp() {
 
 function clickDown() {
   if (inFocus.value) {
-    console.log("down");
     let elements = document.getElementsByClassName("btn-light");
-    let firstElement = elements.item(0);
+    let firstElement = document.getElementById("deleteButton");
     const toggleElement = document.getElementById("active-toggle");
     let focused = false;
     if (currentElement.value == null) {
@@ -149,14 +149,16 @@ function clickDown() {
           }
           currentElement.value.focus();
           focused = true;
-          console.log(currentElement.value);
           break;
         } else if (currentElement.value == toggleElement) {
           currentElement.value = firstElement;
-          console.log(currentElement.value);
           currentElement.value.focus();
           focused = true;
           break;
+        } else if (currentElement.value == firstElement) {
+          currentElement.value = elements.item(0);
+          currentElement.value.focus();
+          focused = true;
         }
       }
     }
@@ -279,7 +281,6 @@ function toggledCourseSwitch() {
   });
 }
 
-
 function toggleCourseSwitch() {
   document.getElementById("active-toggle")?.click();
 }
@@ -303,20 +304,21 @@ function deleteCurrentCourse() {
   <b-overlay :show="loading" rounded="sm">
     <div class="container mt-4">
       <div v-if="course != null" class="">
-      <b-button
-        variant="danger"
-        size="small"
-        v-b-modal.delete-confirmation-modal
-      >
-        Delete Course
-      </b-button>
-      <EditableStringAttribute
-        prefix="Name"
-        :value="course.courseName"
-        @submit="saveCourseName"
-        @cancel="cancelEditCourseName"
-        id="course-name"
-      />
+        <b-button
+          variant="danger"
+          size="small"
+          v-b-modal.delete-confirmation-modal
+          id="deleteButton"
+        >
+          Delete Course
+        </b-button>
+        <EditableStringAttribute
+          prefix="Name"
+          :value="course.courseName"
+          @submit="saveCourseName"
+          @cancel="cancelEditCourseName"
+          id="course-name"
+        />
         <b-col>
           <EditableStringAttribute
             prefix="Name"
