@@ -7,6 +7,7 @@ import { useToast } from "vue-toastification";
 import EditableStringAttribute from "@/components/EditableStringAttribute.vue";
 import EditMinigameConfigurationModal from "@/components/EditMinigameConfigurationModal.vue";
 import EditChickenshockConfigurationModal from "@/components/EditChickenshockConfigurationModal.vue";
+import { BOverlay } from "bootstrap-vue-3";
 
 const availableMinigames = Object.values(Minigame);
 
@@ -20,10 +21,11 @@ const dungeonIndex = ref(route.params.dungeonIndex as string);
 const editedMinigame = ref();
 const showEditModal = ref(false);
 const showChickenshockModal = ref(false);
-const editMinigameTask = ref(true);
-const firstFocus = ref(false);
+const editMinigameTask = ref(false);
+const editDescription = ref(false);
 const currentMinigameId = ref(1);
 const inFocus = ref(false);
+const firstFocus = ref(false);
 
 watch(
   () => [
@@ -56,7 +58,6 @@ watch(
   () => props.inFocus,
   (newBoolean) => {
     inFocus.value = newBoolean;
-    editMinigameTask.value = true;
   },
   { deep: true }
 );
@@ -102,36 +103,54 @@ watch(
 );
 
 function clickLeft() {
-  if (inFocus.value && editMinigameTask.value) {
-    emit("return");
-    console.log("left");
-    firstFocus.value = false;
-    document
-      .getElementById("minigameSelect" + currentMinigameId.value)
-      ?.focus();
-  } else {
-    editMinigameTask.value = true;
-    document
-      .getElementById("minigameSelect" + currentMinigameId.value)
-      ?.focus();
+  if (inFocus.value) {
+    if (editDescription.value) {
+      editDescription.value = false;
+      firstFocus.value = false;
+      emit("return");
+      console.log("left");
+    } else if (editMinigameTask.value) {
+      editMinigameTask.value = false;
+      editDescription.value = true;
+      document
+        .getElementsByClassName("btn-light")
+        .item(currentMinigameId.value - 1)
+        ?.focus();
+    } else {
+      editMinigameTask.value = true;
+      document
+        .getElementById("minigameSelect" + currentMinigameId.value)
+        ?.focus();
+    }
   }
 }
 
 function clickRight() {
   if (inFocus.value) {
     console.log("right");
-    if (editMinigameTask.value && firstFocus.value) {
+    if (editDescription.value) {
+      console.log("Zwei");
+      editDescription.value = false;
+      editMinigameTask.value = true;
+      document
+        .getElementById("minigameSelect" + currentMinigameId.value)
+        ?.focus();
+    } else if (editMinigameTask.value) {
+      console.log("Drei");
       editMinigameTask.value = false;
       document
         .getElementById("editMinigameButton" + currentMinigameId.value)
         ?.focus();
-    } else {
-      document
-        .getElementById("minigameSelect" + currentMinigameId.value)
-        ?.focus();
       console.log("test");
+    } else if (!firstFocus.value) {
+      firstFocus.value = true;
+      console.log("Eins");
+      editDescription.value = true;
+      document
+        .getElementsByClassName("btn-light")
+        .item(currentMinigameId.value - 1)
+        ?.focus();
     }
-    firstFocus.value = true;
   }
 }
 
@@ -140,7 +159,12 @@ function clickUp() {
     console.log("up");
     if (currentMinigameId.value > 1) {
       currentMinigameId.value--;
-      if (editMinigameTask.value) {
+      if (editDescription.value) {
+        document
+          .getElementsByClassName("btn-light")
+          .item(currentMinigameId.value - 1)
+          ?.focus();
+      } else if (editMinigameTask.value) {
         document
           .getElementById("minigameSelect" + currentMinigameId.value)
           ?.focus();
@@ -151,7 +175,12 @@ function clickUp() {
       }
     } else {
       currentMinigameId.value = minigames.value.length;
-      if (editMinigameTask.value) {
+      if (editDescription.value) {
+        document
+          .getElementsByClassName("btn-light")
+          .item(currentMinigameId.value - 1)
+          ?.focus();
+      } else if (editMinigameTask.value) {
         document
           .getElementById("minigameSelect" + currentMinigameId.value)
           ?.focus();
@@ -169,7 +198,12 @@ function clickDown() {
     console.log("down");
     if (currentMinigameId.value < minigames.value.length) {
       currentMinigameId.value++;
-      if (editMinigameTask.value) {
+      if (editDescription.value) {
+        document
+          .getElementsByClassName("btn-light")
+          .item(currentMinigameId.value - 1)
+          ?.focus();
+      } else if (editMinigameTask.value) {
         document
           .getElementById("minigameSelect" + currentMinigameId.value)
           ?.focus();
@@ -180,7 +214,12 @@ function clickDown() {
       }
     } else {
       currentMinigameId.value = 1;
-      if (editMinigameTask.value) {
+      if (editDescription.value) {
+        document
+          .getElementsByClassName("btn-light")
+          .item(currentMinigameId.value - 1)
+          ?.focus();
+      } else if (editMinigameTask.value) {
         document
           .getElementById("minigameSelect" + currentMinigameId.value)
           ?.focus();
@@ -285,44 +324,54 @@ function closedEditModal() {
 </script>
 
 <template>
-  <div class="container mt-4">
-    <h1 v-if="dungeonIndex === undefined">
-      Minigames from World {{ worldIndex }}
-    </h1>
-    <h1 v-else>
-      Minigames from World World {{ worldIndex }}, Dungeon {{ dungeonIndex }}
-    </h1>
-    <b-card v-for="task in minigames" :key="task.id" class="mt-1">
-      <b-row>
-        <b-col sm="2">{{ task.index }}</b-col>
-        <b-col sm="5">
-          <EditableStringAttribute
-            prefix="Description"
-            :value="task.description"
-            @submit="(newDescription) => saveDescription(task, newDescription)"
-            @cancel="cancelEditDescription"
-          />
-        </b-col>
-        <b-col sm="3">
-          <b-form-select
-            v-model="task.game"
-            :options="availableMinigames"
-            @input="changedMinigame(task)"
-          ></b-form-select>
-        </b-col>
-        <b-col sm="2">
-          <b-button
-            variant="info"
-            size="small"
-            @click="editMinigameConfiguration(task)"
-          >
-            <em class="bi bi-pencil-square"></em>
-            Edit
-          </b-button>
-        </b-col>
-      </b-row>
-    </b-card>
-  </div>
+  <b-overlay :show="loading" rounded="sm">
+    <div class="container mt-4">
+      <h1 v-if="dungeonIndex === undefined">
+        Minigames from World {{ worldIndex }}
+      </h1>
+      <h1 v-else>
+        Minigames from World World {{ worldIndex }}, Dungeon {{ dungeonIndex }}
+      </h1>
+      <b-card v-for="task in minigames" :key="task.id" class="mt-1">
+        <b-row>
+          <b-col sm="2">{{ task.index }}</b-col>
+          <b-col sm="5">
+            <EditableStringAttribute
+              prefix="Description"
+              :value="task.description"
+              @submit="
+                (newDescription) => saveDescription(task, newDescription)
+              "
+              @cancel="cancelEditDescription"
+            />
+          </b-col>
+          <b-col sm="3">
+            <b-form-select
+              v-model="task.game"
+              :options="availableMinigames"
+              @input="changedMinigame(task)"
+              :id="`minigameSelect` + task.index"
+              @keydown.up.prevent
+              @keydown.down.prevent
+              @keydown.right.prevent
+              @keydown.left.prevent
+            ></b-form-select>
+          </b-col>
+          <b-col sm="2">
+            <b-button
+              variant="info"
+              size="small"
+              @click="editMinigameConfiguration(task)"
+              :id="`editMinigameButton` + task.index"
+            >
+              <em class="bi bi-pencil-square"></em>
+              Edit
+            </b-button>
+          </b-col>
+        </b-row>
+      </b-card>
+    </div>
+  </b-overlay>
   <EditMinigameConfigurationModal
     :showModal="showEditModal"
     :minigame="editedMinigame"

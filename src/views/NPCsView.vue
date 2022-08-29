@@ -102,31 +102,35 @@ function closedEditModal() {
 </script>
 
 <template>
-  <div class="container mt-4">
-    <h1 v-if="dungeonIndex === undefined">NPCs from World {{ worldIndex }}</h1>
-    <h1 v-else>
-      NPCs from World World {{ worldIndex }}, Dungeon {{ dungeonIndex }}
-    </h1>
-    <b-card v-for="npc in npcs" :key="npc.id" class="mt-1">
-      <b-row>
-        <b-col sm="2">{{ npc.index }}</b-col>
-        <b-col>
-          <EditableStringAttribute
-            prefix="Description"
-            :value="npc.description"
-            @submit="(newDescription) => saveDescription(npc, newDescription)"
-            @cancel="cancelEditDescription"
-          />
-        </b-col>
-        <b-col sm="2">
-          <b-button variant="info" size="small" @click="editNPC(npc)">
-            <em class="bi bi-pencil-square"></em>
-            Edit
-          </b-button>
-        </b-col>
-      </b-row>
-    </b-card>
-  </div>
+  <b-overlay :show="loading" rounded="sm">
+    <div class="container mt-4">
+      <h1 v-if="dungeonIndex === undefined">
+        NPCs from World {{ worldIndex }}
+      </h1>
+      <h1 v-else>
+        NPCs from World World {{ worldIndex }}, Dungeon {{ dungeonIndex }}
+      </h1>
+      <b-card v-for="npc in npcs" :key="npc.id" class="mt-1">
+        <b-row>
+          <b-col sm="2">{{ npc.index }}</b-col>
+          <b-col>
+            <EditableStringAttribute
+              prefix="Description"
+              :value="npc.description"
+              @submit="(newDescription) => saveDescription(npc, newDescription)"
+              @cancel="cancelEditDescription"
+            />
+          </b-col>
+          <b-col sm="2">
+            <b-button variant="info" size="small" @click="editNPC(npc)">
+              <em class="bi bi-pencil-square"></em>
+              Edit
+            </b-button>
+          </b-col>
+        </b-row>
+      </b-card>
+    </div>
+  </b-overlay>
   <NPCEditModal
     :showModal="showEditModal"
     :npc="editedNPC"
