@@ -10,6 +10,7 @@ import { useRouter } from "vue-router";
 import { useToast } from "vue-toastification";
 import { BCol, BFormInput } from "bootstrap-vue-3";
 
+
 const loading = ref(false);
 
 const courses = ref(Array<ICourse>());
@@ -53,6 +54,9 @@ watch(
   },
   { deep: true }
 );
+let showCreateModal = ref(false);
+let showCloneModal = ref(false);
+let currentCourse = ref();
 
 async function loadCourses() {
   loading.value = true;
@@ -183,13 +187,28 @@ function resetModal() {
   semesterInput.value = "";
 }
 
+function showCreateModalFun() {
+  console.log("CreateModal");
+  showCreateModal.value = true;
+}
+
 function startClone(row: ICourse) {
-  console.log(row);
-  cloneNameInput.value = row.courseName;
-  cloneDescriptionInput.value = row.description;
-  cloneSemesterInput.value = row.semester;
-  cloneCourseId.value = row.id;
-  showCloneCourse.value = true;
+  currentCourse.value = row;
+  showCloneModal.value = true;
+}
+function finishCreate(course: ICourse) {
+  courses.value.push(course);
+  showCreateModal.value = false;
+}
+function finishClone(course: ICourse) {
+  courses.value.push(course);
+  showCloneModal.value = false;
+}
+function closedCloneModal() {
+  showCloneModal.value = false;
+}
+function closedCreateModal() {
+  showCreateModal.value = false;
 }
 
 function courseUp() {
@@ -315,62 +334,20 @@ function resetFocus(row: ICourse) {
         </div>
       </template>
     </b-table>
-    <b-button variant="success" v-b-modal.create-course>
+    <b-button variant="success" @click="showCreateModalFun">
       create new course
     </b-button>
-    <b-modal
-      title="Create course"
-      id="create-course"
-      @show="resetModal"
-      @ok="handleOk"
-    >
-      <form ref="form" @submit.stop.prevent="">
-        <b-form-group label="Name" label-for="name">
-          <b-form-input id="name" v-model="nameInput"></b-form-input>
-        </b-form-group>
-
-        <b-form-group label="Description" label-for="description">
-          <b-form-input
-            id="description"
-            v-model="descriptionInput"
-          ></b-form-input>
-        </b-form-group>
-        <b-form-group
-          label="Semester in the format (WS/SS)-year(22)"
-          label-for="semester"
-        >
-          <b-form-input id="semester" v-model="semesterInput"></b-form-input>
-        </b-form-group>
-      </form>
-    </b-modal>
-    <b-modal
-      title="Clone course"
-      id="clone-course"
-      v-model="showCloneCourse"
-      @ok="handleCloneOk"
-    >
-      <form ref="form" @submit.stop.prevent="">
-        <b-form-group label="Name" label-for="name">
-          <b-form-input id="name" v-model="cloneNameInput"></b-form-input>
-        </b-form-group>
-
-        <b-form-group label="Description" label-for="description">
-          <b-form-input
-            id="description"
-            v-model="cloneDescriptionInput"
-          ></b-form-input>
-        </b-form-group>
-        <b-form-group
-          label="Semester in the format (WS/SS)-year(22)"
-          label-for="semester"
-        >
-          <b-form-input
-            id="semester"
-            v-model="cloneSemesterInput"
-          ></b-form-input>
-        </b-form-group>
-      </form>
-    </b-modal>
+    <CreateCourseModal
+      :showModal="showCreateModal"
+      @created="finishCreate"
+      @closedModal="closedCreateModal"
+    />
+    <CloneCourseModal
+      :course="currentCourse"
+      :show-modal="showCloneModal"
+      @cloned="finishClone"
+      @closedModal="closedCloneModal"
+    />
   </div>
 </template>
 
