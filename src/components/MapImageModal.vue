@@ -48,15 +48,18 @@ function hiddenModal() {
   emit("closedModal");
 }
 
-function getFileName(): string | undefined {
-  if (mapType.value == MapType.RAW) {
-    return "raw.webp";
-  } else if (mapType.value == MapType.NPC) {
-    return "npc.webp";
-  } else if (mapType.value == MapType.MINIGAME) {
-    return "minigames.webp";
-  } else if (mapType.value == MapType.DUNGEON) {
-    return "dungeons.webp";
+function getFileName(): string {
+  switch (mapType.value) {
+    case MapType.RAW:
+      return "raw.webp";
+    case MapType.NPC:
+      return "npc.webp";
+    case MapType.MINIGAME:
+      return "minigames.webp";
+    case MapType.DUNGEON:
+      return "dungeons.webp";
+    default:
+      throw new Error(`Non-existent maptype in switch: ${mapType.value}`);
   }
 }
 
