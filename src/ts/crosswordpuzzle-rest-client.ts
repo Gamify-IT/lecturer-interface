@@ -8,7 +8,7 @@ export async function postCrosswordpuzzleConfig(
   chickenshockConfig: ICrosswordpuzzleConfiguration
 ): Promise<AxiosResponse> {
   return axios.post(
-    `${config.apiCrosswordpuzzleApi}/configurations`,
+    `${config.apiCrosswordpuzzleUrl}/configurations`,
     chickenshockConfig
   );
 }
@@ -16,5 +16,5 @@ export async function postCrosswordpuzzleConfig(
 export async function getCrosswordpuzzleConfig(
   id: string
 ): Promise<AxiosResponse> {
-  return axios.get(`${config.apiCrosswordpuzzleApi}/configurations/${id}`);
+  return axios.get(`${config.apiCrosswordpuzzleUrl}/configurations/${id}`);
 }
