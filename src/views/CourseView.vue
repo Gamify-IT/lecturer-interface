@@ -145,6 +145,7 @@ function deleteCurrentCourse() {
         @submit="saveCourseName"
         @cancel="cancelEditCourseName"
         id="course-name"
+        sm="6"
       />
       <EditableStringAttribute
         prefix="Description"
@@ -152,6 +153,7 @@ function deleteCurrentCourse() {
         @submit="saveDescription"
         @cancel="cancelEditDescription"
         id="course-description"
+        sm="6"
       />
       <EditableStringAttribute
         prefix="Semester"
@@ -159,6 +161,7 @@ function deleteCurrentCourse() {
         @submit="saveSemester"
         @cancel="cancelEditSemester"
         id="course-semester"
+        sm="6"
       />
       <b-form-checkbox
         v-model="course.active"

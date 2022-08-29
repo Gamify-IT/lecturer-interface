@@ -4,6 +4,7 @@ import { getMinigames, putMinigame } from "@/ts/minigame-rest-client";
 import { ref, watch } from "vue";
 import { useRoute } from "vue-router";
 import { useToast } from "vue-toastification";
+import EditableStringAttribute from "@/components/EditableStringAttribute.vue";
 import EditMinigameConfigurationModal from "@/components/EditMinigameConfigurationModal.vue";
 import EditChickenshockConfigurationModal from "@/components/EditChickenshockConfigurationModal.vue";
 
@@ -92,6 +93,23 @@ function editMinigameConfiguration(task: ITask) {
   }
 }
 
+function saveDescription(task: ITask, description: string) {
+  task.description = description;
+  putMinigame(
+    parseInt(courseId.value),
+    parseInt(worldIndex.value),
+    parseInt(dungeonIndex.value),
+    task
+  ).then((response) => {
+    task = response.data;
+    toast.success(`Description in Task was updated!`);
+  });
+}
+
+function cancelEditDescription() {
+  toast.warning(`Description in Task was not updated!`);
+}
+
 function updateMinigameConfiguration(task: ITask) {
   console.log("Pressed submit button in configuration modal");
   toast.success(`Configuration of minigame ${task.index} was saved!`);
@@ -116,6 +134,14 @@ function closedEditModal() {
     <b-card v-for="task in minigames" :key="task.id" class="mt-1">
       <b-row>
         <b-col>{{ task.index }}</b-col>
+        <b-col>
+          <EditableStringAttribute
+            prefix="Description"
+            :value="task.description"
+            @submit="(newDescription) => saveDescription(task, newDescription)"
+            @cancel="cancelEditDescription"
+          />
+        </b-col>
         <b-col>
           <b-form-select
             v-model="task.game"
