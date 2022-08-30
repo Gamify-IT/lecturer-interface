@@ -7,6 +7,7 @@ import { useToast } from "vue-toastification";
 import EditableStringAttribute from "@/components/EditableStringAttribute.vue";
 import EditMinigameConfigurationModal from "@/components/EditMinigameConfigurationModal.vue";
 import EditChickenshockConfigurationModal from "@/components/EditChickenshockConfigurationModal.vue";
+import EditFinitequizConfigurationModal from "@/components/EditFinitequizConfigurationModal.vue";
 import EditCrosswordpuzzleModal from "@/components/EditCrosswordpuzzleModal.vue";
 import MapImageModal from "@/components/MapImageModal.vue";
 
@@ -23,6 +24,7 @@ const showMapModal = ref(false);
 const editedMinigame = ref();
 const showEditModal = ref(false);
 const showChickenshockModal = ref(false);
+const showFinitequizModal = ref(false);
 const showCrosswordpuzzleModal = ref(false);
 
 watch(
@@ -100,6 +102,9 @@ function editMinigameConfiguration(task: ITask) {
     case Minigame.CROSSWORDPUZZLE:
       showCrosswordpuzzleModal.value = true;
       break;
+    case Minigame.FINITEQUIZ:
+      showFinitequizModal.value = true;
+      break;
     default:
       console.log(
         "This minigame is currently not supported to be edited here."
@@ -135,6 +140,7 @@ function closedEditModal() {
   console.log(editedMinigame.value.id);
   showEditModal.value = false;
   showChickenshockModal.value = false;
+  showFinitequizModal.value = false;
   showCrosswordpuzzleModal.value = false;
 }
 </script>
@@ -196,6 +202,12 @@ function closedEditModal() {
   />
   <EditChickenshockConfigurationModal
     :showModal="showChickenshockModal"
+    :minigame="editedMinigame"
+    @updateMinigameConfiguration="updateMinigameConfiguration"
+    @closedModal="closedEditModal"
+  />
+  <EditFinitequizConfigurationModal
+    :showModal="showFinitequizModal"
     :minigame="editedMinigame"
     @updateMinigameConfiguration="updateMinigameConfiguration"
     @closedModal="closedEditModal"
