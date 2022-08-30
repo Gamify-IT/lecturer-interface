@@ -17,6 +17,13 @@ export async function postCourse(
   return axios.post(`${config.apiBaseUrl}/courses/`, initialData);
 }
 
+export async function postCloneCourse(
+  initialData: CourseInitialData,
+  id: number
+): Promise<AxiosResponse> {
+  return axios.post(`${config.apiBaseUrl}/courses/${id}/clone`, initialData);
+}
+
 export async function putCourse(course: ICourse): Promise<AxiosResponse> {
   return axios.put(`${config.apiBaseUrl}/courses/${course.id}`, course);
 }
