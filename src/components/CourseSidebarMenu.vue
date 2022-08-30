@@ -1,15 +1,55 @@
 <script setup lang="ts">
-import { ref, watch } from "vue";
+import { defineProps, nextTick, onMounted, ref, watch } from "vue";
 import "vue-sidebar-menu/dist/vue-sidebar-menu.css";
-import { ICourse, IDungeon, IWorld } from "@/ts/models";
+import { ICourse, IDungeon, ITask, IWorld } from "@/ts/models";
 
 import { computed } from "vue";
 import { useRouter } from "vue-router";
 import { getCourse } from "@/ts/course-rest-client";
 
+const props = defineProps({
+  upClicked: Boolean,
+  downClicked: Boolean,
+  inFocus: Boolean,
+});
+
+watch(
+  () => props.inFocus,
+  (newBoolean) => {
+    inFocus.value = newBoolean;
+    if (newBoolean) {
+      currentElement.value.focus();
+    }
+  },
+  { deep: true }
+);
+
+watch(
+  () => props.upClicked,
+  (newBoolean) => {
+    if (newBoolean) {
+      clickUp();
+    }
+  },
+  { deep: true }
+);
+
+watch(
+  () => props.downClicked,
+  (newBoolean) => {
+    if (newBoolean) {
+      clickDown();
+    }
+  },
+  { deep: true }
+);
+
 const router = useRouter();
 let course: ICourse;
 const menu = ref([]);
+const inFocus = ref(true);
+let currentElement = ref();
+let currentElementId = ref();
 
 const sidebarActive = [
   "course",
@@ -32,13 +72,19 @@ watch(
   { deep: true }
 );
 
-function loadCourse(id: number) {
+async function loadCourse(id: number) {
   getCourse(id)
-    .then((response) => {
+    .then(async (response) => {
       const result: ICourse = response.data;
       course = result;
       console.log(course);
       loadMenu();
+      await nextTick();
+      currentElement.value = document
+        .getElementsByClassName("vsm--link")
+        .item(0);
+      currentElementId.value = 0;
+      currentElement.value.focus();
     })
     .catch((error) => {
       console.log(error);
@@ -171,6 +217,71 @@ async function getCourseIdFromRouter(): Promise<number> {
   return 0;
 }
 
+function clickUp() {
+  if (showSideBarComputed.value && inFocus.value) {
+    let elements = document.getElementsByClassName("vsm--link");
+    let previousElement = elements.item(elements.length - 1);
+    let foundElement = false;
+    if (currentElement.value == null) {
+      currentElement.value = previousElement;
+      currentElement.value.focus();
+      currentElementId.value = elements.length - 1;
+      foundElement = true;
+    } else {
+      for (let i = 0; i < elements.length; i++) {
+        if (currentElement.value == elements.item(i)) {
+          currentElement.value = previousElement;
+          if (i - 1 >= 0) {
+            currentElementId.value = i - 1;
+          } else {
+            currentElementId.value = elements.length - 1;
+          }
+          currentElement.value.focus();
+          foundElement = true;
+          break;
+        } else {
+          previousElement = elements.item(i);
+        }
+      }
+    }
+    if (!foundElement) {
+      currentElement.value = elements.item(currentElementId.value);
+      currentElement.value.focus();
+    }
+  }
+}
+
+function clickDown() {
+  if (showSideBarComputed.value && inFocus.value) {
+    let elements = document.getElementsByClassName("vsm--link");
+    let firstElement = elements.item(0);
+    let foundElement = false;
+    if (currentElement.value == null) {
+      currentElement.value = firstElement;
+      currentElement.value.focus();
+      foundElement = true;
+      currentElementId.value = 0;
+    } else {
+      for (let i = 0; i < elements.length; i++) {
+        if (currentElement.value == elements.item(i)) {
+          if (i + 1 < elements.length) {
+            currentElement.value = elements.item(i + 1);
+            currentElementId.value = i + 1;
+          } else {
+            currentElement.value = firstElement;
+            currentElementId.value = 0;
+          }
+          currentElement.value.focus();
+          break;
+        }
+      }
+    }
+    if (!foundElement) {
+      currentElement.value = elements.item(currentElementId.value);
+      currentElement.value.focus();
+    }
+  }
+}
 update();
 </script>
 
@@ -179,6 +290,7 @@ update();
     :menu="menu"
     :relative="true"
     :showOneChild="true"
+    :id="`sidebar`"
     v-if="showSideBarComputed"
   >
   </sidebar-menu>
@@ -192,6 +304,11 @@ update();
 
 .v-sidebar-menu {
   height: 100%;
+}
+
+.v-sidebar-menu .vsm--link:focus {
+  box-shadow: 0px 0px 0px 2px #ffffff;
+  border-radius: 2px;
 }
 
 .router-view-wrapper {

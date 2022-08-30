@@ -1,15 +1,58 @@
 <script setup lang="ts">
 import CourseSidebarMenu from "@/components/CourseSidebarMenu.vue";
+import { ref } from "vue";
+
+const upClicked = ref();
+const downClicked = ref();
+const navigationFocus = ref(true);
+const routerFocus = ref(false);
+const leftClicked = ref();
+const rightClicked = ref();
+function clickRight() {
+  rightClicked.value = true;
+  if (navigationFocus.value) {
+    navigationFocus.value = false;
+    routerFocus.value = true;
+  }
+}
+function returnFocus() {
+  console.log("returnFocus");
+  if (routerFocus.value) {
+    routerFocus.value = false;
+    navigationFocus.value = true;
+  }
+}
 </script>
 
 <template>
-  {{ course }}
-  <div class="app-wrapper">
-    <CourseSidebarMenu />
+  <div
+    class="app-wrapper"
+    tabindex="-1"
+    @keydown.up="upClicked = true"
+    @keydown.down="downClicked = true"
+    @keydown.left="leftClicked = true"
+    @keydown.right="clickRight"
+    @keyup.up="upClicked = false"
+    @keyup.down="downClicked = false"
+    @keyup.left="leftClicked = false"
+    @keyup.right="rightClicked = false"
+  >
+    <CourseSidebarMenu
+      :downClicked="downClicked"
+      :up-clicked="upClicked"
+      :inFocus="navigationFocus"
+    />
     <!-- route outlet -->
     <!-- component matched by the route will render here -->
     <div class="router-view-wrapper">
-      <router-view></router-view>
+      <router-view
+        :upClicked="upClicked"
+        :downClicked="downClicked"
+        :inFocus="routerFocus"
+        :rightClicked="rightClicked"
+        :leftClicked="leftClicked"
+        @return="returnFocus"
+      ></router-view>
       <footer class="py-2 footer">
         <div class="notice-right">
           <a href="/third-party-license-notice">Licence notice</a>

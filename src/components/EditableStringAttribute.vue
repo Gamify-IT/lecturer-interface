@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { defineProps, defineEmits, ref, watch } from "vue";
+import { defineProps, defineEmits, ref, watch, nextTick } from "vue";
 
 const props = defineProps<{
   value: string | null;
@@ -10,6 +10,8 @@ const prefix = ref(props.prefix);
 const value = ref(props.value);
 const editing = ref(false);
 const editingValue = ref();
+const inputId = "TestInputId";
+const randomNumber = (Math.random() * 100000000000000).toString();
 
 watch(
   () => props.value,
@@ -32,42 +34,59 @@ const emit = defineEmits<{
   (e: "cancel"): void;
 }>();
 
-function startEdit() {
+async function startEdit() {
   editingValue.value = value.value;
   editing.value = true;
+  console.log("start editing");
+  await nextTick();
+  console.log(document.getElementById(inputId));
+  document.getElementById(inputId)?.focus();
 }
 
-function saveEdit() {
+async function saveEdit() {
   emit("submit", editingValue.value);
   editing.value = false;
   editingValue.value = value.value;
+  await nextTick();
+  document.getElementById("editingButton" + randomNumber)?.focus();
 }
 
-function cancelEdit() {
+async function cancelEdit() {
   emit("cancel");
   editing.value = false;
   editingValue.value = value.value;
+  await nextTick();
+  document.getElementById("editingButton" + randomNumber)?.focus();
 }
 </script>
 
 <template>
   <h5 v-if="!editing">
     <span v-if="prefix != null">{{ prefix }}: </span>{{ value }}
-    <b-button variant="light" size="small" @click="startEdit">
+    <b-button
+      variant="light"
+      size="small"
+      :id="`editingButton` + randomNumber"
+      @keydown.enter="startEdit"
+      @keyup.enter.prevent
+      @mousedown="startEdit"
+    >
       <em class="bi bi-pencil-square"></em>
     </b-button>
   </h5>
   <b-col v-else>
-    <b-form @submit="saveEdit" @cancel="cancelEdit">
-      <b-input-group :prepend="prefix">
-        <b-form-input v-model="editingValue"></b-form-input>
-        <b-button variant="success" type="submit" size="sm" @click="saveEdit">
-          <em class="bi bi-journal-check"></em>
-        </b-button>
-        <b-button variant="danger" size="sm" type="reset" @click="cancelEdit">
-          <em class="bi bi-x-lg"></em>
-        </b-button>
-      </b-input-group>
-    </b-form>
+    <b-input-group
+      :prepend="prefix"
+      @keydown.enter="saveEdit"
+      @keydown.esc="cancelEdit"
+    >
+      <b-form-input :id="inputId" v-model="editingValue"></b-form-input>
+      <b-button variant="success" type="submit" size="sm" @click="saveEdit">
+        <em class="bi bi-journal-check"></em>
+      </b-button>
+      <b-button variant="danger" size="sm" type="reset" @click="cancelEdit">
+        <em class="bi bi-x-lg"></em>
+      </b-button>
+    </b-input-group>
   </b-col>
 </template>

@@ -8,6 +8,16 @@ export interface ICourse {
   worlds: IWorld[];
 }
 
+export interface ICourseItem {
+  id: number;
+  semester: string;
+  courseName: string;
+  description: string;
+
+  active: boolean;
+  _rowVariant: string;
+}
+
 export interface IArea {
   id: string;
   index: number;

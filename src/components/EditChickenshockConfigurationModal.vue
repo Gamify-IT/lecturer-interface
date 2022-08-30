@@ -93,6 +93,7 @@ function resetModal() {
       });
     oldMinigame.value = minigame.value;
   } else {
+    configuration.value.id = undefined;
     configuration.value.questions = [];
     oldMinigame.value = minigame.value;
   }
@@ -124,7 +125,6 @@ function handleSubmit() {
   if (!checkFormValidity()) {
     return;
   }
-  resetModal();
   emit("updateMinigameConfiguration", minigame.value);
 }
 

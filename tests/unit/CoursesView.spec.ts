@@ -3,7 +3,7 @@ import mockAxios from "jest-mock-axios";
 import router from "@/router/index";
 import CoursesView from "@/views/CoursesView.vue";
 import { Course, ICourse } from "@/ts/models";
-import BootstrapVue3, { BRow } from "bootstrap-vue-3";
+import BootstrapVue3, { BCol, BRow } from "bootstrap-vue-3";
 import config from "@/config";
 
 jest.mock("axios");
@@ -44,7 +44,7 @@ describe("CoursesView.vue", () => {
     let selectedCourse: ICourse | undefined;
     let selectedCourseComponent;
     for (course of courses) {
-      const rowComponents = wrapper.findAllComponents(BRow);
+      const rowComponents = wrapper.findAllComponents(BCol);
       const courseComponent = rowComponents.find((row) =>
         row.html().includes(course.courseName)
       );

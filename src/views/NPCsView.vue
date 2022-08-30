@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { INPC, IWorld, MapType } from "@/ts/models";
 import { putNPC } from "@/ts/npc-rest-client";
-import { ref, watch } from "vue";
+import { defineEmits, ref, watch } from "vue";
 import { useRoute } from "vue-router";
 import { useToast } from "vue-toastification";
 import EditableStringAttribute from "@/components/EditableStringAttribute.vue";
@@ -11,6 +11,7 @@ import MapImageModal from "@/components/MapImageModal.vue";
 
 const toast = useToast();
 const route = useRoute();
+const loading = ref(false);
 const courseId = ref(route.params.courseId);
 const worldIndex = ref(route.params.worldIndex);
 const dungeonIndex = ref(route.params.dungeonIndex);
@@ -19,6 +20,10 @@ const showMapModal = ref(false);
 
 const editedNPC = ref();
 const showEditModal = ref(false);
+const currentNPCId = ref(1);
+const editDescription = ref(false);
+const firstFocus = ref(false);
+const inFocus = ref(false);
 
 watch(
   () => [
@@ -37,7 +42,158 @@ watch(
 
 const npcs = ref(Array<INPC>());
 
+const emit = defineEmits<{
+  (e: "return"): void;
+}>();
+
+const props = defineProps({
+  upClicked: Boolean,
+  downClicked: Boolean,
+  inFocus: Boolean,
+  leftClicked: Boolean,
+  rightClicked: Boolean,
+});
+
+watch(
+  () => props.inFocus,
+  (newBoolean) => {
+    inFocus.value = newBoolean;
+  },
+  { deep: true }
+);
+
+watch(
+  () => props.upClicked,
+  (newBoolean) => {
+    if (newBoolean) {
+      clickUp();
+    }
+  },
+  { deep: true }
+);
+
+watch(
+  () => props.downClicked,
+  (newBoolean) => {
+    if (newBoolean) {
+      clickDown();
+    }
+  },
+  { deep: true }
+);
+
+watch(
+  () => props.leftClicked,
+  (newBoolean) => {
+    if (newBoolean) {
+      clickLeft();
+    }
+  },
+  { deep: true }
+);
+
+watch(
+  () => props.rightClicked,
+  (newBoolean) => {
+    if (newBoolean) {
+      clickRight();
+    }
+  },
+  { deep: true }
+);
+
+function clickLeft() {
+  if (inFocus.value) {
+    if (editDescription.value) {
+      editDescription.value = false;
+      firstFocus.value = false;
+      emit("return");
+      console.log("left");
+    } else {
+      editDescription.value = true;
+      document
+        .getElementsByClassName("btn-light")
+        .item(currentNPCId.value - 1)
+        ?.focus();
+    }
+  }
+}
+
+function clickRight() {
+  if (inFocus.value) {
+    console.log("right");
+    if (editDescription.value) {
+      console.log("Zwei");
+      editDescription.value = false;
+      document.getElementById("editButton" + currentNPCId.value)?.focus();
+    } else if (!firstFocus.value) {
+      firstFocus.value = true;
+      console.log("Eins");
+      editDescription.value = true;
+      document
+        .getElementsByClassName("btn-light")
+        .item(currentNPCId.value - 1)
+        ?.focus();
+    }
+  }
+}
+
+function clickUp() {
+  if (inFocus.value) {
+    console.log("up");
+    if (currentNPCId.value > 1) {
+      currentNPCId.value--;
+      if (editDescription.value) {
+        document
+          .getElementsByClassName("btn-light")
+          .item(currentNPCId.value - 1)
+          ?.focus();
+      } else {
+        document.getElementById("editButton" + currentNPCId.value)?.focus();
+      }
+    } else {
+      currentNPCId.value = npcs.value.length;
+      if (editDescription.value) {
+        document
+          .getElementsByClassName("btn-light")
+          .item(currentNPCId.value - 1)
+          ?.focus();
+      } else {
+        document.getElementById("editButton" + currentNPCId.value)?.focus();
+      }
+    }
+  }
+}
+
+function clickDown() {
+  if (inFocus.value) {
+    console.log("down");
+    if (currentNPCId.value < npcs.value.length) {
+      currentNPCId.value++;
+      if (editDescription.value) {
+        document
+          .getElementsByClassName("btn-light")
+          .item(currentNPCId.value - 1)
+          ?.focus();
+      } else {
+        document.getElementById("editButton" + currentNPCId.value)?.focus();
+      }
+    } else {
+      currentNPCId.value = 1;
+      if (editDescription.value) {
+        document
+          .getElementsByClassName("btn-light")
+          .item(currentNPCId.value - 1)
+          ?.focus();
+      } else {
+        document.getElementById("editButton" + currentNPCId.value)?.focus();
+      }
+    }
+  }
+}
+
 async function loadNPCs(courseId: any, worldIndex: any, dungeonIndex: any) {
+  loading.value = true;
   console.log("load npcs");
   if (
     isNaN(courseId) ||
@@ -45,6 +201,7 @@ async function loadNPCs(courseId: any, worldIndex: any, dungeonIndex: any) {
     (dungeonIndex != undefined && isNaN(dungeonIndex))
   ) {
     console.log("one of the ids is NaN");
+    loading.value = false;
     return;
   }
   getArea(courseId, worldIndex, dungeonIndex)
@@ -55,7 +212,8 @@ async function loadNPCs(courseId: any, worldIndex: any, dungeonIndex: any) {
     })
     .catch((error) => {
       console.log(error);
-    });
+    })
+    .finally(() => (loading.value = false));
 }
 
 loadNPCs(courseId.value, worldIndex.value, dungeonIndex.value);
@@ -101,32 +259,41 @@ function closedEditModal() {
 </script>
 
 <template>
-  <div class="container mt-4">
-    <h1 v-if="dungeonIndex === undefined">NPCs from World {{ worldIndex }}</h1>
-    <h1 v-else>
-      NPCs from World World {{ worldIndex }}, Dungeon {{ dungeonIndex }}
-    </h1>
-    <b-button @click="showMapModal = true">Show Map</b-button>
-    <b-card v-for="npc in npcs" :key="npc.id" class="mt-1">
-      <b-row>
-        <b-col sm="2">{{ npc.index }}</b-col>
-        <b-col>
-          <EditableStringAttribute
-            prefix="Description"
-            :value="npc.description"
-            @submit="(newDescription) => saveDescription(npc, newDescription)"
-            @cancel="cancelEditDescription"
-          />
-        </b-col>
-        <b-col sm="2">
-          <b-button variant="info" size="small" @click="editNPC(npc)">
-            <em class="bi bi-pencil-square"></em>
-            Edit
-          </b-button>
-        </b-col>
-      </b-row>
-    </b-card>
-  </div>
+  <b-overlay :show="loading" rounded="sm">
+    <div class="container mt-4">
+      <h1 v-if="dungeonIndex === undefined">
+        NPCs from World {{ worldIndex }}
+      </h1>
+      <h1 v-else>
+        NPCs from World World {{ worldIndex }}, Dungeon {{ dungeonIndex }}
+      </h1>
+      <b-button @click="showMapModal = true">Show Map</b-button>
+      <b-card v-for="npc in npcs" :key="npc.id" class="mt-1">
+        <b-row>
+          <b-col sm="2">{{ npc.index }}</b-col>
+          <b-col>
+            <EditableStringAttribute
+              prefix="Description"
+              :value="npc.description"
+              @submit="(newDescription) => saveDescription(npc, newDescription)"
+              @cancel="cancelEditDescription"
+            />
+          </b-col>
+          <b-col sm="2">
+            <b-button
+              variant="info"
+              size="small"
+              :id="`editButton` + npc.index"
+              @click="editNPC(npc)"
+            >
+              <em class="bi bi-pencil-square"></em>
+              Edit
+            </b-button>
+          </b-col>
+        </b-row>
+      </b-card>
+    </div>
+  </b-overlay>
   <MapImageModal
     :worldIndex="worldIndex"
     :dungeonIndex="dungeonIndex"

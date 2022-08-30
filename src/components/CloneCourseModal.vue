@@ -5,6 +5,7 @@ import { useToast } from "vue-toastification";
 import { ICourse } from "@/ts/models";
 import { defineProps, watch } from "vue";
 import { postCloneCourse } from "@/ts/course-rest-client";
+import { validateSemester } from "@/ts/validate";
 
 const props = defineProps<{
   showModal: boolean;
@@ -38,11 +39,6 @@ watch(
     startClone(course.value);
   }
 );
-
-function validateSemester(semester: string): boolean {
-  const rExp = /^(WS|SS)-\d\d$/;
-  return rExp.test(semester);
-}
 
 function handleOk() {
   if (validateSemester(semesterInput.value)) {
