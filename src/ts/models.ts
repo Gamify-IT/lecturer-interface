@@ -42,6 +42,7 @@ export interface IDungeon extends IArea {
 export interface ITask {
   id: string;
   index: number;
+  description: string;
   game: Minigame;
   configurationId: string;
 }
@@ -49,6 +50,7 @@ export interface ITask {
 export interface INPC {
   id: string;
   index: number;
+  description: string;
   text: string[];
 }
 
@@ -76,10 +78,18 @@ export interface IChickenshockQuestion {
   wrongAnswers: string[];
 }
 
+
 export interface ICrosswordpuzzleQuestion {
   id?: string;
   questionText: string;
   answer: string;
+}
+
+export enum MapType {
+  NPC,
+  MINIGAME,
+  DUNGEON,
+  RAW,
 }
 
 export enum Minigame {
@@ -211,17 +221,20 @@ export class Dungeon implements IDungeon {
 export class Task implements ITask {
   id: string;
   index: number;
+  description: string;
   game: Minigame;
   configurationId: string;
 
   public constructor(
     id: string,
     index: number,
+    description: string,
     game: Minigame,
     configurationId: string
   ) {
     this.id = id;
     this.index = index;
+    this.description = description;
     this.game = game;
     this.configurationId = configurationId;
   }
@@ -230,11 +243,18 @@ export class Task implements ITask {
 export class NPC implements INPC {
   id: string;
   index: number;
+  description: string;
   text: string[];
 
-  public constructor(id: string, index: number, text: string[]) {
+  public constructor(
+    id: string,
+    index: number,
+    description: string,
+    text: string[]
+  ) {
     this.id = id;
     this.index = index;
+    this.description = description;
     this.text = text;
   }
 }

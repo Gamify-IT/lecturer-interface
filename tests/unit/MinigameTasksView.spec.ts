@@ -20,12 +20,14 @@ describe("MinigameTaskView.vue", () => {
         new Task(
           "random uuid",
           1,
+          "Learn to code",
           Minigame.BUGFINDER,
           "random configurationId"
         ),
         new Task(
           "random uuid2",
           2,
+          "Hit the chicken",
           Minigame.CHICKENSHOCK,
           "random configurationId 2"
         ),
