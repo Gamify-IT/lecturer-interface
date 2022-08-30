@@ -58,6 +58,29 @@ function showCreateModalFun() {
   console.log("CreateModal");
   showCreateModal.value = true;
 }
+function handleOk() {
+  console.log(
+    "create Course name: " +
+      nameInput.value +
+      ", description: " +
+      descriptionInput.value +
+      ", in the semester" +
+      semesterInput.value
+  );
+  postCourse({
+    courseName: nameInput.value,
+    description: descriptionInput.value,
+    semester: semesterInput.value,
+  })
+    .then((response) => {
+      courses.value.push(response.data);
+      toast.success(`Course ${response.data.courseName} is created!`);
+    })
+    .catch((error) => {
+      toast.error(`Course ${nameInput.value} could not be created!`);
+      console.log(error);
+    });
+}
 function startClone(row: ICourse) {
   currentCourse.value = row;
   showCloneModal.value = true;

@@ -27,3 +27,7 @@ export async function postCloneCourse(
 export async function putCourse(course: ICourse): Promise<AxiosResponse> {
   return axios.put(`${config.apiBaseUrl}/courses/${course.id}`, course);
 }
+
+export async function deleteCourse(id: number): Promise<AxiosResponse> {
+  return axios.delete(`${config.apiBaseUrl}/courses/${id}`);
+}
