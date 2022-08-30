@@ -125,7 +125,6 @@ function handleSubmit() {
   if (!checkFormValidity()) {
     return;
   }
-  resetModal();
   emit("updateMinigameConfiguration", minigame.value);
 }
 
