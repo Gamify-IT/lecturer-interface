@@ -270,6 +270,9 @@ function changedMinigame(task: ITask) {
   if (task.game == null) {
     task.game = Minigame.NONE;
   }
+  if (task.game == Minigame.NONE) {
+    task.configurationId = null;
+  }
   putMinigame(
     parseInt(courseId.value),
     parseInt(worldIndex.value),

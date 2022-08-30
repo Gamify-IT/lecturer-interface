@@ -93,6 +93,7 @@ function resetModal() {
       });
     oldMinigame.value = minigame.value;
   } else {
+    configuration.value.id = undefined;
     configuration.value.questions = [];
     oldMinigame.value = minigame.value;
   }
