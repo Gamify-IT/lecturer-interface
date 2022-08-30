@@ -380,7 +380,7 @@ function deleteCurrentCourse() {
     @ok="deleteCurrentCourse"
     v-if="course != null"
   >
-    Are you sure you want to delete course <b>{{ course.courseName }}</b> of
-    semester {{ course.semester }}?
+    Are you sure you want to delete course
+    <strong>{{ course.courseName }}</strong> of semester {{ course.semester }}?
   </b-modal>
 </template>

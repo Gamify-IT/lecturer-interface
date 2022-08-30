@@ -228,56 +228,60 @@ function resetFocus(row: ICourse) {
 </script>
 
 <template>
-  <div class="container mt-4">
-    <b-table bordered striped hover :fields="fields" :items="courseItems">
-      <template
-        v-for="(field, index) in fields"
-        :key="index"
-        #[`cell(${field.key})`]="data"
-      >
-        <div v-if="field.key !== 'clone'">
-          <b-col
-            v-if="data.item.active"
-            class="table-cursor"
-            @click="directToCourse(data.item.id)"
-          >
-            {{ data.value }}</b-col
-          >
-          <b-col
-            v-else
-            class="table-row-inactive table-cursor"
-            @click="directToCourse(data.item.id)"
-          >
-            {{ data.value }}
-          </b-col>
-        </div>
-        <div v-else>
-          <button
-            class="invisible-button"
-            @focusin="startFocus(data.item)"
-            @focusout="resetFocus(data.item)"
-            @keydown.enter="directToCourse(data.item.id)"
-            :id="'invisible-button' + data.item.id"
-          ></button>
-          <b-button @click="startClone(data.item)" size="sm"> clone </b-button>
-        </div>
-      </template>
-    </b-table>
-    <b-button variant="success" @click="showCreateModalFun">
-      create new course
-    </b-button>
-    <CreateCourseModal
-      :showModal="showCreateModal"
-      @created="finishCreate"
-      @closedModal="closedCreateModal"
-    />
-    <CloneCourseModal
-      :course="currentCourse"
-      :show-modal="showCloneModal"
-      @cloned="finishClone"
-      @closedModal="closedCloneModal"
-    />
-  </div>
+  <b-overlay :show="loading" rounded="sm">
+    <div class="container mt-4">
+      <b-table bordered striped hover :fields="fields" :items="courseItems">
+        <template
+          v-for="(field, index) in fields"
+          :key="index"
+          #[`cell(${field.key})`]="data"
+        >
+          <div v-if="field.key !== 'clone'">
+            <b-col
+              v-if="data.item.active"
+              class="table-cursor"
+              @click="directToCourse(data.item.id)"
+            >
+              {{ data.value }}</b-col
+            >
+            <b-col
+              v-else
+              class="table-row-inactive table-cursor"
+              @click="directToCourse(data.item.id)"
+            >
+              {{ data.value }}
+            </b-col>
+          </div>
+          <div v-else>
+            <button
+              class="invisible-button"
+              @focusin="startFocus(data.item)"
+              @focusout="resetFocus(data.item)"
+              @keydown.enter="directToCourse(data.item.id)"
+              :id="'invisible-button' + data.item.id"
+            ></button>
+            <b-button @click="startClone(data.item)" size="sm">
+              clone
+            </b-button>
+          </div>
+        </template>
+      </b-table>
+      <b-button variant="success" @click="showCreateModalFun">
+        create new course
+      </b-button>
+      <CreateCourseModal
+        :showModal="showCreateModal"
+        @created="finishCreate"
+        @closedModal="closedCreateModal"
+      />
+      <CloneCourseModal
+        :course="currentCourse"
+        :show-modal="showCloneModal"
+        @cloned="finishClone"
+        @closedModal="closedCloneModal"
+      />
+    </div>
+  </b-overlay>
 </template>
 
 <style>
