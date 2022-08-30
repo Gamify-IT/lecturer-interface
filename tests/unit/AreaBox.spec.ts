@@ -66,23 +66,19 @@ describe("AreaBox.vue", () => {
     expect(topicNameInput.exists()).toBe(false);
 
     const editButton = areaNameColumn.findComponent(BButton);
-    editButton.trigger("click");
-
-    // wait that component re-renders
-    await flushPromises();
+    await editButton.trigger("keydown.enter");
 
     areaNameColumn = wrapper.find("#area-name-column");
+    console.log(areaNameColumn.html());
     topicNameInput = areaNameColumn.findComponent(BFormInput);
+    console.log(topicNameInput);
     expect(topicNameInput.exists()).toBe(true);
-    topicNameInput.setValue(updatedDungeonTopicName);
+    await topicNameInput.setValue(updatedDungeonTopicName);
 
     // click save button
     const submitButton = areaNameColumn.find(".btn-success");
     expect(submitButton.exists()).toBe(true);
-    submitButton.trigger("click");
-
-    // wait that component re-renders
-    await flushPromises();
+    await submitButton.trigger("click");
 
     areaNameColumn = wrapper.find("#area-name-column");
     topicNameInput = areaNameColumn.findComponent(BFormInput);
@@ -107,23 +103,17 @@ describe("AreaBox.vue", () => {
     expect(topicNameInput.exists()).toBe(false);
 
     const editButton = areaNameColumn.findComponent(BButton);
-    editButton.trigger("click");
-
-    // wait that component re-renders
-    await flushPromises();
+    await editButton.trigger("keydown.enter");
 
     areaNameColumn = wrapper.find("#area-name-column");
     topicNameInput = areaNameColumn.findComponent(BFormInput);
     expect(topicNameInput.exists()).toBe(true);
-    topicNameInput.setValue(updatedDungeonTopicName);
+    await topicNameInput.setValue(updatedDungeonTopicName);
 
     // click save button
     const cancelButton = areaNameColumn.find(".btn-danger");
     expect(cancelButton.exists()).toBe(true);
-    cancelButton.trigger("click");
-
-    // wait that component re-renders
-    await flushPromises();
+    await cancelButton.trigger("click");
 
     areaNameColumn = wrapper.find("#area-name-column");
     topicNameInput = areaNameColumn.findComponent(BFormInput);

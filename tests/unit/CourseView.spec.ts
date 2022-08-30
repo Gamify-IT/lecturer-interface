@@ -65,7 +65,7 @@ describe("CourseView.vue", () => {
     expect(editCourseNameInput.exists()).toBe(false);
     expect(wrapper.html()).toContain(initialCourseName);
 
-    editCourseNameButton.trigger("click");
+    editCourseNameButton.trigger("keydown.enter");
 
     // wait that component re-renders
     await flushPromises();
@@ -115,7 +115,7 @@ describe("CourseView.vue", () => {
     expect(editCourseDescriptionInput.exists()).toBe(false);
     expect(wrapper.html()).toContain(initialCourseDescription);
 
-    editCourseDescriptionButton.trigger("click");
+    editCourseDescriptionButton.trigger("keydown.enter");
 
     // wait that component re-renders
     await flushPromises();
