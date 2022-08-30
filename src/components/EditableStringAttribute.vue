@@ -67,7 +67,9 @@ async function cancelEdit() {
       variant="light"
       size="small"
       :id="`editingButton` + randomNumber"
-      @click="startEdit"
+      @keydown.enter="startEdit"
+      @keyup.enter.prevent
+      @mousedown="startEdit"
     >
       <em class="bi bi-pencil-square"></em>
     </b-button>
