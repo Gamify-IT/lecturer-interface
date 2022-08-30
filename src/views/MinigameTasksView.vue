@@ -1,12 +1,14 @@
 <script setup lang="ts">
-import { ITask, Minigame } from "@/ts/models";
+import { ITask, Minigame, MapType } from "@/ts/models";
 import { getMinigames, putMinigame } from "@/ts/minigame-rest-client";
 import { ref, watch } from "vue";
 import { useRoute } from "vue-router";
 import { useToast } from "vue-toastification";
+import EditableStringAttribute from "@/components/EditableStringAttribute.vue";
 import EditMinigameConfigurationModal from "@/components/EditMinigameConfigurationModal.vue";
 import EditChickenshockConfigurationModal from "@/components/EditChickenshockConfigurationModal.vue";
 import EditFinitequizConfigurationModal from "@/components/EditFinitequizConfigurationModal.vue";
+import MapImageModal from "@/components/MapImageModal.vue";
 
 const availableMinigames = Object.values(Minigame);
 
@@ -15,6 +17,8 @@ const route = useRoute();
 const courseId = ref(route.params.courseId as string);
 const worldIndex = ref(route.params.worldIndex as string);
 const dungeonIndex = ref(route.params.dungeonIndex as string);
+
+const showMapModal = ref(false);
 
 const editedMinigame = ref();
 const showEditModal = ref(false);
@@ -97,6 +101,23 @@ function editMinigameConfiguration(task: ITask) {
   }
 }
 
+function saveDescription(task: ITask, description: string) {
+  task.description = description;
+  putMinigame(
+    parseInt(courseId.value),
+    parseInt(worldIndex.value),
+    parseInt(dungeonIndex.value),
+    task
+  ).then((response) => {
+    task = response.data;
+    toast.success(`Description in Task was updated!`);
+  });
+}
+
+function cancelEditDescription() {
+  toast.warning(`Description in Task was not updated!`);
+}
+
 function updateMinigameConfiguration(task: ITask) {
   console.log("Pressed submit button in configuration modal");
   toast.success(`Configuration of minigame ${task.index} was saved!`);
@@ -119,17 +140,27 @@ function closedEditModal() {
     <h1 v-else>
       Minigames from World World {{ worldIndex }}, Dungeon {{ dungeonIndex }}
     </h1>
+    <b-button @click="showMapModal = true">Show Map</b-button>
+
     <b-card v-for="task in minigames" :key="task.id" class="mt-1">
       <b-row>
-        <b-col>{{ task.index }}</b-col>
-        <b-col>
+        <b-col sm="2">{{ task.index }}</b-col>
+        <b-col sm="5">
+          <EditableStringAttribute
+            prefix="Description"
+            :value="task.description"
+            @submit="(newDescription) => saveDescription(task, newDescription)"
+            @cancel="cancelEditDescription"
+          />
+        </b-col>
+        <b-col sm="3">
           <b-form-select
             v-model="task.game"
             :options="availableMinigames"
             @input="changedMinigame(task)"
           ></b-form-select>
         </b-col>
-        <b-col>
+        <b-col sm="2">
           <b-button
             variant="info"
             size="small"
@@ -142,6 +173,14 @@ function closedEditModal() {
       </b-row>
     </b-card>
   </div>
+  <MapImageModal
+    :worldIndex="worldIndex"
+    :dungeonIndex="dungeonIndex"
+    :showModal="showMapModal"
+    modalTitle="Minigame spots"
+    :mapType="MapType.MINIGAME"
+    @closedModal="showMapModal = false"
+  />
   <EditMinigameConfigurationModal
     :showModal="showEditModal"
     :minigame="editedMinigame"
