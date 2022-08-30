@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - "main"
-      - "feature/improve-a11y"
     tags:
       - "v*"
   pull_request:

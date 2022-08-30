@@ -290,7 +290,9 @@ function resetFocus(row: ICourse) {
 .invisible-button {
   background-color: transparent;
   border-color: transparent;
-  outline-width: 0;
   margin-left: 5px;
+}
+.invisible-button:focus {
+  outline: none;
 }
 </style>

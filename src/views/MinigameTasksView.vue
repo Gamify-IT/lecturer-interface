@@ -7,7 +7,6 @@ import { useToast } from "vue-toastification";
 import EditableStringAttribute from "@/components/EditableStringAttribute.vue";
 import EditMinigameConfigurationModal from "@/components/EditMinigameConfigurationModal.vue";
 import EditChickenshockConfigurationModal from "@/components/EditChickenshockConfigurationModal.vue";
-import { BOverlay } from "bootstrap-vue-3";
 
 const availableMinigames = Object.values(Minigame);
 
