@@ -1,11 +1,12 @@
 <script setup lang="ts">
-import { getCourse, putCourse } from "@/ts/course-rest-client";
+import { getCourse, putCourse, deleteCourse } from "@/ts/course-rest-client";
 import { ref } from "vue";
-import { useRoute } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 import { useToast } from "vue-toastification";
 import EditableStringAttribute from "@/components/EditableStringAttribute.vue";
 
 const route = useRoute();
+const router = useRouter();
 const id = route.params.id as string;
 const course = ref();
 
@@ -50,7 +51,7 @@ function saveCourseName(courseName: string) {
 }
 
 function cancelEditCourseName() {
-  toast.warning(`Name of course ${course.value.description} was not updated!`);
+  toast.warning(`Name of course ${course.value.courseName} was not updated!`);
 }
 
 function saveDescription(description: string) {
@@ -72,7 +73,7 @@ function saveDescription(description: string) {
 
 function cancelEditDescription() {
   toast.warning(
-    `Description of course ${course.value.description} was not updated!`
+    `Description of course ${course.value.courseName} was not updated!`
   );
 }
 
@@ -112,47 +113,63 @@ function toggleCourseSwitch() {
     }
   });
 }
+
+function deleteCurrentCourse() {
+  deleteCourse(course.value.id)
+    .then((response) => {
+      toast.success(
+        `Course ${course.value.courseName} was deleted sucessfully!`
+      );
+      router.push("/");
+    })
+    .catch((error) => {
+      console.log(error);
+      toast.error(`Course ${course.value.courseName} could not be deleted!`);
+    });
+}
 </script>
 
 <template>
   <div class="container mt-4">
     <div v-if="course != null" class="">
-      <b-col>
-        <EditableStringAttribute
-          prefix="Name"
-          :value="course.courseName"
-          @submit="saveCourseName"
-          @cancel="cancelEditCourseName"
-          id="course-name"
-        />
-      </b-col>
-      <b-col>
-        <EditableStringAttribute
-          prefix="Description"
-          :value="course.description"
-          @submit="saveDescription"
-          @cancel="cancelEditDescription"
-          id="course-description"
-        />
-      </b-col>
-      <b-col>
-        <EditableStringAttribute
-          prefix="Semester"
-          :value="course.semester"
-          @submit="saveSemester"
-          @cancel="cancelEditSemester"
-          id="course-semester"
-        />
-      </b-col>
-      <b-col>
-        <h4>active:</h4>
-        <b-form-checkbox
-          v-model="course.active"
-          @change="toggleCourseSwitch"
-          name="check-button"
-          switch
-        ></b-form-checkbox>
-      </b-col>
+      <b-button
+        variant="danger"
+        size="small"
+        v-b-modal.delete-confirmation-modal
+      >
+        Delete Course
+      </b-button>
+      <EditableStringAttribute
+        prefix="Name"
+        :value="course.courseName"
+        @submit="saveCourseName"
+        @cancel="cancelEditCourseName"
+        id="course-name"
+        sm="6"
+      />
+      <EditableStringAttribute
+        prefix="Description"
+        :value="course.description"
+        @submit="saveDescription"
+        @cancel="cancelEditDescription"
+        id="course-description"
+        sm="6"
+      />
+      <EditableStringAttribute
+        prefix="Semester"
+        :value="course.semester"
+        @submit="saveSemester"
+        @cancel="cancelEditSemester"
+        id="course-semester"
+        sm="6"
+      />
+      <b-form-checkbox
+        v-model="course.active"
+        @change="toggleCourseSwitch"
+        name="check-button"
+        switch
+        >active</b-form-checkbox
+      >
     </div>
     <div v-else>
       <div
@@ -169,4 +186,16 @@ function toggleCourseSwitch() {
       </div>
     </div>
   </div>
+  <b-modal
+    id="delete-confirmation-modal"
+    title="Delete Course confirmation"
+    header-bg-variant="danger"
+    ok-title="Delete"
+    ok-variant="danger"
+    @ok="deleteCurrentCourse"
+    v-if="course != null"
+  >
+    Are you sure you want to delete course <b>{{ course.courseName }}</b> of
+    semester {{ course.semester }}?
+  </b-modal>
 </template>

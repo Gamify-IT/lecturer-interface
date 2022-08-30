@@ -42,6 +42,7 @@ export interface IDungeon extends IArea {
 export interface ITask {
   id: string;
   index: number;
+  description: string;
   game: Minigame;
   configurationId: string;
 }
@@ -49,6 +50,7 @@ export interface ITask {
 export interface INPC {
   id: string;
   index: number;
+  description: string;
   text: string[];
 }
 
@@ -63,6 +65,16 @@ export interface IChickenshockConfiguration {
   questions: IChickenshockQuestion[];
 }
 
+export interface IFinitequizConfiguration {
+  id?: string;
+  questions: IFinitequizQuestion[];
+}
+export interface ICrosswordpuzzleConfiguration {
+  id?: string;
+  name: string;
+  questions: ICrosswordpuzzleQuestion[];
+}
+
 export interface IChickenshockQuestion {
   id?: string;
   text: string;
@@ -70,9 +82,30 @@ export interface IChickenshockQuestion {
   wrongAnswers: string[];
 }
 
+export interface IFinitequizQuestion {
+  id?: string;
+  text: string;
+  rightAnswer: string;
+  wrongAnswers: string[];
+}
+
+export interface ICrosswordpuzzleQuestion {
+  id?: string;
+  questionText: string;
+  answer: string;
+}
+
+export enum MapType {
+  NPC,
+  MINIGAME,
+  DUNGEON,
+  RAW,
+}
+
 export enum Minigame {
   NONE = "NONE",
   CHICKENSHOCK = "CHICKENSHOCK",
+  FINITEQUIZ = "FINITEQUIZ",
   BUGFINDER = "BUGFINDER",
   REGEX_GAME = "REGEX-GAME",
   CROSSWORDPUZZLE = "CROSSWORDPUZZLE",
@@ -85,6 +118,38 @@ export class ChickenshockConfiguration implements IChickenshockConfiguration {
   questions: IChickenshockQuestion[];
   public constructor(questions: IChickenshockQuestion[]) {
     this.questions = questions;
+  }
+}
+
+export class FinitequizConfiguration implements IFinitequizConfiguration {
+  id?: string;
+  questions: IFinitequizQuestion[];
+  public constructor(questions: IFinitequizQuestion[]) {
+    this.questions = questions;
+  }
+}
+
+export class CrosswordpuzzleConfiguration
+  implements ICrosswordpuzzleConfiguration
+{
+  id?: string;
+  name: string;
+  questions: ICrosswordpuzzleQuestion[];
+
+  public constructor(name: string, questions: ICrosswordpuzzleQuestion[]) {
+    this.name = name;
+    this.questions = questions;
+  }
+}
+
+export class CrosswordpuzzleQuestion implements ICrosswordpuzzleQuestion {
+  id?: string;
+  questionText: string;
+  answer: string;
+
+  public constructor(questionText: string, answer: string) {
+    this.questionText = questionText;
+    this.answer = answer;
   }
 }
 
@@ -175,17 +240,20 @@ export class Dungeon implements IDungeon {
 export class Task implements ITask {
   id: string;
   index: number;
+  description: string;
   game: Minigame;
   configurationId: string;
 
   public constructor(
     id: string,
     index: number,
+    description: string,
     game: Minigame,
     configurationId: string
   ) {
     this.id = id;
     this.index = index;
+    this.description = description;
     this.game = game;
     this.configurationId = configurationId;
   }
@@ -194,11 +262,18 @@ export class Task implements ITask {
 export class NPC implements INPC {
   id: string;
   index: number;
+  description: string;
   text: string[];
 
-  public constructor(id: string, index: number, text: string[]) {
+  public constructor(
+    id: string,
+    index: number,
+    description: string,
+    text: string[]
+  ) {
     this.id = id;
     this.index = index;
+    this.description = description;
     this.text = text;
   }
 }

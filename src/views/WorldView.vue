@@ -1,16 +1,19 @@
 <script setup lang="ts">
-import { IDungeon } from "@/ts/models";
+import { IDungeon, MapType } from "@/ts/models";
 import { getWorld } from "@/ts/world-rest-client";
 import { ref, watch } from "vue";
 import { useRoute } from "vue-router";
 import AreaBox from "../components/AreaBox.vue";
 import { useToast } from "vue-toastification";
+import MapImageModal from "@/components/MapImageModal.vue";
 
 useToast();
 const route = useRoute();
 const courseId = ref(parseInt(route.params.courseId as string));
 const worldIndex = ref(parseInt(route.params.worldIndex as string));
 const world = ref();
+
+const showMapModal = ref(false);
 
 loadSelectedWorld(courseId.value, worldIndex.value);
 
@@ -47,6 +50,7 @@ watch(
   <div v-if="world !== undefined" class="container mt-5">
     <h2>Configure World {{ world.index }}</h2>
     <h4>{{ world.staticName }}</h4>
+    <b-button @click="showMapModal = true">Show Map</b-button>
 
     <div style="margin-top: 30px">
       <b-table-simple>
@@ -88,4 +92,12 @@ watch(
       <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
     </div>
   </div>
+  <MapImageModal
+    :worldIndex="worldIndex"
+    :dungeonIndex="undefined"
+    :showModal="showMapModal"
+    modalTitle="Dungeon spots"
+    :mapType="MapType.DUNGEON"
+    @closedModal="showMapModal = false"
+  />
 </template>

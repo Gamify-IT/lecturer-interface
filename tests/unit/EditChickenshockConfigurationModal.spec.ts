@@ -21,6 +21,7 @@ describe("EditChickenshockConfigurationModal.vue", () => {
     minigame = {
       id: "Id",
       index: 1,
+      description: "Hit the chicken",
       game: Minigame.CHICKENSHOCK,
       configurationId: "configuration",
     };
