@@ -102,14 +102,14 @@ function editMinigameConfiguration(task: ITask) {
     case Minigame.CROSSWORDPUZZLE:
       showCrosswordpuzzleModal.value = true;
       break;
+    case Minigame.FINITEQUIZ:
+      showFinitequizModal.value = true;
+      break;
     default:
       console.log(
         "This minigame is currently not supported to be edited here."
       );
       break;
-  }
-  if (task.game == "FINITEQUIZ") {
-    showFinitequizModal.value = true;
   }
 }
 

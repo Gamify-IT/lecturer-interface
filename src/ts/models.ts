@@ -125,6 +125,8 @@ export class FinitequizConfiguration implements IFinitequizConfiguration {
   id?: string;
   questions: IFinitequizQuestion[];
   public constructor(questions: IFinitequizQuestion[]) {
+    this.questions = questions;
+  }
 }
 
 export class CrosswordpuzzleConfiguration
