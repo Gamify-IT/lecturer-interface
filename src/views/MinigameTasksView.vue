@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ITask, Minigame } from "@/ts/models";
+import { ITask, Minigame, MapType } from "@/ts/models";
 import { getMinigames, putMinigame } from "@/ts/minigame-rest-client";
 import { defineEmits, ref, watch } from "vue";
 import { useRoute } from "vue-router";
@@ -7,6 +7,9 @@ import { useToast } from "vue-toastification";
 import EditableStringAttribute from "@/components/EditableStringAttribute.vue";
 import EditMinigameConfigurationModal from "@/components/EditMinigameConfigurationModal.vue";
 import EditChickenshockConfigurationModal from "@/components/EditChickenshockConfigurationModal.vue";
+import EditFinitequizConfigurationModal from "@/components/EditFinitequizConfigurationModal.vue";
+import EditCrosswordpuzzleModal from "@/components/EditCrosswordpuzzleModal.vue";
+import MapImageModal from "@/components/MapImageModal.vue";
 
 const availableMinigames = Object.values(Minigame);
 
@@ -17,6 +20,8 @@ const courseId = ref(route.params.courseId as string);
 const worldIndex = ref(route.params.worldIndex as string);
 const dungeonIndex = ref(route.params.dungeonIndex as string);
 
+const showMapModal = ref(false);
+
 const editedMinigame = ref();
 const showEditModal = ref(false);
 const showChickenshockModal = ref(false);
@@ -25,6 +30,8 @@ const editDescription = ref(false);
 const currentMinigameId = ref(1);
 const inFocus = ref(false);
 const firstFocus = ref(false);
+const showFinitequizModal = ref(false);
+const showCrosswordpuzzleModal = ref(false);
 
 watch(
   () => [
@@ -287,11 +294,24 @@ function changedMinigame(task: ITask) {
 function editMinigameConfiguration(task: ITask) {
   editedMinigame.value = task;
   console.log("Want to edit minigame " + task.id);
-  if (task.game == "NONE") {
-    showEditModal.value = true;
-  }
-  if (task.game == "CHICKENSHOCK") {
-    showChickenshockModal.value = true;
+  switch (task.game) {
+    case Minigame.NONE:
+      showEditModal.value = true;
+      break;
+    case Minigame.CHICKENSHOCK:
+      showChickenshockModal.value = true;
+      break;
+    case Minigame.CROSSWORDPUZZLE:
+      showCrosswordpuzzleModal.value = true;
+      break;
+    case Minigame.FINITEQUIZ:
+      showFinitequizModal.value = true;
+      break;
+    default:
+      console.log(
+        "This minigame is currently not supported to be edited here."
+      );
+      break;
   }
 }
 
@@ -322,6 +342,8 @@ function closedEditModal() {
   console.log(editedMinigame.value.id);
   showEditModal.value = false;
   showChickenshockModal.value = false;
+  showFinitequizModal.value = false;
+  showCrosswordpuzzleModal.value = false;
 }
 </script>
 
@@ -334,6 +356,8 @@ function closedEditModal() {
       <h1 v-else>
         Minigames from World World {{ worldIndex }}, Dungeon {{ dungeonIndex }}
       </h1>
+      <b-button @click="showMapModal = true">Show Map</b-button>
+
       <b-card v-for="task in minigames" :key="task.id" class="mt-1">
         <b-row>
           <b-col sm="2">{{ task.index }}</b-col>
@@ -374,6 +398,14 @@ function closedEditModal() {
       </b-card>
     </div>
   </b-overlay>
+  <MapImageModal
+    :worldIndex="worldIndex"
+    :dungeonIndex="dungeonIndex"
+    :showModal="showMapModal"
+    modalTitle="Minigame spots"
+    :mapType="MapType.MINIGAME"
+    @closedModal="showMapModal = false"
+  />
   <EditMinigameConfigurationModal
     :showModal="showEditModal"
     :minigame="editedMinigame"
@@ -382,6 +414,18 @@ function closedEditModal() {
   />
   <EditChickenshockConfigurationModal
     :showModal="showChickenshockModal"
+    :minigame="editedMinigame"
+    @updateMinigameConfiguration="updateMinigameConfiguration"
+    @closedModal="closedEditModal"
+  />
+  <EditFinitequizConfigurationModal
+    :showModal="showFinitequizModal"
+    :minigame="editedMinigame"
+    @updateMinigameConfiguration="updateMinigameConfiguration"
+    @closedModal="closedEditModal"
+  />
+  <EditCrosswordpuzzleModal
+    :showModal="showCrosswordpuzzleModal"
     :minigame="editedMinigame"
     @updateMinigameConfiguration="updateMinigameConfiguration"
     @closedModal="closedEditModal"
