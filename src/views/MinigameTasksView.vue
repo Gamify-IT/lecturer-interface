@@ -6,6 +6,7 @@ import { useRoute } from "vue-router";
 import { useToast } from "vue-toastification";
 import EditMinigameConfigurationModal from "@/components/EditMinigameConfigurationModal.vue";
 import EditChickenshockConfigurationModal from "@/components/EditChickenshockConfigurationModal.vue";
+import EditFinitequizConfigurationModal from "@/components/EditFinitequizConfigurationModal.vue";
 
 const availableMinigames = Object.values(Minigame);
 
@@ -18,6 +19,7 @@ const dungeonIndex = ref(route.params.dungeonIndex as string);
 const editedMinigame = ref();
 const showEditModal = ref(false);
 const showChickenshockModal = ref(false);
+const showFinitequizModal = ref(false);
 
 watch(
   () => [
@@ -90,6 +92,9 @@ function editMinigameConfiguration(task: ITask) {
   if (task.game == "CHICKENSHOCK") {
     showChickenshockModal.value = true;
   }
+  if (task.game == "FINITEQUIZ") {
+    showFinitequizModal.value = true;
+  }
 }
 
 function updateMinigameConfiguration(task: ITask) {
@@ -102,6 +107,7 @@ function closedEditModal() {
   console.log(editedMinigame.value.id);
   showEditModal.value = false;
   showChickenshockModal.value = false;
+  showFinitequizModal.value = false;
 }
 </script>
 
@@ -144,6 +150,12 @@ function closedEditModal() {
   />
   <EditChickenshockConfigurationModal
     :showModal="showChickenshockModal"
+    :minigame="editedMinigame"
+    @updateMinigameConfiguration="updateMinigameConfiguration"
+    @closedModal="closedEditModal"
+  />
+  <EditFinitequizConfigurationModal
+    :showModal="showFinitequizModal"
     :minigame="editedMinigame"
     @updateMinigameConfiguration="updateMinigameConfiguration"
     @closedModal="closedEditModal"

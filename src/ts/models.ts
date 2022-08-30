@@ -63,7 +63,19 @@ export interface IChickenshockConfiguration {
   questions: IChickenshockQuestion[];
 }
 
+export interface IFinitequizConfiguration {
+  id?: string;
+  questions: IFinitequizQuestion[];
+}
+
 export interface IChickenshockQuestion {
+  id?: string;
+  text: string;
+  rightAnswer: string;
+  wrongAnswers: string[];
+}
+
+export interface IFinitequizQuestion {
   id?: string;
   text: string;
   rightAnswer: string;
@@ -73,6 +85,7 @@ export interface IChickenshockQuestion {
 export enum Minigame {
   NONE = "NONE",
   CHICKENSHOCK = "CHICKENSHOCK",
+  FINITEQUIZ = "FINITEQUIZ",
   BUGFINDER = "BUGFINDER",
   REGEX_GAME = "REGEX-GAME",
   CROSSWORDPUZZLE = "CROSSWORDPUZZLE",
@@ -84,6 +97,14 @@ export class ChickenshockConfiguration implements IChickenshockConfiguration {
   id?: string;
   questions: IChickenshockQuestion[];
   public constructor(questions: IChickenshockQuestion[]) {
+    this.questions = questions;
+  }
+}
+
+export class FinitequizConfiguration implements IFinitequizConfiguration {
+  id?: string;
+  questions: IFinitequizQuestion[];
+  public constructor(questions: IFinitequizQuestion[]) {
     this.questions = questions;
   }
 }
