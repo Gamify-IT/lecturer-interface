@@ -78,7 +78,6 @@ export interface IChickenshockQuestion {
   wrongAnswers: string[];
 }
 
-
 export interface ICrosswordpuzzleQuestion {
   id?: string;
   questionText: string;

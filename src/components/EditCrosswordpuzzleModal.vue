@@ -74,6 +74,7 @@ function checkFormValidity(): boolean {
 }
 
 function resetModal() {
+  currentEditingQuestion.value = new CrosswordpuzzleQuestion("", "");
   if (minigame.value.configurationId != undefined) {
     getCrosswordpuzzleConfig(minigame.value.configurationId)
       .then((response) => {
@@ -87,6 +88,7 @@ function resetModal() {
         }
       });
   } else {
+    configuration.value.id = undefined;
     configuration.value.questions = [];
   }
   console.log("Reset Modal");
@@ -120,7 +122,6 @@ function handleSubmit() {
   if (!checkFormValidity()) {
     return;
   }
-  resetModal();
   emit("updateMinigameConfiguration", minigame.value);
 }
 
