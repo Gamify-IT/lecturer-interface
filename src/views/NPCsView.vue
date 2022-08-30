@@ -1,17 +1,21 @@
 <script setup lang="ts">
-import { INPC, IWorld } from "@/ts/models";
+import { INPC, IWorld, MapType } from "@/ts/models";
 import { putNPC } from "@/ts/npc-rest-client";
 import { ref, watch } from "vue";
 import { useRoute } from "vue-router";
 import { useToast } from "vue-toastification";
+import EditableStringAttribute from "@/components/EditableStringAttribute.vue";
 import NPCEditModal from "@/components/EditNPCModal.vue";
 import { getArea } from "@/ts/area-rest-client";
+import MapImageModal from "@/components/MapImageModal.vue";
 
 const toast = useToast();
 const route = useRoute();
 const courseId = ref(route.params.courseId);
 const worldIndex = ref(route.params.worldIndex);
 const dungeonIndex = ref(route.params.dungeonIndex);
+
+const showMapModal = ref(false);
 
 const editedNPC = ref();
 const showEditModal = ref(false);
@@ -73,6 +77,23 @@ function updateNPC(npc: INPC) {
     });
 }
 
+function saveDescription(npc: INPC, description: string) {
+  npc.description = description;
+  putNPC(courseId.value, worldIndex.value, dungeonIndex.value, npc.index, npc)
+    .then(() => {
+      toast.success(`Description of NPC with index ${npc.index} was updated!`);
+    })
+    .catch(() => {
+      toast.error(
+        `Description of NPC with index ${npc.index} could not be updated!`
+      );
+    });
+}
+
+function cancelEditDescription() {
+  toast.warning(`Description in NPC was not updated!`);
+}
+
 function closedEditModal() {
   console.log("Parent got info that modal was closed");
   showEditModal.value = false;
@@ -85,10 +106,19 @@ function closedEditModal() {
     <h1 v-else>
       NPCs from World World {{ worldIndex }}, Dungeon {{ dungeonIndex }}
     </h1>
+    <b-button @click="showMapModal = true">Show Map</b-button>
     <b-card v-for="npc in npcs" :key="npc.id" class="mt-1">
       <b-row>
-        <b-col>{{ npc.index }}</b-col>
+        <b-col sm="2">{{ npc.index }}</b-col>
         <b-col>
+          <EditableStringAttribute
+            prefix="Description"
+            :value="npc.description"
+            @submit="(newDescription) => saveDescription(npc, newDescription)"
+            @cancel="cancelEditDescription"
+          />
+        </b-col>
+        <b-col sm="2">
           <b-button variant="info" size="small" @click="editNPC(npc)">
             <em class="bi bi-pencil-square"></em>
             Edit
@@ -97,6 +127,14 @@ function closedEditModal() {
       </b-row>
     </b-card>
   </div>
+  <MapImageModal
+    :worldIndex="worldIndex"
+    :dungeonIndex="dungeonIndex"
+    :showModal="showMapModal"
+    modalTitle="NPC spots"
+    :mapType="MapType.NPC"
+    @closedModal="showMapModal = false"
+  />
   <NPCEditModal
     :showModal="showEditModal"
     :npc="editedNPC"

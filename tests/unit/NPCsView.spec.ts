@@ -47,8 +47,11 @@ describe("NPCsView.vue", () => {
         ],
         [],
         [
-          new NPC("random uuid", 1, ["I am a NPC", "I give you a task"]),
-          new NPC("random uuid 2", 2, [
+          new NPC("random uuid", 1, "Welcome NPC", [
+            "I am a NPC",
+            "I give you a task",
+          ]),
+          new NPC("random uuid 2", 2, "Second NPC", [
             "I hope you met my ohter NPC friend before",
           ]),
         ]

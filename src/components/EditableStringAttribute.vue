@@ -57,7 +57,7 @@ function cancelEdit() {
       <em class="bi bi-pencil-square"></em>
     </b-button>
   </h5>
-  <b-col sm="6" v-else>
+  <b-col v-else>
     <b-form @submit="saveEdit" @cancel="cancelEdit">
       <b-input-group :prepend="prefix">
         <b-form-input v-model="editingValue"></b-form-input>
