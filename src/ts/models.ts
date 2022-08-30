@@ -82,6 +82,7 @@ export interface IFinitequizQuestion {
   text: string;
   rightAnswer: string;
   wrongAnswers: string[];
+}
 
 export enum MapType {
   NPC,
