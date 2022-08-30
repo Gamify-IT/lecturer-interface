@@ -1,4 +1,6 @@
 <script setup lang="ts">
+// compatible finitequiz versions: v0.0.1
+const compatibleVersions = ["v0.0.1"];
 import { defineProps, defineEmits, ref, watch } from "vue";
 import {
   ITask,
@@ -117,6 +119,10 @@ function handleOk() {
         parseInt(dungeonIndex.value),
         minigame.value
       );
+    })
+    .catch((error) => {
+      toast.error("There was an error updating the minigame configuration.");
+      console.log(error);
     });
 }
 
@@ -205,6 +211,12 @@ function addWrongAnswer() {
     @show="loadModal"
     @abort="resetModal"
   >
+    <template v-slot:title>
+      Edit Finitequiz configuration
+      <b-col style="font-size: 12px">
+        Compatible versions: {{ compatibleVersions }}</b-col
+      >
+    </template>
     <form
       ref="form"
       @submit.stop.prevent="handleSubmit"
