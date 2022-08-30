@@ -8,6 +8,7 @@ import EditableStringAttribute from "@/components/EditableStringAttribute.vue";
 import EditMinigameConfigurationModal from "@/components/EditMinigameConfigurationModal.vue";
 import EditChickenshockConfigurationModal from "@/components/EditChickenshockConfigurationModal.vue";
 import EditFinitequizConfigurationModal from "@/components/EditFinitequizConfigurationModal.vue";
+import EditCrosswordpuzzleModal from "@/components/EditCrosswordpuzzleModal.vue";
 import MapImageModal from "@/components/MapImageModal.vue";
 
 const availableMinigames = Object.values(Minigame);
@@ -24,6 +25,7 @@ const editedMinigame = ref();
 const showEditModal = ref(false);
 const showChickenshockModal = ref(false);
 const showFinitequizModal = ref(false);
+const showCrosswordpuzzleModal = ref(false);
 
 watch(
   () => [
@@ -90,11 +92,21 @@ function changedMinigame(task: ITask) {
 function editMinigameConfiguration(task: ITask) {
   editedMinigame.value = task;
   console.log("Want to edit minigame " + task.id);
-  if (task.game == "NONE") {
-    showEditModal.value = true;
-  }
-  if (task.game == "CHICKENSHOCK") {
-    showChickenshockModal.value = true;
+  switch (task.game) {
+    case Minigame.NONE:
+      showEditModal.value = true;
+      break;
+    case Minigame.CHICKENSHOCK:
+      showChickenshockModal.value = true;
+      break;
+    case Minigame.CROSSWORDPUZZLE:
+      showCrosswordpuzzleModal.value = true;
+      break;
+    default:
+      console.log(
+        "This minigame is currently not supported to be edited here."
+      );
+      break;
   }
   if (task.game == "FINITEQUIZ") {
     showFinitequizModal.value = true;
@@ -129,6 +141,7 @@ function closedEditModal() {
   showEditModal.value = false;
   showChickenshockModal.value = false;
   showFinitequizModal.value = false;
+  showCrosswordpuzzleModal.value = false;
 }
 </script>
 
@@ -195,6 +208,12 @@ function closedEditModal() {
   />
   <EditFinitequizConfigurationModal
     :showModal="showFinitequizModal"
+    :minigame="editedMinigame"
+    @updateMinigameConfiguration="updateMinigameConfiguration"
+    @closedModal="closedEditModal"
+  />
+  <EditCrosswordpuzzleModal
+    :showModal="showCrosswordpuzzleModal"
     :minigame="editedMinigame"
     @updateMinigameConfiguration="updateMinigameConfiguration"
     @closedModal="closedEditModal"
