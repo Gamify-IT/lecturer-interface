@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import config from "@/config";
 import { defineProps, defineEmits, ref, watch } from "vue";
-import { MapType } from "@/ts/models";
+import { MapType } from "@/ts/modals/models";
 
 const props = defineProps<{
   worldIndex: string | number;

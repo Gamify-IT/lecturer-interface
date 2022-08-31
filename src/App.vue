@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import CourseSidebarMenu from "@/components/CourseSidebarMenu.vue";
+import CourseSidebarMenu from "@/components/Sidebar/CourseSidebarMenu.vue";
 import { ref } from "vue";
 
 const upClicked = ref();

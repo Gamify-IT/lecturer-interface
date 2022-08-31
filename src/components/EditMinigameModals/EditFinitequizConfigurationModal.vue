@@ -1,17 +1,20 @@
 <script setup lang="ts">
+// compatible finitequiz versions: v0.0.1
+const compatibleVersions = ["v0.0.1"];
 import { defineProps, defineEmits, ref, watch } from "vue";
 import {
-  IChickenshockQuestion,
   ITask,
-  ChickenshockConfiguration,
-} from "@/ts/models";
-import {
-  getChickenshockConfig,
-  postChickenshockConfig,
-} from "@/ts/chickenshock-rest-client";
+  FinitequizConfiguration,
+  IFinitequizQuestion,
+} from "@/ts/modals/models";
+
 import { useToast } from "vue-toastification";
-import { putMinigame } from "@/ts/minigame-rest-client";
+import { putMinigame } from "@/ts/rest-clients/minigame-rest-client";
 import { useRoute } from "vue-router";
+import {
+  getFinitequizConfig,
+  postFinitequizConfig,
+} from "@/ts/rest-clients/finitequiz-rest-client";
 
 const props = defineProps<{
   minigame: ITask;
@@ -45,7 +48,7 @@ const toast = useToast();
 const minigame = ref(props.minigame);
 const form = ref();
 const showModal = ref(props.showModal);
-let configuration = ref(new ChickenshockConfiguration([]));
+let configuration = ref(new FinitequizConfiguration([]));
 const question = ref();
 const rightAnswer = ref();
 const showQuestionModal = ref();
@@ -94,7 +97,7 @@ function checkFormValidity(): boolean {
 
 function resetModal() {
   if (minigame.value.configurationId != undefined) {
-    getChickenshockConfig(minigame.value.configurationId)
+    getFinitequizConfig(minigame.value.configurationId)
       .then((response) => {
         configuration.value = response.data;
       })
@@ -115,7 +118,7 @@ function resetModal() {
 }
 
 function handleOk() {
-  postChickenshockConfig(configuration.value)
+  postFinitequizConfig(configuration.value)
     .then((response) => {
       minigame.value.configurationId = response.data.id;
       console.log("Submit Modal");
@@ -131,6 +134,10 @@ function handleOk() {
         parseInt(dungeonIndex.value),
         minigame.value
       );
+    })
+    .catch((error) => {
+      toast.error("There was an error updating the minigame configuration.");
+      console.log(error);
     });
 }
 
@@ -162,7 +169,7 @@ function loadModal() {
 }
 
 function removeQuestion(text: string) {
-  let filteredQuestions: IChickenshockQuestion[] = [];
+  let filteredQuestions: IFinitequizQuestion[] = [];
   configuration.value.questions.forEach((question) => {
     if (question.text != text) {
       filteredQuestions.push(question);
@@ -209,7 +216,7 @@ function addWrongAnswer() {
 </script>
 <template>
   <b-modal
-    title="Edit Chickenshock configuration"
+    title="Edit Finitequiz configuration"
     id="edit-modal"
     v-model="showModal"
     @hidden="hiddenModal"
@@ -218,6 +225,12 @@ function addWrongAnswer() {
     @show="loadModal"
     @abort="resetModal"
   >
+    <template v-slot:title>
+      Edit Finitequiz configuration
+      <b-col style="font-size: 12px">
+        Compatible versions: {{ compatibleVersions }}</b-col
+      >
+    </template>
     <form
       ref="form"
       @submit.stop.prevent="handleSubmit"
@@ -227,7 +240,7 @@ function addWrongAnswer() {
         <b-button
           variant="success"
           id="add-question-button"
-          v-b-modal.add-question
+          v-b-modal.add-question-finitequiz
         >
           add question
         </b-button>
@@ -253,8 +266,8 @@ function addWrongAnswer() {
     </form>
   </b-modal>
   <b-modal
-    id="add-question"
-    title="Add Question to Chickenshock configuration"
+    id="add-question-finitequiz"
+    title="Add Question to Finitequiz configuration"
     v-model="showQuestionModal"
     @hidden="resetQuestionModal"
     @show="resetQuestionModal"

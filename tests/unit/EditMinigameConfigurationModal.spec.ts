@@ -1,6 +1,6 @@
 import { shallowMount } from "@vue/test-utils";
-import EditMinigameConfigurationModal from "@/components/EditMinigameConfigurationModal.vue";
-import { Minigame } from "@/ts/models";
+import EditMinigameConfigurationModal from "@/components/EditMinigameModals/EditMinigameConfigurationModal.vue";
+import { Minigame } from "@/ts/modals/models";
 import BootstrapVue3, { BModal } from "bootstrap-vue-3";
 
 describe("EditMinigameConfigurationModal.vue", () => {

@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import { defineEmits } from "vue/dist/vue";
 import { ref } from "vue";
-import { postCourse } from "@/ts/course-rest-client";
+import { postCourse } from "@/ts/rest-clients/course-rest-client";
 import { useToast } from "vue-toastification";
-import { ICourse } from "@/ts/models";
+import { ICourse } from "@/ts/modals/models";
 import { defineProps, watch } from "vue";
-import { validateSemester } from "@/ts/validate";
+import { validateSemester } from "@/ts/validation/validate";
 
 const props = defineProps<{
   showModal: boolean;

@@ -2,7 +2,7 @@ import { mount, VueWrapper, flushPromises } from "@vue/test-utils";
 import mockAxios from "jest-mock-axios";
 import router from "@/router/index";
 import CourseView from "@/views/CourseView.vue";
-import { Course, ICourse } from "@/ts/models";
+import { Course, ICourse } from "@/ts/modals/models";
 import BootstrapVue3, { BButton, BFormInput } from "bootstrap-vue-3";
 import config from "@/config";
 import EditableStringAttribute from "@/components/EditableStringAttribute.vue";

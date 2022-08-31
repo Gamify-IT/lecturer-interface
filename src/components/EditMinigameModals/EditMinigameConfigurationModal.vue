@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { defineProps, defineEmits, ref, watch } from "vue";
-import { ITask } from "@/ts/models";
+import { ITask } from "@/ts/modals/models";
 
 const props = defineProps<{
   minigame: ITask;

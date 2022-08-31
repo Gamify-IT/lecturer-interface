@@ -2,7 +2,7 @@ import { mount, VueWrapper, flushPromises } from "@vue/test-utils";
 import mockAxios from "jest-mock-axios";
 import router from "@/router/index";
 import CoursesView from "@/views/CoursesView.vue";
-import { Course, ICourse } from "@/ts/models";
+import { Course, ICourse } from "@/ts/modals/models";
 import BootstrapVue3, { BCol, BRow } from "bootstrap-vue-3";
 import config from "@/config";
 

@@ -1,7 +1,7 @@
 import axios, { AxiosResponse } from "axios";
 
 import config from "@/config";
-import { INPC } from "./models";
+import { INPC } from "../modals/models";
 
 export async function putNPC(
   courseId: number,

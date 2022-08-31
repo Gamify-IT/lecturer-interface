@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { defineProps, ref, watch } from "vue";
-import { updateArea } from "@/ts/area-rest-client";
-import { IArea } from "@/ts/models";
+import { updateArea } from "@/ts/rest-clients/area-rest-client";
+import { IArea } from "@/ts/modals/models";
 import { useToast } from "vue-toastification";
 import EditableStringAttribute from "@/components/EditableStringAttribute.vue";
 

@@ -1,7 +1,7 @@
 import axios, { AxiosResponse } from "axios";
 
 import config from "@/config";
-import { IArea } from "./models";
+import { IArea } from "../modals/models";
 
 export async function getWorld(
   courseId: number,

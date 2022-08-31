@@ -1,6 +1,10 @@
 import { flushPromises, mount, VueWrapper } from "@vue/test-utils";
-import EditChickenshockConfigurationModal from "@/components/EditChickenshockConfigurationModal.vue";
-import { IChickenshockConfiguration, ITask, Minigame } from "@/ts/models";
+import EditChickenshockConfigurationModal from "@/components/EditMinigameModals/EditChickenshockConfigurationModal.vue";
+import {
+  IChickenshockConfiguration,
+  ITask,
+  Minigame,
+} from "@/ts/modals/models";
 import BootstrapVue3, { BButton, BModal } from "bootstrap-vue-3";
 import router from "@/router";
 import mockAxios from "jest-mock-axios";

@@ -2,7 +2,7 @@ import axios, { AxiosResponse } from "axios";
 
 import config from "@/config";
 
-import { IChickenshockConfiguration } from "@/ts/models";
+import { IChickenshockConfiguration } from "@/ts/modals/models";
 
 export async function postChickenshockConfig(
   chickenshockConfig: IChickenshockConfiguration

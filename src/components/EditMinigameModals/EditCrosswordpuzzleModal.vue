@@ -7,14 +7,14 @@ import {
   CrosswordpuzzleConfiguration,
   IChickenshockQuestion,
   CrosswordpuzzleQuestion,
-} from "@/ts/models";
+} from "@/ts/modals/models";
 import { useToast } from "vue-toastification";
-import { putMinigame } from "@/ts/minigame-rest-client";
+import { putMinigame } from "@/ts/rest-clients/minigame-rest-client";
 import { useRoute } from "vue-router";
 import {
   getCrosswordpuzzleConfig,
   postCrosswordpuzzleConfig,
-} from "@/ts/crosswordpuzzle-rest-client";
+} from "@/ts/rest-clients/crosswordpuzzle-rest-client";
 import EditableStringAttribute from "@/components/EditableStringAttribute.vue";
 
 const props = defineProps<{

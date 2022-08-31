@@ -1,6 +1,10 @@
 <script setup lang="ts">
 import { defineEmits, nextTick, ref, watch } from "vue";
-import { getCourse, putCourse, deleteCourse } from "@/ts/course-rest-client";
+import {
+  getCourse,
+  putCourse,
+  deleteCourse,
+} from "@/ts/rest-clients/course-rest-client";
 import { useRoute, useRouter } from "vue-router";
 import { useToast } from "vue-toastification";
 import EditableStringAttribute from "@/components/EditableStringAttribute.vue";

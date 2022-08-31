@@ -2,7 +2,7 @@ import { mount, VueWrapper, flushPromises } from "@vue/test-utils";
 import mockAxios from "jest-mock-axios";
 import router from "@/router/index";
 import MinigameTasksView from "@/views/MinigameTasksView.vue";
-import { ITask, Minigame, Task } from "@/ts/models";
+import { ITask, Minigame, Task } from "@/ts/modals/models";
 import BootstrapVue3 from "bootstrap-vue-3";
 import config from "@/config";
 
