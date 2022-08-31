@@ -72,6 +72,20 @@ watch(
   { deep: true }
 );
 
+watch(
+  () => [
+    route.params.courseId,
+    route.params.worldIndex,
+    route.params.dungeonIndex,
+  ],
+  (newVal) => {
+    courseId.value = newVal[0] as string;
+    worldIndex.value = newVal[1] as string;
+    dungeonIndex.value = newVal[2] as string;
+  },
+  { deep: true }
+);
+
 const emit = defineEmits<{
   (e: "updateMinigameConfiguration", minigame: ITask): void;
   (e: "closedModal"): void;
