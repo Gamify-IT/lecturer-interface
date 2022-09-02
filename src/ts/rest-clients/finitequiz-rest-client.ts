@@ -8,11 +8,11 @@ export async function postFinitequizConfig(
   finitequizConfig: IFinitequizConfiguration
 ): Promise<AxiosResponse> {
   return axios.post(
-    `${config.apiFinitequizUrl}/configurations`,
+    `${config.finitequizApiUrl}/configurations`,
     finitequizConfig
   );
 }
 
 export async function getFinitequizConfig(id: string): Promise<AxiosResponse> {
-  return axios.get(`${config.apiFinitequizUrl}/configurations/${id}`);
+  return axios.get(`${config.finitequizApiUrl}/configurations/${id}`);
 }

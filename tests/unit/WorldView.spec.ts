@@ -55,7 +55,7 @@ describe("WorldView.vue", () => {
   });
   test("WorldView displays table correctly", async () => {
     expect(mockAxios.get).toHaveBeenCalledWith(
-      `${config.apiBaseUrl}/courses/${courseId}/worlds/${world.index}`
+      `${config.overworldApiUrl}/courses/${courseId}/worlds/${world.index}`
     );
 
     await flushPromises();

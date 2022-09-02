@@ -75,7 +75,7 @@ describe("NPCsView.vue", () => {
       `${config.apiBaseUrl}/courses/${courseId}/worlds/${worldIndex}/npcs`
     );*/
     expect(mockAxios.get).toHaveBeenCalledWith(
-      `${config.apiBaseUrl}/courses/${courseId}/worlds/${worldIndex}`
+      `${config.overworldApiUrl}/courses/${courseId}/worlds/${worldIndex}`
     );
 
     await flushPromises();

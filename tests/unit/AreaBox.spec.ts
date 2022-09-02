@@ -86,7 +86,7 @@ describe("AreaBox.vue", () => {
     expect(areaNameColumn.html()).toContain(updatedDungeonTopicName);
 
     expect(mockAxios.put).toHaveBeenCalledWith(
-      `${config.apiBaseUrl}/courses/${courseId}/worlds/${worldIndex}/dungeons/${dungeonIndex}`,
+      `${config.overworldApiUrl}/courses/${courseId}/worlds/${worldIndex}/dungeons/${dungeonIndex}`,
       dungeon
     );
   });

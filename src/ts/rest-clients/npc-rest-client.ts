@@ -12,12 +12,12 @@ export async function putNPC(
 ): Promise<AxiosResponse> {
   if (dungoenIndex != undefined) {
     return axios.put(
-      `${config.apiBaseUrl}/courses/${courseId}/worlds/${worldIndex}/dungeons/${dungoenIndex}/npcs/${npcIndex}`,
+      `${config.overworldApiUrl}/courses/${courseId}/worlds/${worldIndex}/dungeons/${dungoenIndex}/npcs/${npcIndex}`,
       npc
     );
   } else {
     return axios.put(
-      `${config.apiBaseUrl}/courses/${courseId}/worlds/${worldIndex}/npcs/${npcIndex}`,
+      `${config.overworldApiUrl}/courses/${courseId}/worlds/${worldIndex}/npcs/${npcIndex}`,
       npc
     );
   }

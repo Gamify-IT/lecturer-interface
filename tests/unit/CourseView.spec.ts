@@ -37,7 +37,7 @@ describe("CourseView.vue", () => {
   });
   test("CourseView displays course details", async () => {
     expect(mockAxios.get).toHaveBeenCalledWith(
-      `${config.apiBaseUrl}/courses/${course.id}`
+      `${config.overworldApiUrl}/courses/${course.id}`
     );
 
     await flushPromises();
@@ -89,7 +89,7 @@ describe("CourseView.vue", () => {
     expect(wrapper.html()).toContain(updatedCourseName);
 
     expect(mockAxios.put).toHaveBeenCalledWith(
-      `${config.apiBaseUrl}/courses/${course.id}`,
+      `${config.overworldApiUrl}/courses/${course.id}`,
       course
     );
   });
@@ -139,7 +139,7 @@ describe("CourseView.vue", () => {
     expect(wrapper.html()).toContain(updatedCourseDescription);
 
     expect(mockAxios.put).toHaveBeenCalledWith(
-      `${config.apiBaseUrl}/courses/${course.id}`,
+      `${config.overworldApiUrl}/courses/${course.id}`,
       course
     );
   });

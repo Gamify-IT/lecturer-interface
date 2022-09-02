@@ -8,7 +8,7 @@ export async function getWorld(
   worldIndex: number
 ): Promise<AxiosResponse> {
   return axios.get(
-    `${config.apiBaseUrl}/courses/${courseId}/worlds/${worldIndex}`
+    `${config.overworldApiUrl}/courses/${courseId}/worlds/${worldIndex}`
   );
 }
 
@@ -18,7 +18,7 @@ export async function updateWorld(
   world: IArea
 ): Promise<AxiosResponse> {
   return axios.put(
-    `${config.apiBaseUrl}/courses/${courseId}/worlds/${worldIndex}`,
+    `${config.overworldApiUrl}/courses/${courseId}/worlds/${worldIndex}`,
     world
   );
 }

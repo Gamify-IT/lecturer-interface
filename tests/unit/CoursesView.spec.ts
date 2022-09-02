@@ -37,7 +37,9 @@ describe("CoursesView.vue", () => {
     });
   });
   test("CoursesView.vue displays all received courses", async () => {
-    expect(mockAxios.get).toHaveBeenCalledWith(`${config.apiBaseUrl}/courses`);
+    expect(mockAxios.get).toHaveBeenCalledWith(
+      `${config.overworldApiUrl}/courses`
+    );
 
     let course: ICourse;
 

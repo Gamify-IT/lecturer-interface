@@ -46,7 +46,7 @@ describe("MinigameTaskView.vue", () => {
   });
   test("MinigameTaskView displays all minigames", async () => {
     expect(mockAxios.get).toHaveBeenCalledWith(
-      `${config.apiBaseUrl}/courses/${courseId}/worlds/${worldIndex}/minigame-tasks`
+      `${config.overworldApiUrl}/courses/${courseId}/worlds/${worldIndex}/minigame-tasks`
     );
 
     await flushPromises();
