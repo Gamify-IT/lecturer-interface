@@ -1,7 +1,7 @@
 import axios, { AxiosResponse } from "axios";
 
 import config from "@/config";
-import { ITask } from "@/ts/modals/models";
+import { ITask } from "@/ts/models/overworld-models";
 
 export async function getMinigames(
   courseId: number,

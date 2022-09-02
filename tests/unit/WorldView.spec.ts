@@ -2,7 +2,7 @@ import { mount, VueWrapper, flushPromises } from "@vue/test-utils";
 import mockAxios from "jest-mock-axios";
 import router from "@/router/index";
 import WorldView from "@/views/WorldView.vue";
-import { Dungeon, IWorld, World } from "@/ts/modals/models";
+import { Dungeon, IWorld, World } from "@/ts/models/overworld-models";
 import BootstrapVue3, {
   BFormCheckbox,
   BTableSimple,

@@ -2,7 +2,7 @@
 import { defineEmits } from "vue/dist/vue";
 import { ref } from "vue";
 import { useToast } from "vue-toastification";
-import { ICourse } from "@/ts/modals/models";
+import { ICourse } from "@/ts/models/overworld-models";
 import { defineProps, watch } from "vue";
 import { postCloneCourse } from "@/ts/rest-clients/course-rest-client";
 import { validateSemester } from "@/ts/validation/validate";

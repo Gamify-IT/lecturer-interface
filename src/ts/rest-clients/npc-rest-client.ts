@@ -1,7 +1,7 @@
 import axios, { AxiosResponse } from "axios";
 
 import config from "@/config";
-import { INPC } from "../modals/models";
+import { INPC } from "../models/overworld-models";
 
 export async function putNPC(
   courseId: number,

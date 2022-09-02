@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { INPC, IWorld, MapType } from "@/ts/modals/models";
+import { INPC, IWorld, MapType } from "@/ts/models/overworld-models";
 import { putNPC } from "@/ts/rest-clients/npc-rest-client";
 import { defineEmits, ref, watch } from "vue";
 import { useRoute } from "vue-router";

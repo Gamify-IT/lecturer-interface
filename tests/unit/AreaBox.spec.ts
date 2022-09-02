@@ -1,6 +1,6 @@
 import { flushPromises, mount } from "@vue/test-utils";
 import AreaBox from "@/components/WorldComponents/AreaBox.vue";
-import { Dungeon, IArea, Minigame, Task } from "@/ts/modals/models";
+import { Dungeon, IArea, Minigame, Task } from "@/ts/models/overworld-models";
 import BootstrapVue3, { BButton, BFormInput } from "bootstrap-vue-3";
 import WrapperLike from "@vue/test-utils/dist/interfaces/wrapperLike";
 import config from "@/config";

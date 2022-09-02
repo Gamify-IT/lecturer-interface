@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ITask, Minigame, MapType } from "@/ts/modals/models";
+import { ITask, Minigame, MapType } from "@/ts/models/overworld-models";
 import {
   getMinigames,
   putMinigame,

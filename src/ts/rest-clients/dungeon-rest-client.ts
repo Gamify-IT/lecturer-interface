@@ -1,7 +1,7 @@
 import axios, { AxiosResponse } from "axios";
 
 import config from "@/config";
-import { IArea } from "../modals/models";
+import { IArea } from "../models/overworld-models";
 
 export async function getDungeon(
   courseId: number,

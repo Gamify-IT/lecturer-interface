@@ -2,12 +2,11 @@
 // compatible crosswordpuzzle versions: v0.0.6
 const compatibleVersions = ["v0.0.6"];
 import { defineProps, defineEmits, ref, watch } from "vue";
+import { ITask } from "@/ts/models/overworld-models";
 import {
-  ITask,
   CrosswordpuzzleConfiguration,
-  IChickenshockQuestion,
   CrosswordpuzzleQuestion,
-} from "@/ts/modals/models";
+} from "@/ts/models/crosswordpuzzle-models";
 import { useToast } from "vue-toastification";
 import { putMinigame } from "@/ts/rest-clients/minigame-rest-client";
 import { useRoute } from "vue-router";

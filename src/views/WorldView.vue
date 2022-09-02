@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { IDungeon, MapType } from "@/ts/modals/models";
+import { IDungeon, MapType } from "@/ts/models/overworld-models";
 import { getWorld } from "@/ts/rest-clients/world-rest-client";
 import { defineEmits, ref, watch } from "vue";
 import { useRoute } from "vue-router";

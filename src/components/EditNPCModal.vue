@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { defineProps, defineEmits, ref, watch } from "vue";
-import { INPC } from "@/ts/modals/models";
+import { INPC } from "@/ts/models/overworld-models";
 
 const props = defineProps<{
   npc: INPC;

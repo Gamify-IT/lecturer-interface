@@ -2,9 +2,8 @@
 import { defineProps, defineEmits, ref, watch } from "vue";
 import {
   IChickenshockQuestion,
-  ITask,
   ChickenshockConfiguration,
-} from "@/ts/modals/models";
+} from "@/ts/models/chickenshock-models";
 import {
   getChickenshockConfig,
   postChickenshockConfig,
@@ -12,6 +11,7 @@ import {
 import { useToast } from "vue-toastification";
 import { putMinigame } from "@/ts/rest-clients/minigame-rest-client";
 import { useRoute } from "vue-router";
+import { ITask } from "@/ts/models/overworld-models";
 
 const props = defineProps<{
   minigame: ITask;

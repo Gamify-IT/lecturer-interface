@@ -1,7 +1,7 @@
 import axios, { AxiosResponse } from "axios";
 
 import config from "@/config";
-import { CourseInitialData, ICourse } from "../modals/models";
+import { CourseInitialData, ICourse } from "../models/overworld-models";
 
 export async function getCourses(): Promise<AxiosResponse> {
   return axios.get(`${config.apiBaseUrl}/courses`);

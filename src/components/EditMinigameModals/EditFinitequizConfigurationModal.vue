@@ -2,12 +2,11 @@
 // compatible finitequiz versions: v0.0.1
 const compatibleVersions = ["v0.0.1"];
 import { defineProps, defineEmits, ref, watch } from "vue";
+import { ITask } from "@/ts/models/overworld-models";
 import {
-  ITask,
   FinitequizConfiguration,
   IFinitequizQuestion,
-} from "@/ts/modals/models";
-
+} from "@/ts/models/finitequiz-models";
 import { useToast } from "vue-toastification";
 import { putMinigame } from "@/ts/rest-clients/minigame-rest-client";
 import { useRoute } from "vue-router";

@@ -2,7 +2,7 @@ import axios, { AxiosResponse } from "axios";
 
 import config from "@/config";
 
-import { ICrosswordpuzzleConfiguration } from "@/ts/modals/models";
+import { ICrosswordpuzzleConfiguration } from "@/ts/models/crosswordpuzzle-models";
 
 export async function postCrosswordpuzzleConfig(
   chickenshockConfig: ICrosswordpuzzleConfiguration

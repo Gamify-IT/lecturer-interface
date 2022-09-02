@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ICourse, ICourseItem } from "@/ts/modals/models";
+import { ICourse, ICourseItem } from "@/ts/models/overworld-models";
 import { getCourses } from "@/ts/rest-clients/course-rest-client";
 import { ref, watch } from "vue";
 import { useRouter } from "vue-router";

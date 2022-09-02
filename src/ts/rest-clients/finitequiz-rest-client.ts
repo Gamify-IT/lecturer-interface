@@ -2,7 +2,7 @@ import axios, { AxiosResponse } from "axios";
 
 import config from "@/config";
 
-import { IFinitequizConfiguration } from "@/ts/modals/models";
+import { IFinitequizConfiguration } from "@/ts/models/finitequiz-models";
 
 export async function postFinitequizConfig(
   finitequizConfig: IFinitequizConfiguration
