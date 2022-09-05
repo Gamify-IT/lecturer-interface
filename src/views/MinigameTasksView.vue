@@ -1,14 +1,17 @@
 <script setup lang="ts">
-import { ITask, Minigame, MapType } from "@/ts/models";
-import { getMinigames, putMinigame } from "@/ts/minigame-rest-client";
+import { ITask, Minigame, MapType } from "@/ts/models/overworld-models";
+import {
+  getMinigames,
+  putMinigame,
+} from "@/ts/rest-clients/minigame-rest-client";
 import { defineEmits, ref, watch } from "vue";
 import { useRoute } from "vue-router";
 import { useToast } from "vue-toastification";
 import EditableStringAttribute from "@/components/EditableStringAttribute.vue";
-import EditMinigameConfigurationModal from "@/components/EditMinigameConfigurationModal.vue";
-import EditChickenshockConfigurationModal from "@/components/EditChickenshockConfigurationModal.vue";
-import EditFinitequizConfigurationModal from "@/components/EditFinitequizConfigurationModal.vue";
-import EditCrosswordpuzzleModal from "@/components/EditCrosswordpuzzleModal.vue";
+import EditMinigameConfigurationModal from "@/components/EditMinigameModals/EditMinigameConfigurationModal.vue";
+import EditChickenshockConfigurationModal from "@/components/EditMinigameModals/EditChickenshockConfigurationModal.vue";
+import EditFinitequizConfigurationModal from "@/components/EditMinigameModals/EditFinitequizConfigurationModal.vue";
+import EditCrosswordpuzzleModal from "@/components/EditMinigameModals/EditCrosswordpuzzleModal.vue";
 import MapImageModal from "@/components/MapImageModal.vue";
 
 const availableMinigames = Object.values(Minigame);

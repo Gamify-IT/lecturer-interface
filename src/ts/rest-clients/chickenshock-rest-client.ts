@@ -2,13 +2,13 @@ import axios, { AxiosResponse } from "axios";
 
 import config from "@/config";
 
-import { IChickenshockConfiguration } from "@/ts/models";
+import { IChickenshockConfiguration } from "@/ts/models/chickenshock-models";
 
 export async function postChickenshockConfig(
   chickenshockConfig: IChickenshockConfiguration
 ): Promise<AxiosResponse> {
   return axios.post(
-    `${config.apiChickenshockUrl}/configurations`,
+    `${config.chickenshockApiUrl}/configurations`,
     chickenshockConfig
   );
 }
@@ -16,5 +16,5 @@ export async function postChickenshockConfig(
 export async function getChickenshockConfig(
   id: string
 ): Promise<AxiosResponse> {
-  return axios.get(`${config.apiChickenshockUrl}/configurations/${id}`);
+  return axios.get(`${config.chickenshockApiUrl}/configurations/${id}`);
 }

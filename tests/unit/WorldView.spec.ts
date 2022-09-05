@@ -2,7 +2,7 @@ import { mount, VueWrapper, flushPromises } from "@vue/test-utils";
 import mockAxios from "jest-mock-axios";
 import router from "@/router/index";
 import WorldView from "@/views/WorldView.vue";
-import { Dungeon, IWorld, World } from "@/ts/models";
+import { Dungeon, IWorld, World } from "@/ts/models/overworld-models";
 import BootstrapVue3, {
   BFormCheckbox,
   BTableSimple,
@@ -55,7 +55,7 @@ describe("WorldView.vue", () => {
   });
   test("WorldView displays table correctly", async () => {
     expect(mockAxios.get).toHaveBeenCalledWith(
-      `${config.apiBaseUrl}/courses/${courseId}/worlds/${world.index}`
+      `${config.overworldApiUrl}/courses/${courseId}/worlds/${world.index}`
     );
 
     await flushPromises();

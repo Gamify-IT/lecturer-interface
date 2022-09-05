@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import { INPC, IWorld, MapType } from "@/ts/models";
-import { putNPC } from "@/ts/npc-rest-client";
+import { INPC, IWorld, MapType } from "@/ts/models/overworld-models";
+import { putNPC } from "@/ts/rest-clients/npc-rest-client";
 import { defineEmits, ref, watch } from "vue";
 import { useRoute } from "vue-router";
 import { useToast } from "vue-toastification";
 import EditableStringAttribute from "@/components/EditableStringAttribute.vue";
 import NPCEditModal from "@/components/EditNPCModal.vue";
-import { getArea } from "@/ts/area-rest-client";
+import { getArea } from "@/ts/rest-clients/area-rest-client";
 import MapImageModal from "@/components/MapImageModal.vue";
 
 const toast = useToast();

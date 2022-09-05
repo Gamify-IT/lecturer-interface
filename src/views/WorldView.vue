@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { IDungeon, MapType } from "@/ts/models";
-import { getWorld } from "@/ts/world-rest-client";
+import { IDungeon, MapType } from "@/ts/models/overworld-models";
+import { getWorld } from "@/ts/rest-clients/world-rest-client";
 import { defineEmits, ref, watch } from "vue";
 import { useRoute } from "vue-router";
-import AreaBox from "../components/AreaBox.vue";
+import AreaBox from "../components/WorldComponents/AreaBox.vue";
 import { useToast } from "vue-toastification";
 import MapImageModal from "@/components/MapImageModal.vue";
 

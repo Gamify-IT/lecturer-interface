@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import { defineProps, nextTick, onMounted, ref, watch } from "vue";
 import "vue-sidebar-menu/dist/vue-sidebar-menu.css";
-import { ICourse, IDungeon, ITask, IWorld } from "@/ts/models";
+import { ICourse, IDungeon, ITask, IWorld } from "@/ts/models/overworld-models";
 
 import { computed } from "vue";
 import { useRouter } from "vue-router";
-import { getCourse } from "@/ts/course-rest-client";
+import { getCourse } from "@/ts/rest-clients/course-rest-client";
 
 const props = defineProps({
   upClicked: Boolean,

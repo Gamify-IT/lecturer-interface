@@ -70,41 +70,6 @@ export interface CourseInitialData {
   semester: string;
 }
 
-export interface IChickenshockConfiguration {
-  id?: string;
-  questions: IChickenshockQuestion[];
-}
-
-export interface IFinitequizConfiguration {
-  id?: string;
-  questions: IFinitequizQuestion[];
-}
-export interface ICrosswordpuzzleConfiguration {
-  id?: string;
-  name: string;
-  questions: ICrosswordpuzzleQuestion[];
-}
-
-export interface IChickenshockQuestion {
-  id?: string;
-  text: string;
-  rightAnswer: string;
-  wrongAnswers: string[];
-}
-
-export interface IFinitequizQuestion {
-  id?: string;
-  text: string;
-  rightAnswer: string;
-  wrongAnswers: string[];
-}
-
-export interface ICrosswordpuzzleQuestion {
-  id?: string;
-  questionText: string;
-  answer: string;
-}
-
 export enum MapType {
   NPC,
   MINIGAME,
@@ -121,46 +86,6 @@ export enum Minigame {
   CROSSWORDPUZZLE = "CROSSWORDPUZZLE",
   GIT_CARD_GAME = "GIT-CARD-GAME",
   UML_GAME = "UML-GAME",
-}
-
-export class ChickenshockConfiguration implements IChickenshockConfiguration {
-  id?: string;
-  questions: IChickenshockQuestion[];
-  public constructor(questions: IChickenshockQuestion[]) {
-    this.questions = questions;
-  }
-}
-
-export class FinitequizConfiguration implements IFinitequizConfiguration {
-  id?: string;
-  questions: IFinitequizQuestion[];
-  public constructor(questions: IFinitequizQuestion[]) {
-    this.questions = questions;
-  }
-}
-
-export class CrosswordpuzzleConfiguration
-  implements ICrosswordpuzzleConfiguration
-{
-  id?: string;
-  name: string;
-  questions: ICrosswordpuzzleQuestion[];
-
-  public constructor(name: string, questions: ICrosswordpuzzleQuestion[]) {
-    this.name = name;
-    this.questions = questions;
-  }
-}
-
-export class CrosswordpuzzleQuestion implements ICrosswordpuzzleQuestion {
-  id?: string;
-  questionText: string;
-  answer: string;
-
-  public constructor(questionText: string, answer: string) {
-    this.questionText = questionText;
-    this.answer = answer;
-  }
 }
 
 export class Course implements ICourse {

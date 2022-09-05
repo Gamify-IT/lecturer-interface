@@ -1,81 +1,72 @@
 <script setup lang="ts">
 import { defineEmits } from "vue/dist/vue";
 import { ref } from "vue";
+import { postCourse } from "@/ts/rest-clients/course-rest-client";
 import { useToast } from "vue-toastification";
-import { ICourse } from "@/ts/models";
+import { ICourse } from "@/ts/models/overworld-models";
 import { defineProps, watch } from "vue";
-import { postCloneCourse } from "@/ts/course-rest-client";
-import { validateSemester } from "@/ts/validate";
+import { validateSemester } from "@/ts/validation/validate";
 
 const props = defineProps<{
   showModal: boolean;
-  course: ICourse;
 }>();
-let showModal = ref(props.showModal);
-let course = ref(props.course);
+
 let nameInput = ref("");
 let descriptionInput = ref("");
 let semesterInput = ref("");
+let showModal = ref(props.showModal);
 let error = ref("");
 const toast = useToast();
 
 const emit = defineEmits<{
-  (e: "cloned", emitCourse: ICourse): void;
+  (e: "created", course: ICourse): void;
   (e: "closedModal"): void;
 }>();
 
 watch(
   () => props.showModal,
   (newBoolean) => {
+    console.log("Test");
     showModal.value = newBoolean;
   },
   { deep: true }
 );
 
-watch(
-  () => props.course,
-  (newCourse) => {
-    course.value = newCourse;
-    startClone(course.value);
-  }
-);
-
 function handleOk() {
   if (validateSemester(semesterInput.value)) {
-    console.log(`clone course with new name "${nameInput.value}",
+    console.log(
+      `create course with the name "${nameInput.value}",
   description "${descriptionInput.value}",
-  in the semester "${semesterInput.value}"`);
-    postCloneCourse(
-      {
-        courseName: nameInput.value,
-        description: descriptionInput.value,
-        semester: semesterInput.value,
-      },
-      course.value.id
-    )
+  in the semester "${semesterInput.value}"`
+    );
+    emit("closedModal");
+    postCourse({
+      courseName: nameInput.value,
+      description: descriptionInput.value,
+      semester: semesterInput.value,
+    })
       .then((response) => {
-        emit("cloned", response.data);
+        emit("created", response.data);
         toast.success(`Course ${response.data.courseName} is created!`);
       })
       .catch((error) => {
-        toast.error(`Course ${course.value.id} could not be cloned!`);
+        toast.error(`Course ${nameInput.value} could not be created created!`);
         console.log(error);
       });
   } else {
-    console.log("error");
     error.value = "The semester must be in the format (SS/WS)-year(22)";
   }
 }
-function startClone(currentCourse: ICourse) {
-  nameInput.value = currentCourse.courseName;
-  descriptionInput.value = currentCourse.description;
-  semesterInput.value = currentCourse.semester;
-}
-function hiddenModal() {
-  error.value = "";
-  emit("closedModal");
+function resetModal() {
+  nameInput.value = "";
+  descriptionInput.value = "";
+  semesterInput.value = "";
 }
 function handleCancel() {
+  emit("closedModal");
+}
+function handleHidden() {
+  error.value = "";
   emit("closedModal");
 }
 </script>
@@ -85,8 +76,8 @@ function handleCancel() {
     v-model="showModal"
     title="Create course"
     id="create-course"
-    @hidden="hiddenModal"
-    @ok="handleOk"
+    @show="resetModal"
+    @hidden="handleHidden"
   >
     <form ref="form" @submit.stop.prevent="">
       <b-form-group label="Name" label-for="name">

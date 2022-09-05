@@ -1,6 +1,6 @@
 import { flushPromises, mount } from "@vue/test-utils";
-import AreaBox from "@/components/AreaBox.vue";
-import { Dungeon, IArea, Minigame, Task } from "@/ts/models";
+import AreaBox from "@/components/WorldComponents/AreaBox.vue";
+import { Dungeon, IArea, Minigame, Task } from "@/ts/models/overworld-models";
 import BootstrapVue3, { BButton, BFormInput } from "bootstrap-vue-3";
 import WrapperLike from "@vue/test-utils/dist/interfaces/wrapperLike";
 import config from "@/config";
@@ -86,7 +86,7 @@ describe("AreaBox.vue", () => {
     expect(areaNameColumn.html()).toContain(updatedDungeonTopicName);
 
     expect(mockAxios.put).toHaveBeenCalledWith(
-      `${config.apiBaseUrl}/courses/${courseId}/worlds/${worldIndex}/dungeons/${dungeonIndex}`,
+      `${config.overworldApiUrl}/courses/${courseId}/worlds/${worldIndex}/dungeons/${dungeonIndex}`,
       dungeon
     );
   });

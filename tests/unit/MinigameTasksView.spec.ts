@@ -2,7 +2,7 @@ import { mount, VueWrapper, flushPromises } from "@vue/test-utils";
 import mockAxios from "jest-mock-axios";
 import router from "@/router/index";
 import MinigameTasksView from "@/views/MinigameTasksView.vue";
-import { ITask, Minigame, Task } from "@/ts/models";
+import { ITask, Minigame, Task } from "@/ts/models/overworld-models";
 import BootstrapVue3 from "bootstrap-vue-3";
 import config from "@/config";
 
@@ -46,7 +46,7 @@ describe("MinigameTaskView.vue", () => {
   });
   test("MinigameTaskView displays all minigames", async () => {
     expect(mockAxios.get).toHaveBeenCalledWith(
-      `${config.apiBaseUrl}/courses/${courseId}/worlds/${worldIndex}/minigame-tasks`
+      `${config.overworldApiUrl}/courses/${courseId}/worlds/${worldIndex}/minigame-tasks`
     );
 
     await flushPromises();

@@ -2,7 +2,7 @@ import { mount, VueWrapper, flushPromises } from "@vue/test-utils";
 import mockAxios from "jest-mock-axios";
 import router from "@/router/index";
 import NPCView from "@/views/NPCsView.vue";
-import { Dungeon, INPC, NPC, World } from "@/ts/models";
+import { Dungeon, INPC, NPC, World } from "@/ts/models/overworld-models";
 import BootstrapVue3 from "bootstrap-vue-3";
 import config from "@/config";
 
@@ -75,7 +75,7 @@ describe("NPCsView.vue", () => {
       `${config.apiBaseUrl}/courses/${courseId}/worlds/${worldIndex}/npcs`
     );*/
     expect(mockAxios.get).toHaveBeenCalledWith(
-      `${config.apiBaseUrl}/courses/${courseId}/worlds/${worldIndex}`
+      `${config.overworldApiUrl}/courses/${courseId}/worlds/${worldIndex}`
     );
 
     await flushPromises();

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import CourseSidebarMenu from "@/components/CourseSidebarMenu.vue";
+import CourseSidebarMenu from "@/components/Sidebar/CourseSidebarMenu.vue";
 import { ref } from "vue";
 
 const upClicked = ref();
@@ -55,7 +55,7 @@ function returnFocus() {
       ></router-view>
       <footer class="py-2 footer">
         <div class="notice-right">
-          <a href="/third-party-license-notice">Licence notice</a>
+          <a href="/third-party-license-notice">License notice</a>
         </div>
       </footer>
     </div>

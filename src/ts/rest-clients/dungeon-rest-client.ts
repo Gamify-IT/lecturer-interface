@@ -1,7 +1,7 @@
 import axios, { AxiosResponse } from "axios";
 
 import config from "@/config";
-import { IArea } from "./models";
+import { IArea } from "../models/overworld-models";
 
 export async function getDungeon(
   courseId: number,
@@ -9,7 +9,7 @@ export async function getDungeon(
   dungeonIndex: number
 ): Promise<AxiosResponse> {
   return axios.get(
-    `${config.apiBaseUrl}/courses/${courseId}/worlds/${worldIndex}/dungeons/${dungeonIndex}`
+    `${config.overworldApiUrl}/courses/${courseId}/worlds/${worldIndex}/dungeons/${dungeonIndex}`
   );
 }
 
@@ -20,7 +20,7 @@ export async function updateDungeon(
   dungeon: IArea
 ): Promise<AxiosResponse> {
   return axios.put(
-    `${config.apiBaseUrl}/courses/${courseId}/worlds/${worldIndex}/dungeons/${dungeonIndex}`,
+    `${config.overworldApiUrl}/courses/${courseId}/worlds/${worldIndex}/dungeons/${dungeonIndex}`,
     dungeon
   );
 }

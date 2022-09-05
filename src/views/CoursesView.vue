@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import { ICourse, ICourseItem } from "@/ts/models";
-import { getCourses } from "@/ts/course-rest-client";
+import { ICourse, ICourseItem } from "@/ts/models/overworld-models";
+import { getCourses } from "@/ts/rest-clients/course-rest-client";
 import { ref, watch } from "vue";
 import { useRouter } from "vue-router";
 import { BCol } from "bootstrap-vue-3";
-import CreateCourseModal from "@/components/CreateCourseModal.vue";
-import CloneCourseModal from "@/components/CloneCourseModal.vue";
+import CreateCourseModal from "@/components/CourseComponents/CreateCourseModal.vue";
+import CloneCourseModal from "@/components/CourseComponents/CloneCourseModal.vue";
 
 const loading = ref(false);
 

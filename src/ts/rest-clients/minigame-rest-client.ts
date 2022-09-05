@@ -1,7 +1,7 @@
 import axios, { AxiosResponse } from "axios";
 
 import config from "@/config";
-import { ITask } from "@/ts/models";
+import { ITask } from "@/ts/models/overworld-models";
 
 export async function getMinigames(
   courseId: number,
@@ -10,11 +10,11 @@ export async function getMinigames(
 ): Promise<AxiosResponse> {
   if (dungeonIndex != undefined) {
     return axios.get(
-      `${config.apiBaseUrl}/courses/${courseId}/worlds/${worldIndex}/dungeons/${dungeonIndex}/minigame-tasks`
+      `${config.overworldApiUrl}/courses/${courseId}/worlds/${worldIndex}/dungeons/${dungeonIndex}/minigame-tasks`
     );
   } else {
     return axios.get(
-      `${config.apiBaseUrl}/courses/${courseId}/worlds/${worldIndex}/minigame-tasks`
+      `${config.overworldApiUrl}/courses/${courseId}/worlds/${worldIndex}/minigame-tasks`
     );
   }
 }
@@ -28,12 +28,12 @@ export async function putMinigame(
   if (!isNaN(<number>dungeonIndex)) {
     console.log(dungeonIndex);
     return axios.put(
-      `${config.apiBaseUrl}/courses/${courseId}/worlds/${worldIndex}/dungeons/${dungeonIndex}/minigame-tasks/${minigame.index}`,
+      `${config.overworldApiUrl}/courses/${courseId}/worlds/${worldIndex}/dungeons/${dungeonIndex}/minigame-tasks/${minigame.index}`,
       minigame
     );
   } else {
     return axios.put(
-      `${config.apiBaseUrl}/courses/${courseId}/worlds/${worldIndex}/minigame-tasks/${minigame.index}`,
+      `${config.overworldApiUrl}/courses/${courseId}/worlds/${worldIndex}/minigame-tasks/${minigame.index}`,
       minigame
     );
   }
