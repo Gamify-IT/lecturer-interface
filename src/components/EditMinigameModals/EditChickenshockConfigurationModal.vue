@@ -173,10 +173,11 @@ function removeQuestion(text: string) {
 }
 
 function handleQuestionOk() {
-  let contains = false;
+  //removes the need to press add
   if (wrongAnswer.value != "") {
     wrongAnswers.value.push(wrongAnswer.value);
   }
+  let contains = false;
   configuration.value.questions.forEach((pQuestion) => {
     if (pQuestion.text == question.value) {
       contains = true;
