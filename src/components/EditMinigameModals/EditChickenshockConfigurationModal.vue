@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { saveAs } from "file-saver";
 import { defineProps, defineEmits, ref, watch } from "vue";
 import {
   IChickenshockQuestion,
@@ -209,6 +210,19 @@ function addWrongAnswer() {
   wrongAnswers.value.push(wrongAnswer.value);
   wrongAnswer.value = "";
 }
+function downloadConfiguration() {
+  const { ["id"]: unused, ...clonedConfiguration } = configuration.value;
+  const clonedQuestions = Array<IChickenshockQuestion>();
+  for (let question of configuration.value.questions) {
+    const { ["id"]: unused, ...clonedQuestion } = question;
+    clonedQuestions.push(clonedQuestion);
+  }
+  clonedConfiguration.questions = clonedQuestions;
+  const blob = new Blob([JSON.stringify(clonedConfiguration)], {
+    type: "text/plain",
+  });
+  saveAs(blob, "chickenshock-configuration.txt");
+}
 </script>
 <template>
   <b-modal
@@ -254,6 +268,7 @@ function addWrongAnswer() {
         </b-table>
       </b-form-group>
     </form>
+    <b-button @click="downloadConfiguration">Export confiugration</b-button>
   </b-modal>
   <b-modal
     id="add-question"
