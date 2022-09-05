@@ -174,6 +174,9 @@ function removeQuestion(text: string) {
 
 function handleQuestionOk() {
   let contains = false;
+  if (wrongAnswer.value != "") {
+    wrongAnswers.value.push(wrongAnswer.value);
+  }
   configuration.value.questions.forEach((pQuestion) => {
     if (pQuestion.text == question.value) {
       contains = true;
