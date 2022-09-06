@@ -17,7 +17,6 @@ import {
   getCrosswordpuzzleConfig,
   postCrosswordpuzzleConfig,
 } from "@/ts/rest-clients/crosswordpuzzle-rest-client";
-import EditableStringAttribute from "@/components/EditableStringAttribute.vue";
 import ImportExportConfiguration from "@/components/ImportExportConfiguration.vue";
 
 const props = defineProps<{

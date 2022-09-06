@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { saveAs } from "file-saver";
-import { arrayOf, object, optional, string } from "checkeasy";
+import { arrayOf, object, string } from "checkeasy";
 import { importConfiguration } from "@/ts/import-configuration";
 import { defineProps, defineEmits, ref, watch } from "vue";
 import {
