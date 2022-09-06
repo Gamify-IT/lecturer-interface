@@ -1,3 +1,9 @@
+<style scoped>
+#TimeInput {
+  width: 3vw;
+}
+</style>
+
 <script setup lang="ts">
 import { defineProps, defineEmits, ref, watch } from "vue";
 import {
@@ -12,6 +18,7 @@ import { useToast } from "vue-toastification";
 import { putMinigame } from "@/ts/rest-clients/minigame-rest-client";
 import { useRoute } from "vue-router";
 import { ITask } from "@/ts/models/overworld-models";
+import { BFormInput } from "bootstrap-vue-3";
 
 const props = defineProps<{
   minigame: ITask;
@@ -45,7 +52,7 @@ const toast = useToast();
 const minigame = ref(props.minigame);
 const form = ref();
 const showModal = ref(props.showModal);
-let configuration = ref(new ChickenshockConfiguration([]));
+let configuration = ref(new ChickenshockConfiguration([], 50));
 const question = ref();
 const rightAnswer = ref();
 const showQuestionModal = ref();
@@ -115,6 +122,7 @@ function resetModal() {
 }
 
 function handleOk() {
+  console.log("kekw awdawdawdadwdWDawd" + configuration.value.time);
   postChickenshockConfig(configuration.value)
     .then((response) => {
       minigame.value.configurationId = response.data.id;
@@ -235,6 +243,11 @@ function addWrongAnswer() {
         >
           add question
         </b-button>
+        <a> Game Time (in seconds): </a>
+        <b-form-input
+          id="TimeInput"
+          v-model="configuration.time"
+        ></b-form-input>
       </b-form-group>
       <b-form-group>
         <b-table :fields="fields" :items="configuration.questions">
