@@ -1,6 +1,9 @@
 <script setup lang="ts">
 // compatible crosswordpuzzle versions: v0.0.6
 const compatibleVersions = ["v0.0.6"];
+import { saveAs } from "file-saver";
+import { arrayOf, object, optional, string } from "checkeasy";
+import { importConfiguration } from "@/ts/import-configuration";
 import { defineProps, defineEmits, ref, watch } from "vue";
 import { ITask } from "@/ts/models/overworld-models";
 import {
@@ -14,7 +17,7 @@ import {
   getCrosswordpuzzleConfig,
   postCrosswordpuzzleConfig,
 } from "@/ts/rest-clients/crosswordpuzzle-rest-client";
-import EditableStringAttribute from "@/components/EditableStringAttribute.vue";
+import ImportExportConfiguration from "@/components/ImportExportConfiguration.vue";
 
 const props = defineProps<{
   minigame: ITask;
@@ -171,6 +174,43 @@ function removeQuestion(questionText: string) {
     (filtered) => filtered.questionText != questionText
   );
 }
+
+function downloadConfiguration() {
+  const { ["id"]: unused, ...clonedConfiguration } = configuration.value;
+  const clonedQuestions = Array<CrosswordpuzzleQuestion>();
+  for (let question of configuration.value.questions) {
+    const { ["id"]: unused, ...clonedQuestion } = question;
+    clonedQuestions.push(clonedQuestion);
+  }
+  clonedConfiguration.questions = clonedQuestions;
+  const blob = new Blob([JSON.stringify(clonedConfiguration)], {
+    type: "text/plain",
+  });
+  saveAs(blob, "crosswordpuzzle-configuration.txt");
+}
+
+async function importFile(event: any) {
+  const file = event.target.files[0];
+  const validator = object({
+    name: optional(string),
+    questions: arrayOf(
+      object({
+        questionText: string,
+        answer: string,
+      })
+    ),
+  });
+  try {
+    const result: CrosswordpuzzleConfiguration = await importConfiguration(
+      file,
+      validator,
+      toast
+    );
+    configuration.value = result;
+  } catch (e) {
+    console.log("Import was not successful");
+  }
+}
 </script>
 <template>
   <b-modal
@@ -227,5 +267,9 @@ function removeQuestion(questionText: string) {
       ></b-form-input>
       <b-button @click="addQuestion" variant="success">Add Question</b-button>
     </b-form-group>
+    <ImportExportConfiguration
+      @export="downloadConfiguration"
+      @importFile="importFile"
+    />
   </b-modal>
 </template>
