@@ -25,12 +25,11 @@ export async function importConfiguration(
       }
       try {
         const content = JSON.parse(result.target.result as string);
-        validator(content, "configuration");
-        console.log(content);
+        const validatedContent = validator(content, "configuration");
         toast.success(
           "Successfully imported configuration. Make sure to save the configuration if you want to keep the imported configuration!"
         );
-        resolve(content);
+        resolve(validatedContent);
       } catch (e) {
         toast.error(
           "Something went wrong while importing the configuration file! Seems like the configuration file is not in the right format!"

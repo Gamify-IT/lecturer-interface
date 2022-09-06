@@ -6,7 +6,7 @@
 
 <script setup lang="ts">
 import { saveAs } from "file-saver";
-import { arrayOf, object, string } from "checkeasy";
+import { arrayOf, defaultValue, object, string, int } from "checkeasy";
 import { importConfiguration } from "@/ts/import-configuration";
 import { defineProps, defineEmits, ref, watch } from "vue";
 import {
@@ -238,11 +238,12 @@ function downloadConfiguration() {
 async function importFile(event: any) {
   const file = event.target.files[0];
   const validator = object({
+    time: defaultValue(60, int()),
     questions: arrayOf(
       object({
-        text: string,
-        rightAnswer: string,
-        wrongAnswers: arrayOf(string),
+        text: string(),
+        rightAnswer: string(),
+        wrongAnswers: arrayOf(string()),
       })
     ),
   });
