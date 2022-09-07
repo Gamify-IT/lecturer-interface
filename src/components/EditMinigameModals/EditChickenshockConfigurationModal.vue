@@ -1,9 +1,3 @@
-<style scoped>
-#TimeInput {
-  width: 3vw;
-}
-</style>
-
 <script setup lang="ts">
 import { saveAs } from "file-saver";
 import { arrayOf, defaultValue, object, string, int } from "checkeasy";
@@ -21,7 +15,6 @@ import { useToast } from "vue-toastification";
 import { putMinigame } from "@/ts/rest-clients/minigame-rest-client";
 import { useRoute } from "vue-router";
 import { ITask } from "@/ts/models/overworld-models";
-import { BFormInput } from "bootstrap-vue-3";
 import ImportExportConfiguration from "@/components/ImportExportConfiguration.vue";
 
 const props = defineProps<{
@@ -283,11 +276,17 @@ async function importFile(event: any) {
         >
           add question
         </b-button>
-        <a> Game Time (in seconds): </a>
-        <b-form-input
-          id="TimeInput"
-          v-model="configuration.time"
-        ></b-form-input>
+        <b-form-group
+          label-cols-lg="6"
+          label="Game Time (in seconds)"
+          label-for="time-input"
+        >
+          <b-form-input
+            id="time-input"
+            type="number"
+            v-model="configuration.time"
+          />
+        </b-form-group>
       </b-form-group>
       <b-form-group>
         <b-table :fields="fields" :items="configuration.questions">
@@ -348,3 +347,9 @@ async function importFile(event: any) {
     </b-form-group>
   </b-modal>
 </template>
+
+<style scoped>
+#time-input {
+  width: 4vw;
+}
+</style>
