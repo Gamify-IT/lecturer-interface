@@ -192,11 +192,11 @@ function downloadConfiguration() {
 async function importFile(event: any) {
   const file = event.target.files[0];
   const validator = object({
-    name: optional(string),
+    name: optional(string()),
     questions: arrayOf(
       object({
-        questionText: string,
-        answer: string,
+        questionText: string(),
+        answer: string(),
       })
     ),
   });

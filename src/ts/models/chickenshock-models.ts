@@ -1,13 +1,16 @@
 export interface IChickenshockConfiguration {
   id?: string;
   questions: IChickenshockQuestion[];
+  time: number;
 }
 
 export class ChickenshockConfiguration implements IChickenshockConfiguration {
   id?: string;
   questions: IChickenshockQuestion[];
-  public constructor(questions: IChickenshockQuestion[]) {
+  time: number;
+  public constructor(questions: IChickenshockQuestion[], time: number) {
     this.questions = questions;
+    this.time = time;
   }
 }
 

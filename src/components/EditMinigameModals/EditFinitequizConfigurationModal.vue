@@ -238,9 +238,9 @@ async function importFile(event: any) {
   const validator = object({
     questions: arrayOf(
       object({
-        text: string,
-        rightAnswer: string,
-        wrongAnswers: arrayOf(string),
+        text: string(),
+        rightAnswer: string(),
+        wrongAnswers: arrayOf(string()),
       })
     ),
   });

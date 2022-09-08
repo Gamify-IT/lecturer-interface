@@ -12,7 +12,6 @@ services:
       POSTGRES_SETUP: >
         login/default.sql
         overworld/default.sql
-        chickenshock/default.sql
         finitequiz/default.sql
         crosswordpuzzle/default.sql
 
@@ -67,18 +66,6 @@ services:
       - POSTGRES_PASSWORD=postgres
 
   #backends
-  login-backend:
-    container_name: login-backend
-    image: ghcr.io/gamify-it/login-backend:main
-    restart: always
-    pull_policy: always
-    expose:
-      - "80"
-    environment:
-      - JWT_KEY=SecretKEY
-      - JWT_VALIDITY_DURATION=720h
-      - POSTGRES_URL=postgresql://postgres:postgres@login-db:5432/
-
   overworld-backend:
     container_name:   overworld-backend
     image: ghcr.io/gamify-it/overworld-backend:main
@@ -137,14 +124,6 @@ services:
 
 
   #frontends
-  login-frontend:
-    container_name: login-frontend
-    image: ghcr.io/gamify-it/login-frontend:main
-    restart: always
-    pull_policy: always
-    expose:
-      - "80"
-
   overworld:
     container_name: overworld
     image: ghcr.io/gamify-it/overworld:main

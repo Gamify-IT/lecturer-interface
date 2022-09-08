@@ -35,6 +35,7 @@ describe("EditChickenshockConfigurationModal.vue", () => {
           wrongAnswers: ["wrongAnswer"],
         },
       ],
+      time: 50,
     };
     const configurationResponse = {
       data: configuration,

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { saveAs } from "file-saver";
-import { arrayOf, object, string } from "checkeasy";
+import { arrayOf, defaultValue, object, string, int } from "checkeasy";
 import { importConfiguration } from "@/ts/import-configuration";
 import { defineProps, defineEmits, ref, watch } from "vue";
 import {
@@ -49,7 +49,7 @@ const toast = useToast();
 const minigame = ref(props.minigame);
 const form = ref();
 const showModal = ref(props.showModal);
-let configuration = ref(new ChickenshockConfiguration([]));
+let configuration = ref(new ChickenshockConfiguration([], 50));
 const question = ref();
 const rightAnswer = ref();
 const showQuestionModal = ref();
@@ -214,6 +214,7 @@ function addWrongAnswer() {
   wrongAnswers.value.push(wrongAnswer.value);
   wrongAnswer.value = "";
 }
+
 function downloadConfiguration() {
   const { ["id"]: unused, ...clonedConfiguration } = configuration.value;
   const clonedQuestions = Array<IChickenshockQuestion>();
@@ -230,11 +231,12 @@ function downloadConfiguration() {
 async function importFile(event: any) {
   const file = event.target.files[0];
   const validator = object({
+    time: defaultValue(60, int()),
     questions: arrayOf(
       object({
-        text: string,
-        rightAnswer: string,
-        wrongAnswers: arrayOf(string),
+        text: string(),
+        rightAnswer: string(),
+        wrongAnswers: arrayOf(string()),
       })
     ),
   });
@@ -274,6 +276,17 @@ async function importFile(event: any) {
         >
           add question
         </b-button>
+        <b-form-group
+          label-cols-lg="6"
+          label="Game Time (in seconds)"
+          label-for="time-input"
+        >
+          <b-form-input
+            id="time-input"
+            type="number"
+            v-model="configuration.time"
+          />
+        </b-form-group>
       </b-form-group>
       <b-form-group>
         <b-table :fields="fields" :items="configuration.questions">
@@ -334,3 +347,9 @@ async function importFile(event: any) {
     </b-form-group>
   </b-modal>
 </template>
+
+<style scoped>
+#time-input {
+  width: 4vw;
+}
+</style>
