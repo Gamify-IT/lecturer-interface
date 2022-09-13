@@ -87,6 +87,23 @@ services:
       KC_HTTP_RELATIVE_PATH: /keycloak
       KC_HTTP_PORT: 80
 
+  overworld-backend:
+    container_name: overworld-backend
+    image: ghcr.io/gamify-it/overworld-backend:main
+    restart: always
+    pull_policy: always
+    expose:
+      - "80"
+    depends_on:
+      - overworld-db
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_URL=postgresql://overworld-db:5432/postgres
+      - CHICKENSHOCK_URL=http://chickenshock-backend/api/v1
+      - CROSSWORDPUZZLE_URL=http://crosswordpuzzle-backend/api/v1
+      - FINITEQUIZ_URL=http://finitequiz-backend/api/v1
+
   chickenshock-backend:
     container_name:   chickenshock-backend
     image: ghcr.io/gamify-it/chickenshock-backend:main
@@ -134,6 +151,14 @@ services:
   landing-page:
     container_name: landing-page
     image: ghcr.io/gamify-it/landing-page:main
+    restart: always
+    pull_policy: always
+    expose:
+      - "80"
+
+  overworld:
+    container_name: overworld
+    image: ghcr.io/gamify-it/overworld:main
     restart: always
     pull_policy: always
     expose:

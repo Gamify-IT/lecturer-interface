@@ -101,6 +101,9 @@ services:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
       - POSTGRES_URL=postgresql://overworld-db:5432/postgres
+      - CHICKENSHOCK_URL=http://chickenshock-backend/api/v1
+      - CROSSWORDPUZZLE_URL=http://crosswordpuzzle-backend/api/v1
+      - FINITEQUIZ_URL=http://finitequiz-backend/api/v1
 
   chickenshock-backend:
     container_name:   chickenshock-backend
