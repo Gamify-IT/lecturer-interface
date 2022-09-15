@@ -184,9 +184,9 @@ function downloadConfiguration() {
   }
   clonedConfiguration.questions = clonedQuestions;
   const blob = new Blob([JSON.stringify(clonedConfiguration)], {
-    type: "text/plain",
+    type: "text/json",
   });
-  saveAs(blob, "crosswordpuzzle-configuration.txt");
+  saveAs(blob, "crosswordpuzzle-configuration.json");
 }
 
 async function importFile(event: any) {

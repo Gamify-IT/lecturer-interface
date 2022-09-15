@@ -224,9 +224,9 @@ function downloadConfiguration() {
   }
   clonedConfiguration.questions = clonedQuestions;
   const blob = new Blob([JSON.stringify(clonedConfiguration)], {
-    type: "text/plain",
+    type: "text/json",
   });
-  saveAs(blob, "chickenshock-configuration.txt");
+  saveAs(blob, "chickenshock-configuration.json");
 }
 async function importFile(event: any) {
   const file = event.target.files[0];
