@@ -267,6 +267,14 @@ function closedEditModal() {
       <h1 v-else>
         NPCs from World World {{ worldIndex }}, Dungeon {{ dungeonIndex }}
       </h1>
+      <b-alert show dismissible>
+        Here, you can see all NPCs present in this area.<br />
+        NPCs can give the player hints about the course or some other
+        information.<br />
+        To give an NPC some text to say, click on 'Edit'.
+        <br />
+        To find out where which NPC is, click on 'Show map'.</b-alert
+      >
       <b-button @click="showMapModal = true">Show Map</b-button>
       <b-card v-for="npc in npcs" :key="npc.id" class="mt-1">
         <b-row>

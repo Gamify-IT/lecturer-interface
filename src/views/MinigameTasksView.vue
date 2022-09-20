@@ -359,6 +359,14 @@ function closedEditModal() {
       <h1 v-else>
         Minigames from World World {{ worldIndex }}, Dungeon {{ dungeonIndex }}
       </h1>
+      <b-alert show dismissible>
+        Here, you can see all minigames present in this area.<br />
+        In these minigame tasks, you can (for example) check your players
+        knowledge.<br />
+        Select any minigame of your choice and click 'Edit' to configure the
+        minigame.<br />
+        To find out where which minigame is, click on 'Show map'.</b-alert
+      >
       <b-button @click="showMapModal = true">Show Map</b-button>
 
       <b-card v-for="task in minigames" :key="task.id" class="mt-1">
