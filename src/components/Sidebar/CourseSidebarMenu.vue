@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { defineProps, nextTick, onMounted, ref, watch } from "vue";
+import { defineProps, nextTick, ref, watch } from "vue";
 import "vue-sidebar-menu/dist/vue-sidebar-menu.css";
-import { ICourse, IDungeon, ITask, IWorld } from "@/ts/models/overworld-models";
+import { ICourse, IDungeon, IWorld } from "@/ts/models/overworld-models";
 
 import { computed } from "vue";
 import { useRouter } from "vue-router";

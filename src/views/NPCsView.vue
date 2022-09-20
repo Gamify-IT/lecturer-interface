@@ -269,7 +269,8 @@ function closedEditModal() {
       </h1>
       <b-alert show>
         Here, you can see all NPCs present in this area.<br />
-        NPCs can give the player hints about the course or some other information.<br />
+        NPCs can give the player hints about the course or some other
+        information.<br />
         To give an NPC some text to say, click on 'Edit'.
         <br />
         To find out where which NPC is, click on 'Show map'.</b-alert

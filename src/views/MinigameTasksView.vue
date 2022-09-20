@@ -361,7 +361,8 @@ function closedEditModal() {
       </h1>
       <b-alert show>
         Here, you can see all minigames present in this area.<br />
-        In these minigame tasks, you can (for example) check your players knowledge.<br />
+        In these minigame tasks, you can (for example) check your players
+        knowledge.<br />
         Select any minigame of your choice and click 'Edit' to configure the
         minigame.<br />
         To find out where which minigame is, click on 'Show map'.</b-alert
