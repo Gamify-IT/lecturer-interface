@@ -13,6 +13,7 @@ import EditChickenshockConfigurationModal from "@/components/EditMinigameModals/
 import EditFinitequizConfigurationModal from "@/components/EditMinigameModals/EditFinitequizConfigurationModal.vue";
 import EditCrosswordpuzzleModal from "@/components/EditMinigameModals/EditCrosswordpuzzleModal.vue";
 import MapImageModal from "@/components/MapImageModal.vue";
+import EditBugfinderConifgurationModal from "@/components/EditMinigameModals/EditBugfinderConifgurationModal.vue";
 
 const availableMinigames = Object.values(Minigame);
 
@@ -35,6 +36,7 @@ const inFocus = ref(false);
 const firstFocus = ref(false);
 const showFinitequizModal = ref(false);
 const showCrosswordpuzzleModal = ref(false);
+const showBugfinderModal = ref(false);
 
 watch(
   () => [
@@ -310,6 +312,9 @@ function editMinigameConfiguration(task: ITask) {
     case Minigame.FINITEQUIZ:
       showFinitequizModal.value = true;
       break;
+    case Minigame.BUGFINDER:
+      showBugfinderModal.value = true;
+      break;
     default:
       console.log(
         "This minigame is currently not supported to be edited here."
@@ -347,6 +352,7 @@ function closedEditModal() {
   showChickenshockModal.value = false;
   showFinitequizModal.value = false;
   showCrosswordpuzzleModal.value = false;
+  showBugfinderModal.value = false;
 }
 </script>
 
@@ -429,6 +435,12 @@ function closedEditModal() {
   />
   <EditCrosswordpuzzleModal
     :showModal="showCrosswordpuzzleModal"
+    :minigame="editedMinigame"
+    @updateMinigameConfiguration="updateMinigameConfiguration"
+    @closedModal="closedEditModal"
+  />
+  <EditBugfinderConifgurationModal
+    :showModal="showBugfinderModal"
     :minigame="editedMinigame"
     @updateMinigameConfiguration="updateMinigameConfiguration"
     @closedModal="closedEditModal"
