@@ -360,13 +360,11 @@ function closedEditModal() {
         Minigames from World World {{ worldIndex }}, Dungeon {{ dungeonIndex }}
       </h1>
       <b-alert show>
-        Here are all minigames listed, that can be configured for this area.
-        <br />
-        In these minigame tasks, you can check your players knowledge. <br />
+        Here, you can see all minigames present in this area.<br />
+        In these minigame tasks, you can (for example) check your players knowledge.<br />
         Select any minigame of your choice and click 'Edit' to configure the
-        minigame. <br />
-        To find out which minigame spot is where, click 'Show map' to inspect
-        the map.</b-alert
+        minigame.<br />
+        To find out where which minigame is, click on 'Show map'.</b-alert
       >
       <b-button @click="showMapModal = true">Show Map</b-button>
 

@@ -307,7 +307,7 @@ function deleteCurrentCourse() {
 <template>
   <b-overlay :show="loading" rounded="sm">
     <div class="container mt-4">
-      <b-alert show> Edit the details of your course. </b-alert>
+      <b-alert show> Edit the details of your course.</b-alert>
       <div v-if="course != null">
         <b-row>
           <b-col>
