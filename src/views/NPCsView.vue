@@ -267,7 +267,7 @@ function closedEditModal() {
       <h1 v-else>
         NPCs from World World {{ worldIndex }}, Dungeon {{ dungeonIndex }}
       </h1>
-      <b-alert show>
+      <b-alert show dismissible>
         Here, you can see all NPCs present in this area.<br />
         NPCs can give the player hints about the course or some other
         information.<br />

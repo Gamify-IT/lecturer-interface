@@ -216,7 +216,7 @@ watch(
   <b-overlay :show="loading" rounded="sm">
     <div v-if="world !== undefined" class="container mt-5">
       <h2>Configure World {{ world.index }}</h2>
-      <b-alert show>
+      <b-alert show dismissible>
         Here, you can see world {{ world.index }} together with all its
         dungeons.<br />
         The dungeons can be accessed (if enabled) at certain points in the

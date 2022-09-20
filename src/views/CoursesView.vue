@@ -230,7 +230,7 @@ function resetFocus(row: ICourse) {
 <template>
   <b-overlay :show="loading" rounded="sm">
     <div class="container mt-4">
-      <b-alert show>
+      <b-alert show dismissible>
         Here is the course overview. <br />
         You can view your course by clicking on the row or create a new course
         on the button below.

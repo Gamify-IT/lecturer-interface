@@ -359,7 +359,7 @@ function closedEditModal() {
       <h1 v-else>
         Minigames from World World {{ worldIndex }}, Dungeon {{ dungeonIndex }}
       </h1>
-      <b-alert show>
+      <b-alert show dismissible>
         Here, you can see all minigames present in this area.<br />
         In these minigame tasks, you can (for example) check your players
         knowledge.<br />
