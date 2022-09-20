@@ -359,6 +359,15 @@ function closedEditModal() {
       <h1 v-else>
         Minigames from World World {{ worldIndex }}, Dungeon {{ dungeonIndex }}
       </h1>
+      <b-alert show>
+        Here are all minigames listed, that can be configured for this area.
+        <br />
+        In these minigame tasks, you can check your players knowledge. <br />
+        Select any minigame of your choice and click 'Edit' to configure the
+        minigame. <br />
+        To find out which minigame spot is where, click 'Show map' to inspect
+        the map.</b-alert
+      >
       <b-button @click="showMapModal = true">Show Map</b-button>
 
       <b-card v-for="task in minigames" :key="task.id" class="mt-1">

@@ -267,6 +267,16 @@ function closedEditModal() {
       <h1 v-else>
         NPCs from World World {{ worldIndex }}, Dungeon {{ dungeonIndex }}
       </h1>
+      <b-alert show>
+        Here are all NPCs listed, that can be configured for this area.
+        <br />
+        NPCs are usefull to give the player some hints about the course or to
+        give them other informations. <br />
+        To give a NPC some text to say, click 'Edit' to configure the NPC.
+        <br />
+        To find out which NPC spot is where, click 'Show map' to inspect the
+        map.</b-alert
+      >
       <b-button @click="showMapModal = true">Show Map</b-button>
       <b-card v-for="npc in npcs" :key="npc.id" class="mt-1">
         <b-row>

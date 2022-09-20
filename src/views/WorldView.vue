@@ -216,6 +216,13 @@ watch(
   <b-overlay :show="loading" rounded="sm">
     <div v-if="world !== undefined" class="container mt-5">
       <h2>Configure World {{ world.index }}</h2>
+      <b-alert show>
+        Here is the World {{ world.index }} listed with all its dungeons. <br />
+        These dungeons can be accessed (if enabled) trough this world. These
+        areas can be set a topic name, based on what teaching content is taught
+        in this area. Areas can be actived or deactivated, based on how many
+        tasks you have.
+      </b-alert>
       <h4>{{ world.staticName }}</h4>
       <b-button @click="showMapModal = true">Show Map</b-button>
       <div style="margin-top: 30px">

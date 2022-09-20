@@ -307,27 +307,30 @@ function deleteCurrentCourse() {
 <template>
   <b-overlay :show="loading" rounded="sm">
     <div class="container mt-4">
-      <div v-if="course != null" class="">
-        <b-col>
-          <b-button
-            variant="danger"
-            size="small"
-            v-b-modal.delete-confirmation-modal
-            id="deleteButton"
-          >
-            Delete Course
-          </b-button>
-        </b-col>
-        <b-col>
-          <EditableStringAttribute
-            prefix="Name"
-            :value="course.courseName"
-            @submit="saveCourseName"
-            @cancel="cancelEditCourseName"
-            id="course-name"
-            sm="6"
-          />
-        </b-col>
+      <b-alert show> Edit the details of your course. </b-alert>
+      <div v-if="course != null">
+        <b-row>
+          <b-col>
+            <EditableStringAttribute
+              prefix="Name"
+              :value="course.courseName"
+              @submit="saveCourseName"
+              @cancel="cancelEditCourseName"
+              id="course-name"
+              sm="6"
+            />
+          </b-col>
+          <b-col>
+            <b-button
+              variant="danger"
+              size="small"
+              v-b-modal.delete-confirmation-modal
+              id="deleteButton"
+            >
+              Delete Course
+            </b-button>
+          </b-col>
+        </b-row>
         <b-col>
           <EditableStringAttribute
             prefix="Description"
@@ -347,17 +350,21 @@ function deleteCurrentCourse() {
             id="course-semester"
           />
         </b-col>
-        <b-col>
-          <h4>active:</h4>
-          <b-form-checkbox
-            v-model="course.active"
-            @change="toggledCourseSwitch"
-            name="check-button"
-            id="active-toggle"
-            @keydown.enter="toggleCourseSwitch"
-            switch
-          ></b-form-checkbox>
-        </b-col>
+        <b-row>
+          <b-col>
+            <h4>active:</h4>
+          </b-col>
+          <b-col>
+            <b-form-checkbox
+              v-model="course.active"
+              @change="toggledCourseSwitch"
+              name="check-button"
+              id="active-toggle"
+              @keydown.enter="toggleCourseSwitch"
+              switch
+            ></b-form-checkbox>
+          </b-col>
+        </b-row>
       </div>
       <div v-if="errorText">
         <div
