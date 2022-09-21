@@ -2,13 +2,11 @@
 import {
   BugfinderConfiguration,
   BugfinderViewModel,
-  CodeViewModel,
   ErrorType,
   WordViewModel,
-} from "@/ts/models/bugfinder-model";
+} from "@/ts/models/bugfinder-models";
 import { ITask } from "@/ts/models/overworld-models";
-import { remove } from "@vue/shared";
-import { getDefaultSettings } from "http2";
+import { postBugfinderConfig } from "@/ts/rest-clients/bugfinder-rest-client";
 import { defineEmits, defineProps, ref, watch } from "vue";
 import { useRoute } from "vue-router";
 
@@ -85,7 +83,17 @@ function resetModal() {
 }
 
 function handleOk() {
-  // TODO: post results
+  codes.value.codes.forEach((code) => {
+    code.words.forEach(
+      (row) =>
+        (row = row.filter((word) => word.correctValue.trim().length !== 0))
+    );
+    code.words = code.words.filter((row) => row.length !== 0);
+  });
+  codes.value.codes = codes.value.codes.filter(
+    (code) => code.words.length !== 0
+  );
+  postBugfinderConfig(codes.value);
 }
 
 function hiddenModal() {
@@ -182,7 +190,7 @@ function inputChanged(
 
 function addTab(codeId: number, rowId: number) {
   const code = getCode(codeId);
-  code.words[rowId] = [{ correctValue: "<<tab>>" }, ...code.words[rowId]];
+  code.words[rowId] = [{ correctValue: "<tab>" }, ...code.words[rowId]];
 }
 
 function removeTab(codeId: number, rowId: number) {
@@ -237,7 +245,7 @@ function showBugModal(codeId: number, rowId: number, colId: number) {
                   </b-button>
                   <td v-for="(col, colId) in row" :key="colId">
                     <b-button
-                      v-if="col.correctValue === '<<tab>>'"
+                      v-if="col.correctValue === '<tab>'"
                       variant="outline-secondary"
                       size="sm"
                       style="width: 100%"
@@ -245,7 +253,7 @@ function showBugModal(codeId: number, rowId: number, colId: number) {
                     >
                       <em class="bi bi-arrow-bar-left"></em>
                     </b-button>
-                    <b-input-group v-if="col.correctValue !== '<<tab>>'">
+                    <b-input-group v-if="col.correctValue !== '<tab>'">
                       <b-form-input
                         size="sm"
                         v-model="col.correctValue"
