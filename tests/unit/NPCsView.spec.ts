@@ -42,6 +42,7 @@ describe("NPCsView.vue", () => {
             "Dungeon Topic Name",
             false,
             [],
+            [],
             []
           ),
         ],
@@ -54,7 +55,8 @@ describe("NPCsView.vue", () => {
           new NPC("random uuid 2", 2, "Second NPC", [
             "I hope you met my ohter NPC friend before",
           ]),
-        ]
+        ],
+        []
       ),
     };
     npcs = worldResponse.data.npcs;
