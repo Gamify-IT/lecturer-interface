@@ -1,5 +1,6 @@
 # Lecturer-Interface
 
+![grafik](https://user-images.githubusercontent.com/39833217/192109229-da9ad9f8-5f6b-4b4b-9878-8aa4eea3dcfd.png)
 An easy to use interface that lecturers can use to configure the areas of the overworld and the shown minigames.
 
 ## Development
@@ -82,6 +83,3 @@ To remove the container you can use the following command:
 ```sh
 docker rm lecturer-interface
 ```
-
-### Screenshot
-![Image](https://user-images.githubusercontent.com/39833217/178007768-a4f20b6d-5348-48e6-89a2-6956d15ea065.png)
