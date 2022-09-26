@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - "main"
+      - "feature/intgrate-books-in-areas"
     tags:
       - "v*"
   pull_request:
