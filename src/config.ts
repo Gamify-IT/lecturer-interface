@@ -4,5 +4,5 @@ export default {
   chickenshockApiUrl: "/minigames/chickenshock/api/v1",
   finitequizApiUrl: "/minigames/finitequiz/api/v1",
   crosswordpuzzleApiUrl: "/minigames/crosswordpuzzle/api/v1",
-  mapCommitHash: "3616da6c60dcbb116e91d08c59d79b200b3b91a6",
+  mapCommitHash: "e1a218156444439e9f5ed2c00a037dd4de39c06d",
 };
