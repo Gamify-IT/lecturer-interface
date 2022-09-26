@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import { INPC, IWorld, MapType } from "@/ts/models/overworld-models";
-import { putNPC } from "@/ts/rest-clients/npc-rest-client";
+import { IBook, IWorld, MapType } from "@/ts/models/overworld-models";
+import { putBook } from "@/ts/rest-clients/book-rest-client";
 import { defineEmits, Ref, ref, watch } from "vue";
 import { useRoute } from "vue-router";
 import { useToast } from "vue-toastification";
 import EditableStringAttribute from "@/components/EditableStringAttribute.vue";
-import NPCEditModal from "@/components/EditNPCModal.vue";
+import EditBookModal from "@/components/EditBookModal.vue";
 import { getArea } from "@/ts/rest-clients/area-rest-client";
 import MapImageModal from "@/components/MapImageModal.vue";
 
@@ -18,7 +18,7 @@ const dungeonIndex = ref(route.params.dungeonIndex);
 
 const showMapModal = ref(false);
 
-const editedNPC = ref() as Ref<INPC>;
+const editedBook = ref() as Ref<IBook>;
 const showEditModal = ref(false);
 const currentNPCId = ref(1);
 const editDescription = ref(false);
@@ -35,12 +35,12 @@ watch(
     courseId.value = newVal[0];
     worldIndex.value = newVal[1];
     dungeonIndex.value = newVal[2];
-    loadNPCs(courseId.value, worldIndex.value, dungeonIndex.value);
+    loadBooks(courseId.value, worldIndex.value, dungeonIndex.value);
   },
   { deep: true }
 );
 
-const npcs = ref(Array<INPC>());
+const books = ref(Array<IBook>());
 
 const emit = defineEmits<{
   (e: "return"): void;
@@ -152,7 +152,7 @@ function clickUp() {
         document.getElementById("editButton" + currentNPCId.value)?.focus();
       }
     } else {
-      currentNPCId.value = npcs.value.length;
+      currentNPCId.value = books.value.length;
       if (editDescription.value) {
         document
           .getElementsByClassName("btn-light")
@@ -168,7 +168,7 @@ function clickUp() {
 function clickDown() {
   if (inFocus.value) {
     console.log("down");
-    if (currentNPCId.value < npcs.value.length) {
+    if (currentNPCId.value < books.value.length) {
       currentNPCId.value++;
       if (editDescription.value) {
         document
@@ -192,9 +192,9 @@ function clickDown() {
   }
 }
 
-async function loadNPCs(courseId: any, worldIndex: any, dungeonIndex: any) {
+async function loadBooks(courseId: any, worldIndex: any, dungeonIndex: any) {
   loading.value = true;
-  console.log("load npcs");
+  console.log("load books");
   if (
     isNaN(courseId) ||
     isNaN(worldIndex) ||
@@ -207,8 +207,10 @@ async function loadNPCs(courseId: any, worldIndex: any, dungeonIndex: any) {
   getArea(courseId, worldIndex, dungeonIndex)
     .then((response) => {
       const result: IWorld = response.data;
-      npcs.value = result.npcs.sort((npc1, npc2) => npc1.index - npc2.index);
-      console.log(npcs.value);
+      books.value = result.books.sort(
+        (book1, book2) => book1.index - book2.index
+      );
+      console.log(books.value);
     })
     .catch((error) => {
       console.log(error);
@@ -216,40 +218,54 @@ async function loadNPCs(courseId: any, worldIndex: any, dungeonIndex: any) {
     .finally(() => (loading.value = false));
 }
 
-loadNPCs(courseId.value, worldIndex.value, dungeonIndex.value);
+loadBooks(courseId.value, worldIndex.value, dungeonIndex.value);
 
-function editNPC(npc: INPC) {
-  editedNPC.value = npc;
-  console.log("Want to edit NPC " + npc.id);
+function editBook(book: IBook) {
+  editedBook.value = book;
+  console.log("Want to edit Book " + book.id);
   showEditModal.value = true;
 }
 
-function updateNPC(npc: INPC) {
-  console.log("Pressed submit button in npc configuration modal");
-  putNPC(courseId.value, worldIndex.value, dungeonIndex.value, npc.index, npc)
+function updateBook(book: IBook) {
+  console.log("Pressed submit button in book configuration modal");
+  putBook(
+    courseId.value,
+    worldIndex.value,
+    dungeonIndex.value,
+    book.index,
+    book
+  )
     .then(() => {
-      toast.success(`NPC with index ${npc.index} was updated!`);
+      toast.success(`Book with index ${book.index} was updated!`);
     })
     .catch(() => {
-      toast.error(`NPC with index ${npc.index} could not be updated!`);
+      toast.error(`Book with index ${book.index} could not be updated!`);
     });
 }
 
-function saveDescription(npc: INPC, description: string) {
-  npc.description = description;
-  putNPC(courseId.value, worldIndex.value, dungeonIndex.value, npc.index, npc)
+function saveDescription(book: IBook, description: string) {
+  book.description = description;
+  putBook(
+    courseId.value,
+    worldIndex.value,
+    dungeonIndex.value,
+    book.index,
+    book
+  )
     .then(() => {
-      toast.success(`Description of NPC with index ${npc.index} was updated!`);
+      toast.success(
+        `Description of book with index ${book.index} was updated!`
+      );
     })
     .catch(() => {
       toast.error(
-        `Description of NPC with index ${npc.index} could not be updated!`
+        `Description of book with index ${book.index} could not be updated!`
       );
     });
 }
 
 function cancelEditDescription() {
-  toast.warning(`Description in NPC was not updated!`);
+  toast.warning(`Description in book was not updated!`);
 }
 
 function closedEditModal() {
@@ -262,28 +278,29 @@ function closedEditModal() {
   <b-overlay :show="loading" rounded="sm">
     <div class="container mt-4">
       <h1 v-if="dungeonIndex === undefined">
-        NPCs from World {{ worldIndex }}
+        Books from World {{ worldIndex }}
       </h1>
       <h1 v-else>
-        NPCs from World World {{ worldIndex }}, Dungeon {{ dungeonIndex }}
+        Books from World World {{ worldIndex }}, Dungeon {{ dungeonIndex }}
       </h1>
       <b-alert show dismissible>
-        Here, you can see all NPCs present in this area.<br />
-        NPCs can give the player hints about the course or some other
-        information.<br />
-        To give an NPC some text to say, click on 'Edit'.
+        Here, you can see all books present in this area.<br />
+        Books can give the player a more detailed text about the course.<br />
+        To give a book some text to display, click on 'Edit'.
         <br />
-        To find out where which NPC is, click on 'Show map'.</b-alert
+        To find out where which book is, click on 'Show map'.</b-alert
       >
       <b-button @click="showMapModal = true">Show Map</b-button>
-      <b-card v-for="npc in npcs" :key="npc.id" class="mt-1">
+      <b-card v-for="book in books" :key="book.id" class="mt-1">
         <b-row>
-          <b-col sm="2">{{ npc.index }}</b-col>
+          <b-col sm="2">{{ book.index }}</b-col>
           <b-col>
             <EditableStringAttribute
               prefix="Description"
-              :value="npc.description"
-              @submit="(newDescription) => saveDescription(npc, newDescription)"
+              :value="book.description"
+              @submit="
+                (newDescription) => saveDescription(book, newDescription)
+              "
               @cancel="cancelEditDescription"
             />
           </b-col>
@@ -291,8 +308,8 @@ function closedEditModal() {
             <b-button
               variant="info"
               size="small"
-              :id="`editButton` + npc.index"
-              @click="editNPC(npc)"
+              :id="`editButton` + book.index"
+              @click="editBook(book)"
             >
               <em class="bi bi-pencil-square"></em>
               Edit
@@ -306,14 +323,14 @@ function closedEditModal() {
     :worldIndex="worldIndex"
     :dungeonIndex="dungeonIndex"
     :showModal="showMapModal"
-    modalTitle="NPC spots"
-    :mapType="MapType.NPC"
+    modalTitle="Book spots"
+    :mapType="MapType.BOOK"
     @closedModal="showMapModal = false"
   />
-  <NPCEditModal
+  <EditBookModal
     :showModal="showEditModal"
-    :npc="editedNPC"
-    @updateNPC="updateNPC"
+    :book="editedBook"
+    @updateBook="updateBook"
     @closedModal="closedEditModal"
   />
 </template>

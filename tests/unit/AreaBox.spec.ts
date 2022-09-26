@@ -34,6 +34,7 @@ describe("AreaBox.vue", () => {
       "Kapitel 1: UML",
       true,
       tasks,
+      [],
       []
     );
     wrapper = mount(AreaBox, {

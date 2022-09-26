@@ -58,6 +58,8 @@ const sidebarActive = [
   "dungeon-minigames",
   "world-npcs",
   "dungeon-npcs",
+  "world-books",
+  "dungeon-books",
 ];
 
 watch(
@@ -148,6 +150,18 @@ function loadMenu() {
             title: "NPC",
             icon: "bi-person-fill",
           },
+          {
+            href:
+              "/courses/" +
+              course.id +
+              "/worlds/" +
+              world.index +
+              "/dungeons/" +
+              dungeon.index +
+              "/books",
+            title: "Book",
+            icon: "bi-book-fill",
+          },
         ],
       };
     });
@@ -162,6 +176,11 @@ function loadMenu() {
         href: "/courses/" + course.id + "/worlds/" + world.index + "/npcs",
         title: "NPC",
         icon: "bi-person-fill",
+      },
+      {
+        href: "/courses/" + course.id + "/worlds/" + world.index + "/books",
+        title: "Book",
+        icon: "bi-book-fill",
       },
     ];
 

@@ -35,9 +35,11 @@ describe("WorldView.vue", () => {
             "Dungeon Topic Name",
             false,
             [],
+            [],
             []
           ),
         ],
+        [],
         [],
         []
       ),
