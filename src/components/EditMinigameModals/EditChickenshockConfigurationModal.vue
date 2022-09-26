@@ -128,6 +128,14 @@ function handleOk() {
       oldMinigame.value = minigame.value;
       handleSubmit();
     })
+    .then(() => {
+      putMinigame(
+        parseInt(courseId.value),
+        parseInt(worldIndex.value),
+        parseInt(dungeonIndex.value),
+        minigame.value
+      );
+    })
     .catch((error) => {
       const statusCode = error.response.status;
       const errorMessages = error.response.data.errors;
@@ -138,14 +146,6 @@ function handleOk() {
       } else {
         toast.error("There was an error saving the configuration!");
       }
-    })
-    .then(() => {
-      putMinigame(
-        parseInt(courseId.value),
-        parseInt(worldIndex.value),
-        parseInt(dungeonIndex.value),
-        minigame.value
-      );
     });
 }
 

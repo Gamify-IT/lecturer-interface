@@ -139,8 +139,15 @@ function handleOk() {
       );
     })
     .catch((error) => {
-      toast.error("There was an error updating the minigame configuration.");
-      console.log(error);
+      const statusCode = error.response.status;
+      const errorMessages = error.response.data.errors;
+      if (statusCode == 400) {
+        for (let errorMessage of errorMessages) {
+          toast.error("Error on saving configuration: " + errorMessage);
+        }
+      } else {
+        toast.error("There was an error saving the configuration!");
+      }
     });
 }
 
