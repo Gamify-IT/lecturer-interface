@@ -37,8 +37,13 @@ describe("BooksView.vue", () => {
         [],
         [],
         [
-          new Book("random uuid", 1, "Welcome book", "I am a book",),
-          new Book("random uuid 2", 2, "Second book", "I hope you met my ohter book friend before",),
+          new Book("random uuid", 1, "Welcome book", "I am a book"),
+          new Book(
+            "random uuid 2",
+            2,
+            "Second book",
+            "I hope you met my ohter book friend before"
+          ),
         ]
       ),
     };
