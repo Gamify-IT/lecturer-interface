@@ -76,8 +76,7 @@ function handleSubmit() {
     v-if="book !== undefined"
   >
     <b-alert show dismissible>
-      Enter your text to display in the book. Leave the text field empty to not
-      show the book in the game.</b-alert
+      Enter your text to display in the book. If the text is empty a standard sentence will be displayed in the book.</b-alert
     >
     <form ref="form" @submit.stop.prevent="handleSubmit">
       <b-form-textarea
