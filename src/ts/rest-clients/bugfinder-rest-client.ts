@@ -14,5 +14,5 @@ export async function postBugfinderConfig(
 }
 
 export async function getBugfinderConfig(id: string): Promise<AxiosResponse> {
-  return axios.get(`${config.bugfinderApiUrl}/configurations/${id}`);
+  return axios.get(`${config.bugfinderApiUrl}/configurations/vm/${id}`);
 }

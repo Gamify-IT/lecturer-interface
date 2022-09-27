@@ -1,15 +1,5 @@
-export class BugfinderConfiguration {
-  codes: BugfinderCode[] = [];
-}
-
-export interface BugfinderCode {
-  words: BugfinderWord[];
-}
-
-export interface BugfinderWord {
-  word: string;
-  errorType?: ErrorType;
-  correctValue: string;
+export class BugfinderConfiguration implements BugfinderViewModel {
+  codes: CodeViewModel[] = [];
 }
 
 export enum ErrorType {

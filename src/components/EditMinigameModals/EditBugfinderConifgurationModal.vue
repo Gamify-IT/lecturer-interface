@@ -6,7 +6,12 @@ import {
   WordViewModel,
 } from "@/ts/models/bugfinder-models";
 import { ITask } from "@/ts/models/overworld-models";
-import { postBugfinderConfig } from "@/ts/rest-clients/bugfinder-rest-client";
+import {
+  getBugfinderConfig,
+  postBugfinderConfig,
+} from "@/ts/rest-clients/bugfinder-rest-client";
+import { putMinigame } from "@/ts/rest-clients/minigame-rest-client";
+import { ViewportMaxHeightProperty } from "csstype";
 import { defineEmits, defineProps, ref, watch } from "vue";
 import { useRoute } from "vue-router";
 
@@ -62,18 +67,32 @@ const emit = defineEmits<{
 }>();
 
 function resetModal() {
+  console.log("===========", minigame.value.configurationId);
   if (minigame.value.configurationId != undefined) {
-    // getChickenshockConfig(minigame.value.configurationId)
-    //   .then((response) => {
-    //     configuration.value = response.data;
-    //   })
-    //   .catch((error) => {
-    //     console.log(error);
-    //     if (error.response.status == 404) {
-    //       minigame.value.configurationId = undefined;
-    //       configuration.value = new BugfinderConfiguration();
-    //     }
-    //   });
+    getBugfinderConfig(minigame.value.configurationId)
+      .then((response) => {
+        configuration.value = response.data;
+        if (
+          configuration.value.codes.length > 0 &&
+          configuration.value.codes[0].words.length > 0 &&
+          configuration.value.codes[0].words[0].length > 0
+        ) {
+          inputChanged(
+            0,
+            0,
+            0,
+            configuration.value.codes[0].words[0][0].correctValue
+          );
+        }
+        console.log(configuration.value);
+      })
+      .catch((error) => {
+        console.log(error);
+        if (error.response.status == 404) {
+          minigame.value.configurationId = undefined;
+          configuration.value = new BugfinderConfiguration();
+        }
+      });
     oldMinigame.value = minigame.value;
   } else {
     configuration.value = new BugfinderConfiguration();
@@ -82,18 +101,42 @@ function resetModal() {
   console.log("Reset Modal");
 }
 
+function handleSubmit() {
+  emit("updateMinigameConfiguration", minigame.value);
+}
+
 function handleOk() {
-  codes.value.codes.forEach((code) => {
-    code.words.forEach(
-      (row) =>
-        (row = row.filter((word) => word.correctValue.trim().length !== 0))
-    );
+  configuration.value.codes.forEach((code) => {
+    code.words.forEach((row) => {
+      row.forEach(
+        (word) =>
+          (word.errorType =
+            (word.errorType as string) === "" ? undefined : word.errorType)
+      );
+      row = row.filter((word) => word.correctValue.trim().length !== 0);
+    });
     code.words = code.words.filter((row) => row.length !== 0);
   });
-  codes.value.codes = codes.value.codes.filter(
+  configuration.value.codes = configuration.value.codes.filter(
     (code) => code.words.length !== 0
   );
-  postBugfinderConfig(codes.value);
+  postBugfinderConfig(configuration.value)
+    .then((response) => {
+      minigame.value.configurationId = response.data.id;
+      console.log("Submit Modal");
+      console.log("id:" + response.data.id);
+      console.log("minigameId" + minigame.value.configurationId);
+      oldMinigame.value = minigame.value;
+      handleSubmit();
+    })
+    .then(() => {
+      putMinigame(
+        parseInt(courseId.value),
+        parseInt(worldIndex.value),
+        parseInt(dungeonIndex.value),
+        minigame.value
+      );
+    });
 }
 
 function hiddenModal() {
@@ -110,7 +153,7 @@ function loadModal() {
   }
 }
 
-const codes = ref<BugfinderViewModel>(getDefaultViewModel());
+configuration.value = getDefaultViewModel();
 
 function getDefaultViewModel(): BugfinderViewModel {
   return { codes: [{ words: getDefaultWordViewModel() }] };
@@ -120,10 +163,10 @@ function getDefaultWordViewModel(): WordViewModel[][] {
 }
 
 function getCode(code: number) {
-  if (codes.value.codes[code] === undefined) {
+  if (configuration.value.codes[code] === undefined) {
     throw new Error(`cannot find code with index ${code}`);
   }
-  return codes.value.codes[code];
+  return configuration.value.codes[code];
 }
 
 function getRow(code: number, row: number) {
@@ -141,11 +184,11 @@ function getWord(code: number, row: number, col: number): WordViewModel {
 }
 
 function newCode() {
-  codes.value.codes.push({ words: getDefaultWordViewModel() });
+  configuration.value.codes.push({ words: getDefaultWordViewModel() });
 }
 
 function removeCode(code: number) {
-  codes.value.codes.splice(code, 1);
+  configuration.value.codes.splice(code, 1);
 }
 
 function inputChanged(
@@ -176,7 +219,7 @@ function inputChanged(
     }
   }
   // add missing rows
-  if (codes.value.codes.length !== 0) {
+  if (code.words.length !== 0) {
     const lastRow = code.words[code.words.length - 1];
     if (lastRow.length !== 0) {
       code.words.push([{ correctValue: "" }]);
@@ -224,7 +267,7 @@ function showBugModal(codeId: number, rowId: number, colId: number) {
 
     <b-card no-body>
       <b-tabs card>
-        <b-tab v-for="(code, codeId) in codes.codes" :key="codeId">
+        <b-tab v-for="(code, codeId) in configuration.codes" :key="codeId">
           <template #title>
             <div class="tab-title">
               <span>{{ "Tab " + (codeId + 1) }}</span>
@@ -260,14 +303,20 @@ function showBugModal(codeId: number, rowId: number, colId: number) {
                         v-on:input="inputChanged(codeId, rowId, colId, $event)"
                       ></b-form-input>
                       <b-button
-                        v-if="col.errorType === undefined"
+                        v-if="
+                          col.errorType == null ||
+                          col.errorType.toString() === ''
+                        "
                         size="sm"
                         v-on:click="showBugModal(codeId, rowId, colId)"
                       >
                         <em class="bi bi-bug"></em>
                       </b-button>
                       <b-button
-                        v-if="col.errorType !== undefined"
+                        v-if="
+                          col.errorType != null &&
+                          col.errorType.toString() !== ''
+                        "
                         variant="info"
                         size="sm"
                         v-on:click="showBugModal(codeId, rowId, colId)"
