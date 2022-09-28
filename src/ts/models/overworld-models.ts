@@ -8,6 +8,17 @@ export interface ICourse {
   worlds: IWorld[];
 }
 
+export interface ICloneCourse {
+  id: number;
+  semester: string;
+  courseName: string;
+  description: string;
+
+  active: boolean;
+  worlds: IWorld[];
+  errorMessages: string[];
+}
+
 export interface ICourseItem {
   id: number;
   semester: string;
