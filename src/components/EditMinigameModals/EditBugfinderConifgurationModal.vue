@@ -67,7 +67,6 @@ const emit = defineEmits<{
 }>();
 
 function resetModal() {
-  console.log("===========", minigame.value.configurationId);
   if (minigame.value.configurationId != undefined) {
     getBugfinderConfig(minigame.value.configurationId)
       .then((response) => {
@@ -191,14 +190,17 @@ function removeCode(code: number) {
   configuration.value.codes.splice(code, 1);
 }
 
+/**
+ * ensures that an empty input field exists after and below the latest input. Also ensures that no two empty input fields or rows exist.
+ */
 function inputChanged(
-  codeI: number,
+  codeId: number,
   row: number,
   col: number,
   newString: string
 ) {
-  const code = getCode(codeI);
-  const word = getWord(codeI, row, col);
+  const code = getCode(codeId);
+  const word = getWord(codeId, row, col);
   word.correctValue = newString;
   // remove empty columns
   for (let rowIndex = 0; rowIndex < code.words.length; rowIndex++) {
