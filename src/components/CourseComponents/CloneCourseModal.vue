@@ -2,7 +2,7 @@
 import { defineEmits } from "vue/dist/vue";
 import { ref } from "vue";
 import { useToast } from "vue-toastification";
-import { ICourse } from "@/ts/models/overworld-models";
+import { ICloneCourse, ICourse } from "@/ts/models/overworld-models";
 import { defineProps, watch } from "vue";
 import { postCloneCourse } from "@/ts/rest-clients/course-rest-client";
 import { validateSemester } from "@/ts/validation/validate";
@@ -54,8 +54,14 @@ function handleOk() {
       course.value.id
     )
       .then((response) => {
-        emit("cloned", response.data);
-        toast.success(`Course ${response.data.courseName} is created!`);
+        let course: ICloneCourse = response.data;
+        if (course.errorMessages.length == 0) {
+          emit("cloned", response.data);
+          toast.success(`Course ${response.data.courseName} is created!`);
+        } else {
+          emit("cloned", response.data);
+          toast.error(`The following errors occured:` + course.errorMessages);
+        }
       })
       .catch((error) => {
         toast.error(`Course ${course.value.id} could not be cloned!`);
