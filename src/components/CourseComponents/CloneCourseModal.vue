@@ -55,11 +55,11 @@ function handleOk() {
     )
       .then((response) => {
         let course: ICloneCourse = response.data;
-        emit("cloned", response.data);
-        if (course.errorMessages.length == 0) {
-          toast.success(`Course ${response.data.courseName} is created!`);
-        } else {
+        emit("cloned", course);
+        if (course.errorMessages?.length != 0) {
           toast.error(`The following errors occured:` + course.errorMessages);
+        } else {
+          toast.success(`Course ${response.data.courseName} is created!`);
         }
       })
       .catch((error) => {
