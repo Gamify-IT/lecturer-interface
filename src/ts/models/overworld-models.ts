@@ -68,7 +68,7 @@ export interface ITask {
   index: number;
   description: string;
   game: Minigame;
-  configurationId: string;
+  configurationId?: string;
 }
 
 export interface INPC {

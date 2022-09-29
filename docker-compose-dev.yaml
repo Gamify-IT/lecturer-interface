@@ -1,7 +1,6 @@
 version: "3.7"
 
 services:
-
   #databases
   setup:
     container_name: setup
@@ -14,6 +13,7 @@ services:
         overworld/default.sql
         finitequiz/default.sql
         crosswordpuzzle/default.sql
+        bugfinder/default.sql
 
   keycloak-db:
     container_name: keycloak-db
@@ -36,14 +36,14 @@ services:
       - POSTGRES_PASSWORD=postgres
 
   chickenshock-db:
-      container_name: chickenshock-db
-      image: postgres:14-alpine
-      restart: always
-      expose:
-        - "5432"
-      environment:
-        - POSTGRES_USER=postgres
-        - POSTGRES_PASSWORD=postgres
+    container_name: chickenshock-db
+    image: postgres:14-alpine
+    restart: always
+    expose:
+      - "5432"
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
 
   finitequiz-db:
     container_name: finitequiz-db
@@ -57,6 +57,16 @@ services:
 
   crosswordpuzzle-db:
     container_name: crosswordpuzzle-db
+    image: postgres:14-alpine
+    restart: always
+    expose:
+      - "5432"
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+
+  bugfinder-db:
+    container_name: bugfinder-db
     image: postgres:14-alpine
     restart: always
     expose:
@@ -103,9 +113,12 @@ services:
       - CHICKENSHOCK_URL=http://chickenshock-backend/api/v1
       - CROSSWORDPUZZLE_URL=http://crosswordpuzzle-backend/api/v1
       - FINITEQUIZ_URL=http://finitequiz-backend/api/v1
+      - BUGFINDER_URL=http://bugfinder-backend/api/v1
+      - KEYCLOAK_ISSUER=http://localhost/keycloak/realms/Gamify-IT
+      - KEYCLOAK_URL=http://keycloak/keycloak/realms/Gamify-IT
 
   chickenshock-backend:
-    container_name:   chickenshock-backend
+    container_name: chickenshock-backend
     image: ghcr.io/gamify-it/chickenshock-backend:main
     restart: always
     pull_policy: always
@@ -121,8 +134,22 @@ services:
       - KEYCLOAK_ISSUER=http://localhost/keycloak/realms/Gamify-IT
       - KEYCLOAK_URL=http://keycloak/keycloak/realms/Gamify-IT
 
+  bugfinder-backend:
+    container_name: bugfinder-backend
+    image: ghcr.io/gamify-it/bugfinder-backend:main
+    restart: always
+    pull_policy: always
+    expose:
+      - "80"
+    depends_on:
+      - bugfinder-db
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_URL=postgresql://bugfinder-db:5432/postgres
+
   finitequiz-backend:
-    container_name:   finitequiz-backend
+    container_name: finitequiz-backend
     image: ghcr.io/gamify-it/finitequiz-backend:main
     restart: always
     pull_policy: always
@@ -154,7 +181,6 @@ services:
       - OVERWORLD_URL=http://overworld-backend/api/v1
       - KEYCLOAK_ISSUER=http://localhost/keycloak/realms/Gamify-IT
       - KEYCLOAK_URL=http://keycloak/keycloak/realms/Gamify-IT
-
 
   #frontends
   landing-page:
@@ -192,6 +218,14 @@ services:
   crosswordpuzzle:
     container_name: crosswordpuzzle
     image: ghcr.io/gamify-it/crosswordpuzzle:main
+    pull_policy: always
+    restart: always
+    expose:
+      - "80"
+
+  bugfinder:
+    container_name: bugfinder
+    image: ghcr.io/gamify-it/bugfinder:main
     pull_policy: always
     restart: always
     expose:
