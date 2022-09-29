@@ -80,7 +80,6 @@ function getImage(): string {
     size="xl"
     v-model="showModal"
     @hidden="hiddenModal"
-    v-if="showModal"
   >
     <b-img :src="getImage()" fluid></b-img>
   </b-modal>
