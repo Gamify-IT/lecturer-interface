@@ -3,6 +3,7 @@ import CoursesView from "@/views/CoursesView.vue";
 import CourseView from "@/views/CourseView.vue";
 import MinigameTasksView from "@/views/MinigameTasksView.vue";
 import NPCView from "@/views/NPCsView.vue";
+import BooksView from "@/views/BooksView.vue";
 
 import { createRouter, createWebHistory, RouteRecordRaw } from "vue-router";
 
@@ -41,6 +42,16 @@ const routes: Array<RouteRecordRaw> = [
     path: "/courses/:courseId/worlds/:worldIndex/dungeons/:dungeonIndex/npcs",
     name: "dungeon-npcs",
     component: NPCView,
+  },
+  {
+    path: "/courses/:courseId/worlds/:worldIndex/books",
+    name: "world-books",
+    component: BooksView,
+  },
+  {
+    path: "/courses/:courseId/worlds/:worldIndex/dungeons/:dungeonIndex/books",
+    name: "dungeon-books",
+    component: BooksView,
   },
 ];
 

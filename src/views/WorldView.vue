@@ -216,6 +216,13 @@ watch(
   <b-overlay :show="loading" rounded="sm">
     <div v-if="world !== undefined" class="container mt-5">
       <h2>Configure World {{ world.index }}</h2>
+      <b-alert show dismissible>
+        Here, you can see world {{ world.index }} together with all its
+        dungeons.<br />
+        The dungeons can be accessed (if enabled) at certain points in the
+        world, see the dungeon spots map. You can give the areas a topic name,
+        based on what content you intend to place there.
+      </b-alert>
       <h4>{{ world.staticName }}</h4>
       <b-button @click="showMapModal = true">Show Map</b-button>
       <div style="margin-top: 30px">

@@ -54,6 +54,8 @@ function getFileName(): string {
       return "raw.webp";
     case MapType.NPC:
       return "npc.webp";
+    case MapType.BOOK:
+      return "books.webp";
     case MapType.MINIGAME:
       return "minigames.webp";
     case MapType.DUNGEON:

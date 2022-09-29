@@ -1,7 +1,11 @@
-import { flushPromises, mount } from "@vue/test-utils";
+import { mount } from "@vue/test-utils";
 import AreaBox from "@/components/WorldComponents/AreaBox.vue";
 import { Dungeon, IArea, Minigame, Task } from "@/ts/models/overworld-models";
-import BootstrapVue3, { BButton, BFormInput } from "bootstrap-vue-3";
+import BootstrapVue3, {
+  BButton,
+  BFormCheckbox,
+  BFormInput,
+} from "bootstrap-vue-3";
 import WrapperLike from "@vue/test-utils/dist/interfaces/wrapperLike";
 import config from "@/config";
 import mockAxios from "jest-mock-axios";
@@ -34,6 +38,7 @@ describe("AreaBox.vue", () => {
       "Kapitel 1: UML",
       true,
       tasks,
+      [],
       []
     );
     wrapper = mount(AreaBox, {
@@ -121,5 +126,26 @@ describe("AreaBox.vue", () => {
     expect(areaNameColumn.html()).toContain(initialDungeonTopicName);
 
     expect(mockAxios.put).toHaveBeenCalledTimes(0);
+  });
+  test("Active status is toggable on switch button", async () => {
+    const clonedDungeon = { ...dungeon };
+    clonedDungeon.active = !clonedDungeon.active;
+    const updateActiveStatusResponse = {
+      data: [clonedDungeon],
+    };
+    mockAxios.put.mockResolvedValueOnce(updateActiveStatusResponse);
+
+    // the input is hiding under the form checkbox component
+    const activeSwitch = wrapper.findComponent(BFormCheckbox);
+    const activeSwitchInput = activeSwitch.find("input");
+    expect(activeSwitch.exists()).toBe(true);
+    expect(activeSwitchInput.exists()).toBe(true);
+
+    await activeSwitchInput.trigger("change");
+
+    expect(mockAxios.put).toHaveBeenCalledWith(
+      `${config.overworldApiUrl}/courses/${courseId}/worlds/${worldIndex}/dungeons/${dungeonIndex}`,
+      dungeon
+    );
   });
 });

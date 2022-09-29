@@ -135,6 +135,17 @@ function handleOk() {
         parseInt(dungeonIndex.value),
         minigame.value
       );
+    })
+    .catch((error) => {
+      const statusCode = error.response.status;
+      const errorMessages = error.response.data.errors;
+      if (statusCode == 400) {
+        for (let errorMessage of errorMessages) {
+          toast.error("Error on saving configuration: " + errorMessage);
+        }
+      } else {
+        toast.error("There was an error saving the configuration!");
+      }
     });
 }
 
@@ -224,9 +235,9 @@ function downloadConfiguration() {
   }
   clonedConfiguration.questions = clonedQuestions;
   const blob = new Blob([JSON.stringify(clonedConfiguration)], {
-    type: "text/plain",
+    type: "text/json",
   });
-  saveAs(blob, "chickenshock-configuration.txt");
+  saveAs(blob, "chickenshock-configuration.json");
 }
 async function importFile(event: any) {
   const file = event.target.files[0];
@@ -285,6 +296,7 @@ async function importFile(event: any) {
             id="time-input"
             type="number"
             v-model="configuration.time"
+            :state="configuration.time > 0"
           />
         </b-form-group>
       </b-form-group>
@@ -350,6 +362,6 @@ async function importFile(event: any) {
 
 <style scoped>
 #time-input {
-  width: 4vw;
+  width: 6vw;
 }
 </style>
