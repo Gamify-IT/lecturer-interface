@@ -11,6 +11,7 @@ import EditableStringAttribute from "@/components/EditableStringAttribute.vue";
 import EditMinigameConfigurationModal from "@/components/EditMinigameModals/EditMinigameConfigurationModal.vue";
 import EditChickenshockConfigurationModal from "@/components/EditMinigameModals/EditChickenshockConfigurationModal.vue";
 import EditFinitequizConfigurationModal from "@/components/EditMinigameModals/EditFinitequizConfigurationModal.vue";
+import EditTowercrushConfigurationModal from "@/components/EditMinigameModals/EditTowercrushConfigurationModal.vue";
 import EditCrosswordpuzzleModal from "@/components/EditMinigameModals/EditCrosswordpuzzleModal.vue";
 import MapImageModal from "@/components/MapImageModal.vue";
 import EditBugfinderConifgurationModal from "@/components/EditMinigameModals/EditBugfinderConifgurationModal.vue";
@@ -35,6 +36,7 @@ const currentMinigameId = ref(1);
 const inFocus = ref(false);
 const firstFocus = ref(false);
 const showFinitequizModal = ref(false);
+const showTowercrushModal = ref(false);
 const showCrosswordpuzzleModal = ref(false);
 const showBugfinderModal = ref(false);
 
@@ -312,6 +314,9 @@ function editMinigameConfiguration(task: ITask) {
     case Minigame.FINITEQUIZ:
       showFinitequizModal.value = true;
       break;
+    case Minigame.TOWERCRUSH:
+      showTowercrushModal.value = true;
+      break;
     case Minigame.BUGFINDER:
       showBugfinderModal.value = true;
       break;
@@ -351,6 +356,7 @@ function closedEditModal() {
   showEditModal.value = false;
   showChickenshockModal.value = false;
   showFinitequizModal.value = false;
+  showTowercrushModal.value = false;
   showCrosswordpuzzleModal.value = false;
   showBugfinderModal.value = false;
 }
@@ -437,6 +443,12 @@ function closedEditModal() {
   />
   <EditFinitequizConfigurationModal
     :showModal="showFinitequizModal"
+    :minigame="editedMinigame"
+    @updateMinigameConfiguration="updateMinigameConfiguration"
+    @closedModal="closedEditModal"
+  />
+  <EditTowercrushConfigurationModal
+    :showModal="showTowercrushModal"
     :minigame="editedMinigame"
     @updateMinigameConfiguration="updateMinigameConfiguration"
     @closedModal="closedEditModal"
