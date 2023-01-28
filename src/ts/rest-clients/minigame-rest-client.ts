@@ -19,6 +19,23 @@ export async function getMinigames(
   }
 }
 
+export async function getMinigame(
+  courseId: number,
+  worldIndex: number,
+  dungeonIndex: number | undefined,
+  minigameIndex: number
+): Promise<AxiosResponse> {
+  if (dungeonIndex != undefined) {
+    return axios.get(
+      `${config.overworldApiUrl}/courses/${courseId}/worlds/${worldIndex}/dungeons/${dungeonIndex}/minigame-tasks/${minigameIndex}`
+    );
+  } else {
+    return axios.get(
+      `${config.overworldApiUrl}/courses/${courseId}/worlds/${worldIndex}/minigame-tasks/${minigameIndex}`
+    );
+  }
+}
+
 export async function putMinigame(
   courseId: number,
   worldIndex: number,

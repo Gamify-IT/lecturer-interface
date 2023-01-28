@@ -15,6 +15,7 @@ import EditTowercrushConfigurationModal from "@/components/EditMinigameModals/Ed
 import EditCrosswordpuzzleModal from "@/components/EditMinigameModals/EditCrosswordpuzzleModal.vue";
 import MapImageModal from "@/components/MapImageModal.vue";
 import EditBugfinderConifgurationModal from "@/components/EditMinigameModals/EditBugfinderConifgurationModal.vue";
+import router from "@/router";
 
 const availableMinigames = Object.values(Minigame);
 
@@ -360,6 +361,29 @@ function closedEditModal() {
   showCrosswordpuzzleModal.value = false;
   showBugfinderModal.value = false;
 }
+
+function redirectToStatisticView(task: ITask) {
+  if (route.name?.toString().includes("world")) {
+    router.push({
+      name: "world-minigame-statistics",
+      params: {
+        courseId: courseId.value,
+        worldIndex: worldIndex.value,
+        minigameIndex: task.index,
+      },
+    });
+  } else {
+    router.push({
+      name: "dungeon-minigame-statistics",
+      params: {
+        courseId: courseId.value,
+        worldIndex: worldIndex.value,
+        dungeonIndex: dungeonIndex.value,
+        minigameIndex: task.index,
+      },
+    });
+  }
+}
 </script>
 
 <template>
@@ -415,6 +439,15 @@ function closedEditModal() {
             >
               <em class="bi bi-pencil-square"></em>
               Edit
+            </b-button>
+            <b-button
+              variant="warning"
+              size="small"
+              @click="redirectToStatisticView(task)"
+              :id="`redirectToStatistics` + task.index"
+            >
+              <em class="bi bi-pencil-square"></em>
+              Statistics
             </b-button>
           </b-col>
         </b-row>
