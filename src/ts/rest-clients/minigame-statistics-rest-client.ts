@@ -3,7 +3,7 @@ import axios, { AxiosResponse } from "axios";
 import config from "@/config";
 
 export async function getSuccessRateStatistic(
-  courseId: number,
+  courseId: string,
   worldIndex: number,
   dungeonIndex: number | undefined,
   minigameIndex: number
