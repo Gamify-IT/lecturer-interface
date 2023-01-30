@@ -1,4 +1,7 @@
-import { getSuccessRateStatistic } from "@/ts/rest-clients/minigame-statistics-rest-client";
+import {
+  getSuccessRateStatistic,
+  getHighscoreDistributionStatistic,
+} from "@/ts/rest-clients/minigame-statistics-rest-client";
 
 /**
  * Loads the success rate of a minigame task into the present pie chart.
@@ -58,12 +61,57 @@ export async function loadAverageSuccessInPieChart(
     pieChart.options = {
       ...pieChart.options,
       ...{
-        title: { text: "Average Success" },
         labels: labels,
         colors: colors,
       },
     };
     await wait(1000);
+  });
+}
+
+/**
+ * Loads the highscore distribution of a minigame task into the present bar chart.
+ *
+ * @param courseId the id of the course the minigame task is part off
+ * @param worldIndex the index of the world
+ * @param dungeonIndex the index of the dungeon (optional, undefined if the area is a world)
+ * @param minigameIndex the index of the minigame the statistic should be
+ * @param rangeBar the range bar to update with highscore distribution
+ * @returns a promise that resolves after the chart has been updated
+ */
+export async function loadHighscoreDistributionInRangeBar(
+  courseId: string,
+  worldIndex: number,
+  dungeonIndex: number | undefined,
+  minigameIndex: number,
+  rangeBar: any
+): Promise<any> {
+  return getHighscoreDistributionStatistic(
+    courseId,
+    worldIndex,
+    dungeonIndex,
+    minigameIndex
+  ).then(async (response) => {
+    const result: Array<any> = response.data;
+    const data = [] as Array<{ x: string; y: Array<number> }>;
+    const series = [{ data: data }] as Array<{
+      data: Array<{ x: string; y: Array<number> }>;
+    }>;
+    for (const highscoreDistribution of result) {
+      const fromPercentage: number = highscoreDistribution.fromPercentage;
+      const toPercentage: number = highscoreDistribution.toPercentage;
+      const fromScore: number = highscoreDistribution.fromScore;
+      const toScore: number = highscoreDistribution.toScore;
+      const count: number = highscoreDistribution.count;
+      data.push({
+        x: `${fromPercentage}% to ${toPercentage}% has this score`,
+        y: [fromScore, toScore],
+      });
+    }
+    console.log(result);
+    console.log(data);
+
+    rangeBar.series = series;
   });
 }
 

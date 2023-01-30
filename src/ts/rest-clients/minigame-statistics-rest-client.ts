@@ -18,3 +18,20 @@ export async function getSuccessRateStatistic(
     );
   }
 }
+
+export async function getHighscoreDistributionStatistic(
+  courseId: string,
+  worldIndex: number,
+  dungeonIndex: number | undefined,
+  minigameIndex: number
+): Promise<AxiosResponse> {
+  if (dungeonIndex != undefined) {
+    return axios.get(
+      `${config.overworldApiUrl}/courses/${courseId}/worlds/${worldIndex}/dungeons/${dungeonIndex}/minigame-tasks/${minigameIndex}/statistics/highscore-distribution`
+    );
+  } else {
+    return axios.get(
+      `${config.overworldApiUrl}/courses/${courseId}/worlds/${worldIndex}/minigame-tasks/${minigameIndex}/statistics/highscore-distribution`
+    );
+  }
+}

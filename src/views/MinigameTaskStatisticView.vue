@@ -1,9 +1,12 @@
 <script setup lang="ts">
 import { ApexOptions } from "apexcharts";
-import { ITask, Minigame, MapType } from "@/ts/models/overworld-models";
+import { ITask, Minigame } from "@/ts/models/overworld-models";
 import { getMinigame } from "@/ts/rest-clients/minigame-rest-client";
-import { loadAverageSuccessInPieChart } from "@/ts/statistics/overworld-statistics";
-import { defineEmits, ref, watch, Ref } from "vue";
+import {
+  loadAverageSuccessInPieChart,
+  loadHighscoreDistributionInRangeBar,
+} from "@/ts/statistics/overworld-statistics";
+import { ref, watch, Ref } from "vue";
 import { useRoute } from "vue-router";
 import { useToast } from "vue-toastification";
 import router from "@/router";
@@ -13,6 +16,7 @@ const route = useRoute();
 const loading = ref(false);
 const loadingGeneralStatistics = ref(false);
 const loadingMinigameSpecificStatistics = ref(false);
+const isEnoughDataForStatistic = ref(true);
 
 const courseId = ref(route.params.courseId as string);
 const worldIndex = ref(route.params.worldIndex as string);
@@ -91,6 +95,13 @@ async function loadMinigameStatistic(
           minigameIndex,
           successRatePieChart.value
         ),
+        loadHighscoreDistributionInRangeBar(
+          courseId,
+          worldIndex,
+          dungeonIndex,
+          minigameIndex,
+          highscoreDistributionRangeBar.value
+        ),
       ];
       await Promise.all(promisessToWait);
     })
@@ -119,6 +130,15 @@ const successRatePieChart = ref({
   } as ApexOptions,
   series: [] as Array<number>,
 });
+const highscoreDistributionRangeBar = ref({
+  options: {
+    chart: { type: "rangeBar" },
+    title: { text: "Highscore Distribution" },
+  } as ApexOptions,
+  series: [] as Array<{
+    data: Array<{ x: string; y: Array<number> }>;
+  }>,
+});
 </script>
 
 <template>
@@ -136,14 +156,23 @@ const successRatePieChart = ref({
         Here, you can see the statistic if the current miningame.</b-alert
       >
       <b-overlay :show="loadingGeneralStatistics" rounded="sm">
-        <div id="general-statistics" class="container mt-4">
+        <b-row id="general-statistics" class="container mt-4">
           <h2>General minigame statistics</h2>
-          <apexchart
-            width="600"
-            :options="successRatePieChart.options"
-            :series="successRatePieChart.series"
-          ></apexchart>
-        </div>
+          <b-col>
+            <apexchart
+              width="600"
+              :options="successRatePieChart.options"
+              :series="successRatePieChart.series"
+            ></apexchart
+          ></b-col>
+          <b-col>
+            <apexchart
+              width="600"
+              :options="highscoreDistributionRangeBar.options"
+              :series="highscoreDistributionRangeBar.series"
+            ></apexchart>
+          </b-col>
+        </b-row>
       </b-overlay>
       <b-overlay :show="loadingMinigameSpecificStatistics" rounded="sm">
         <div id="minigame-specific-statistics" class="container mt-4">
