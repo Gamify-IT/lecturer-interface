@@ -1,9 +1,8 @@
 <script setup lang="ts">
 import { defineEmits } from "vue/dist/vue";
-import { ref } from "vue";
+import { defineProps, ref, watch } from "vue";
 import { useToast } from "vue-toastification";
 import { ICloneCourse, ICourse } from "@/ts/models/overworld-models";
-import { defineProps, watch } from "vue";
 import { postCloneCourse } from "@/ts/rest-clients/course-rest-client";
 import { validateSemester } from "@/ts/validation/validate";
 

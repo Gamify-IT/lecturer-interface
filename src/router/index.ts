@@ -2,6 +2,7 @@ import WorldView from "@/views/WorldView.vue";
 import CoursesView from "@/views/CoursesView.vue";
 import CourseView from "@/views/CourseView.vue";
 import MinigameTasksView from "@/views/MinigameTasksView.vue";
+import MinigameTaskStatisticView from "@/views/MinigameTaskStatisticView.vue";
 import NPCView from "@/views/NPCsView.vue";
 import BooksView from "@/views/BooksView.vue";
 
@@ -32,6 +33,16 @@ const routes: Array<RouteRecordRaw> = [
     path: "/courses/:courseId/worlds/:worldIndex/dungeons/:dungeonIndex/minigames",
     name: "dungeon-minigames",
     component: MinigameTasksView,
+  },
+  {
+    path: "/courses/:courseId/worlds/:worldIndex/minigames/:minigameIndex/statistics",
+    name: "world-minigame-statistics",
+    component: MinigameTaskStatisticView,
+  },
+  {
+    path: "/courses/:courseId/worlds/:worldIndex/dungeons/:dungeonIndex/minigames/:minigameIndex/statistics",
+    name: "dungeon-minigame-statistics",
+    component: MinigameTaskStatisticView,
   },
   {
     path: "/courses/:courseId/worlds/:worldIndex/npcs",

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ITask, Minigame, MapType } from "@/ts/models/overworld-models";
+import { ITask, MapType, Minigame } from "@/ts/models/overworld-models";
 import {
   getMinigames,
   putMinigame,
@@ -15,6 +15,7 @@ import EditTowercrushConfigurationModal from "@/components/EditMinigameModals/Ed
 import EditCrosswordpuzzleModal from "@/components/EditMinigameModals/EditCrosswordpuzzleModal.vue";
 import MapImageModal from "@/components/MapImageModal.vue";
 import EditBugfinderConifgurationModal from "@/components/EditMinigameModals/EditBugfinderConifgurationModal.vue";
+import router from "@/router";
 
 const availableMinigames = Object.values(Minigame);
 
@@ -360,6 +361,29 @@ function closedEditModal() {
   showCrosswordpuzzleModal.value = false;
   showBugfinderModal.value = false;
 }
+
+function redirectToStatisticView(task: ITask) {
+  if (route.name?.toString().includes("world")) {
+    router.push({
+      name: "world-minigame-statistics",
+      params: {
+        courseId: courseId.value,
+        worldIndex: worldIndex.value,
+        minigameIndex: task.index,
+      },
+    });
+  } else {
+    router.push({
+      name: "dungeon-minigame-statistics",
+      params: {
+        courseId: courseId.value,
+        worldIndex: worldIndex.value,
+        dungeonIndex: dungeonIndex.value,
+        minigameIndex: task.index,
+      },
+    });
+  }
+}
 </script>
 
 <template>
@@ -406,7 +430,7 @@ function closedEditModal() {
               @keydown.left.prevent
             ></b-form-select>
           </b-col>
-          <b-col sm="2">
+          <b-col sm="1">
             <b-button
               variant="info"
               size="small"
@@ -415,6 +439,16 @@ function closedEditModal() {
             >
               <em class="bi bi-pencil-square"></em>
               Edit
+            </b-button>
+          </b-col>
+          <b-col sm="1">
+            <b-button
+              variant="warning"
+              size="small"
+              @click="redirectToStatisticView(task)"
+              :id="`redirectToStatistics` + task.index"
+            >
+              <em class="bi bi-graph-up"></em>
             </b-button>
           </b-col>
         </b-row>
