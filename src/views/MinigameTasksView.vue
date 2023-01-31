@@ -430,7 +430,7 @@ function redirectToStatisticView(task: ITask) {
               @keydown.left.prevent
             ></b-form-select>
           </b-col>
-          <b-col sm="2">
+          <b-col sm="1">
             <b-button
               variant="info"
               size="small"
@@ -440,14 +440,15 @@ function redirectToStatisticView(task: ITask) {
               <em class="bi bi-pencil-square"></em>
               Edit
             </b-button>
+          </b-col>
+          <b-col sm="1">
             <b-button
               variant="warning"
               size="small"
               @click="redirectToStatisticView(task)"
               :id="`redirectToStatistics` + task.index"
             >
-              <em class="bi bi-pencil-square"></em>
-              Statistics
+              <em class="bi bi-graph-up"></em>
             </b-button>
           </b-col>
         </b-row>
