@@ -11,11 +11,12 @@ import { useRoute } from "vue-router";
 import { useToast } from "vue-toastification";
 import router from "@/router";
 
+import FiniteQuizStatisticBox from "@/components/MinigameStatisticComponents/FiniteQuizStatisticBox.vue";
+
 const toast = useToast();
 const route = useRoute();
 const loading = ref(false);
 const loadingGeneralStatistics = ref(false);
-const loadingMinigameSpecificStatistics = ref(false);
 const isEnoughDataForStatistic = ref(true);
 
 const courseId = ref(route.params.courseId as string);
@@ -87,7 +88,7 @@ async function loadMinigameStatistic(
     .then(async (response) => {
       const result: ITask = response.data;
       minigame.value = result;
-      const promisessToWait = [
+      const promisesToWait = [
         loadAverageSuccessInPieChart(
           courseId,
           worldIndex,
@@ -103,7 +104,7 @@ async function loadMinigameStatistic(
           highscoreDistributionRangeBar.value
         ),
       ];
-      await Promise.all(promisessToWait);
+      await Promise.all(promisesToWait);
     })
     .catch((error) => {
       console.log(error);
@@ -115,13 +116,6 @@ async function loadMinigameStatistic(
 function goBack() {
   router.go(-1);
 }
-
-loadMinigameStatistic(
-  courseId.value,
-  worldIndex.value,
-  dungeonIndex.value,
-  minigameIndex.value
-);
 
 const successRatePieChart = ref({
   options: {
@@ -139,6 +133,13 @@ const highscoreDistributionRangeBar = ref({
     data: Array<{ x: string; y: Array<number> }>;
   }>,
 });
+
+loadMinigameStatistic(
+  courseId.value,
+  worldIndex.value,
+  dungeonIndex.value,
+  minigameIndex.value
+);
 </script>
 
 <template>
@@ -174,20 +175,14 @@ const highscoreDistributionRangeBar = ref({
           </b-col>
         </b-row>
       </b-overlay>
-      <b-overlay :show="loadingMinigameSpecificStatistics" rounded="sm">
-        <div id="minigame-specific-statistics" class="container mt-4">
-          <h2>Minigame specific statistics</h2>
-          <b-alert show dismissible>
-            Just the same statistic till we display minigame specific
-            statistics...</b-alert
-          >
-          <apexchart
-            width="600"
-            :options="successRatePieChart.options"
-            :series="successRatePieChart.series"
-          ></apexchart>
-        </div>
-      </b-overlay>
+      <FiniteQuizStatisticBox
+        v-if="minigame?.game == Minigame.FINITEQUIZ"
+        :configuration-id="minigame.configurationId"
+      />
+      <b-alert v-else variant="warning" show dismissible>
+        Minigame specific statistics not included yet for this
+        minigame.</b-alert
+      >
       <b-button @click="goBack">Back</b-button>
     </div>
   </b-overlay>
