@@ -1,6 +1,9 @@
 <script setup lang="ts">
 import { ApexOptions } from "apexcharts";
-import { loadTimeSpentDistributionInRangeBar } from "@/ts/statistics/finitequiz-statistics";
+import {
+  loadTimeSpentDistributionInRangeBar,
+  loadProblematicQuestionsInBarChart,
+} from "@/ts/statistics/finitequiz-statistics";
 import { ref, watch, Ref, defineProps } from "vue";
 
 const loadingMinigameSpecificStatistics = ref(false);
@@ -44,12 +47,17 @@ async function loadMinigameStatistic(configurationId: string | undefined) {
       configurationId,
       timeSpentDistributionRangeBar.value
     ),
+    loadProblematicQuestionsInBarChart(
+      configurationId,
+      problematicQuestionsBarChart.value
+    ),
   ];
   await Promise.all(promisesToWait);
   loadingMinigameSpecificStatistics.value = false;
 }
 
 const timeSpentDistributionRangeBar = ref({
+  width: 600,
   options: {
     chart: { type: "rangeBar" },
     title: { text: "Time spent per minigame run" },
@@ -59,6 +67,20 @@ const timeSpentDistributionRangeBar = ref({
   }>,
 });
 
+const problematicQuestionsBarChart = ref({
+  width: 600,
+  options: {
+    chart: { type: "bar" },
+    title: { text: "Problematic questions per minigame run" },
+  } as ApexOptions,
+  series: [] as Array<{ name: string; data: Array<number> }>,
+});
+
+const statistics = [
+  timeSpentDistributionRangeBar,
+  problematicQuestionsBarChart,
+] as Array<Ref<{ width: number; options: ApexOptions; series: Array<any> }>>;
+
 loadMinigameStatistic(props.configurationId);
 </script>
 
@@ -66,11 +88,14 @@ loadMinigameStatistic(props.configurationId);
   <b-overlay :show="loadingMinigameSpecificStatistics" rounded="sm">
     <b-row id="minigame-specific-statistics" class="container mt-4">
       <h2>Minigame specific statistics</h2>
-      <b-col>
+      <b-col
+        v-for="statistic of statistics"
+        :key="statistic.value.options.title"
+      >
         <apexchart
-          width="600"
-          :options="timeSpentDistributionRangeBar.options"
-          :series="timeSpentDistributionRangeBar.series"
+          :width="statistic.value.width"
+          :options="statistic.value.options"
+          :series="statistic.value.series"
         ></apexchart
       ></b-col>
     </b-row>

@@ -3,6 +3,9 @@ import {
   getHighscoreDistributionStatistic,
 } from "@/ts/rest-clients/minigame-statistics-rest-client";
 
+const greenColor = "#00FF00";
+const redColor = "#FF0000";
+
 /**
  * Loads the success rate of a minigame task into the present pie chart.
  *
@@ -32,8 +35,6 @@ export async function loadAverageSuccessInPieChart(
     let fails = 0;
     let series = [] as Array<number>;
     let labels = [] as Array<string>;
-    const greenColor = "#00FF00";
-    const redColor = "#FF0000";
     let colors = [] as Array<string>;
     for (const key in result.successRateDistribution) {
       if (+key < sumSuccessAt) {
@@ -65,7 +66,6 @@ export async function loadAverageSuccessInPieChart(
         colors: colors,
       },
     };
-    await wait(1000);
   });
 }
 
@@ -104,7 +104,7 @@ export async function loadHighscoreDistributionInRangeBar(
       const toScore: number = highscoreDistribution.toScore;
       const count: number = highscoreDistribution.count;
       data.push({
-        x: `${fromPercentage}% to ${toPercentage}% has this score`,
+        x: `${fromPercentage}% to ${toPercentage}% of players`,
         y: [fromScore, toScore],
       });
     }
@@ -112,6 +112,16 @@ export async function loadHighscoreDistributionInRangeBar(
     console.log(data);
 
     rangeBar.series = series;
+    rangeBar.options = {
+      ...rangeBar.options,
+      ...{
+        yaxis: {
+          title: {
+            text: "Score",
+          },
+        },
+      },
+    };
   });
 }
 

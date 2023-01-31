@@ -1,4 +1,10 @@
-import { getTimeSpentDistributionStatistic } from "@/ts/rest-clients/finitequiz-minigame-statistics-rest-client";
+import {
+  getTimeSpentDistributionStatistic,
+  getProblematicQuestionsStatistic,
+} from "@/ts/rest-clients/finitequiz-minigame-statistics-rest-client";
+
+const greenColor = "#00FF00";
+const redColor = "#FF0000";
 
 /**
  * Loads the time spent distribution of a minigame task into the present range bar chart.
@@ -28,7 +34,7 @@ export async function loadTimeSpentDistributionInRangeBar(
         const toTime: number = timeSpentDistribution.toTime;
         const count: number = timeSpentDistribution.count;
         data.push({
-          x: `${fromPercentage}% to ${toPercentage}% has this time`,
+          x: `${fromPercentage}% to ${toPercentage}% of game runs`,
           y: [fromTime, toTime],
         });
       }
@@ -40,6 +46,87 @@ export async function loadTimeSpentDistributionInRangeBar(
             labels: {
               formatter: (val: any) => {
                 return val + " seconds";
+              },
+            },
+            title: {
+              text: "Time in seconds",
+            },
+          },
+        },
+      };
+    }
+  );
+}
+
+/**
+ * Loads the time spent distribution of a minigame task into the present range bar chart.
+ *
+ * @param courseId the id of the course the minigame task is part off
+ * @param worldIndex the index of the world
+ * @param dungeonIndex the index of the dungeon (optional, undefined if the area is a world)
+ * @param minigameIndex the index of the minigame the statistic should be
+ * @param rangeBar the range bar to update with highscore distribution
+ * @returns a promise that resolves after the chart has been updated
+ */
+export async function loadProblematicQuestionsInBarChart(
+  configurationId: string,
+  barChart: any
+): Promise<any> {
+  return getProblematicQuestionsStatistic(configurationId).then(
+    async (response) => {
+      const result: Array<any> = response.data;
+      const data = [] as Array<{ x: string; y: Array<number> }>;
+      const series = [
+        { name: "Correct answers", data: [] },
+        { name: "Wrong answers", data: [] },
+      ] as Array<{
+        name: string;
+        data: Array<number>;
+      }>;
+      const categories = [] as Array<string>;
+      for (const problematicQuestion of result) {
+        const attempts: number = problematicQuestion.attempts;
+        const correctAnswers: number = problematicQuestion.correctAnswers;
+        const wrongAnswers: number = problematicQuestion.wrongAnswers;
+        const question: { text: string } = problematicQuestion.question;
+        categories.push(question.text);
+        series[0].data.push(correctAnswers);
+        series[1].data.push(wrongAnswers);
+      }
+      barChart.series = series;
+      barChart.options = {
+        ...barChart.options,
+        ...{
+          xaxis: {
+            categories: categories,
+            labels: {
+              formatter: (val: any) => {
+                return val + " tries";
+              },
+            },
+            title: "Tries",
+          },
+          yaxis: {
+            title: {
+              text: "Question",
+            },
+          },
+          chart: {
+            stacked: true,
+          },
+          colors: [greenColor, redColor],
+          plotOptions: {
+            bar: {
+              horizontal: true,
+              dataLabels: {
+                total: {
+                  enabled: true,
+                  offsetX: 0,
+                  style: {
+                    fontSize: "13px",
+                    fontWeight: 900,
+                  },
+                },
               },
             },
           },
