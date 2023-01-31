@@ -118,6 +118,8 @@ function goBack() {
 }
 
 const successRatePieChart = ref({
+  enoughDataToShow: true,
+  width: 600,
   options: {
     chart: { type: "pie" },
     title: { text: "Average Success" },
@@ -125,6 +127,8 @@ const successRatePieChart = ref({
   series: [] as Array<number>,
 });
 const highscoreDistributionRangeBar = ref({
+  enoughDataToShow: true,
+  width: 600,
   options: {
     chart: { type: "rangeBar" },
     title: { text: "Highscore Distribution" },
@@ -133,6 +137,18 @@ const highscoreDistributionRangeBar = ref({
     data: Array<{ x: string; y: Array<number> }>;
   }>,
 });
+
+const statistics = [
+  successRatePieChart,
+  highscoreDistributionRangeBar,
+] as Array<
+  Ref<{
+    enoughDataToShow: boolean;
+    width: number;
+    options: ApexOptions;
+    series: Array<any>;
+  }>
+>;
 
 loadMinigameStatistic(
   courseId.value,
@@ -156,22 +172,24 @@ loadMinigameStatistic(
       <b-alert show dismissible>
         Here, you can see the statistic if the current miningame.</b-alert
       >
+      <b-button @click="goBack">Back</b-button>
       <b-overlay :show="loadingGeneralStatistics" rounded="sm">
         <b-row id="general-statistics" class="container mt-4">
           <h2>General minigame statistics</h2>
-          <b-col>
-            <apexchart
-              width="600"
-              :options="successRatePieChart.options"
-              :series="successRatePieChart.series"
-            ></apexchart
-          ></b-col>
-          <b-col>
-            <apexchart
-              width="600"
-              :options="highscoreDistributionRangeBar.options"
-              :series="highscoreDistributionRangeBar.series"
-            ></apexchart>
+          <b-col
+            v-for="statistic of statistics"
+            :key="statistic.value.options.title"
+          >
+            <b-overlay :show="!statistic.value.enoughDataToShow" rounded="sm">
+              <apexchart
+                :width="statistic.value.width"
+                :options="statistic.value.options"
+                :series="statistic.value.series"
+              ></apexchart>
+              <template #overlay v-if="!loadingGeneralStatistics">
+                <h6>Statistic has not enough data to show.</h6>
+              </template>
+            </b-overlay>
           </b-col>
         </b-row>
       </b-overlay>
@@ -183,7 +201,6 @@ loadMinigameStatistic(
         Minigame specific statistics not included yet for this
         minigame.</b-alert
       >
-      <b-button @click="goBack">Back</b-button>
     </div>
   </b-overlay>
 </template>

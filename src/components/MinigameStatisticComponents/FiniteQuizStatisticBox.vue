@@ -37,6 +37,9 @@ watch(
 
 async function loadMinigameStatistic(configurationId: string | undefined) {
   if (!configurationId) {
+    statistics.forEach(
+      (statistic) => (statistic.value.enoughDataToShow = false)
+    );
     throw new Error(
       "Configuration ID must be present when loading minigame specific statistics"
     );
@@ -57,6 +60,7 @@ async function loadMinigameStatistic(configurationId: string | undefined) {
 }
 
 const timeSpentDistributionRangeBar = ref({
+  enoughDataToShow: true,
   width: 600,
   options: {
     chart: { type: "rangeBar" },
@@ -68,6 +72,7 @@ const timeSpentDistributionRangeBar = ref({
 });
 
 const problematicQuestionsBarChart = ref({
+  enoughDataToShow: true,
   width: 600,
   options: {
     chart: { type: "bar" },
@@ -79,7 +84,14 @@ const problematicQuestionsBarChart = ref({
 const statistics = [
   timeSpentDistributionRangeBar,
   problematicQuestionsBarChart,
-] as Array<Ref<{ width: number; options: ApexOptions; series: Array<any> }>>;
+] as Array<
+  Ref<{
+    enoughDataToShow: boolean;
+    width: number;
+    options: ApexOptions;
+    series: Array<any>;
+  }>
+>;
 
 loadMinigameStatistic(props.configurationId);
 </script>
@@ -92,12 +104,17 @@ loadMinigameStatistic(props.configurationId);
         v-for="statistic of statistics"
         :key="statistic.value.options.title"
       >
-        <apexchart
-          :width="statistic.value.width"
-          :options="statistic.value.options"
-          :series="statistic.value.series"
-        ></apexchart
-      ></b-col>
+        <b-overlay :show="!statistic.value.enoughDataToShow" rounded="sm">
+          <apexchart
+            :width="statistic.value.width"
+            :options="statistic.value.options"
+            :series="statistic.value.series"
+          ></apexchart>
+          <template #overlay>
+            <h6>Statistic has not enough data to show.</h6>
+          </template>
+        </b-overlay></b-col
+      >
     </b-row>
   </b-overlay>
 </template>

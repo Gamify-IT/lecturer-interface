@@ -38,6 +38,14 @@ export async function loadTimeSpentDistributionInRangeBar(
           y: [fromTime, toTime],
         });
       }
+
+      rangeBar.enoughDataToShow = true;
+      data.forEach((dataPoint) => {
+        if (dataPoint.y[0] == dataPoint.y[1]) {
+          rangeBar.enoughDataToShow = false;
+        }
+      });
+
       rangeBar.series = series;
       rangeBar.options = {
         ...rangeBar.options,
@@ -93,6 +101,9 @@ export async function loadProblematicQuestionsInBarChart(
         series[0].data.push(correctAnswers);
         series[1].data.push(wrongAnswers);
       }
+
+      barChart.enoughDataToShow = series.length > 0;
+
       barChart.series = series;
       barChart.options = {
         ...barChart.options,

@@ -58,6 +58,12 @@ export async function loadAverageSuccessInPieChart(
     labels = [...labels, `Nicht bestanden`];
     colors = [...colors, redColor];
 
+    if (series.reduce((x, y) => x + y) <= 0) {
+      pieChart.enoughDataToShow = false;
+    } else {
+      pieChart.enoughDataToShow = true;
+    }
+
     pieChart.series = series;
     pieChart.options = {
       ...pieChart.options,
@@ -68,7 +74,6 @@ export async function loadAverageSuccessInPieChart(
     };
   });
 }
-
 /**
  * Loads the highscore distribution of a minigame task into the present bar chart.
  *
@@ -111,6 +116,13 @@ export async function loadHighscoreDistributionInRangeBar(
     console.log(result);
     console.log(data);
 
+    rangeBar.enoughDataToShow = true;
+    data.forEach((dataPoint) => {
+      if (dataPoint.y[0] == dataPoint.y[1]) {
+        rangeBar.enoughDataToShow = false;
+      }
+    });
+
     rangeBar.series = series;
     rangeBar.options = {
       ...rangeBar.options,
@@ -122,17 +134,5 @@ export async function loadHighscoreDistributionInRangeBar(
         },
       },
     };
-  });
-}
-
-/**
- * Just a test function to make a promise take longer to test loading function
- *
- * @param ms the amount if milliseconds to wait
- * @returns waiting
- */
-function wait(ms: number) {
-  return new Promise((resolve) => {
-    setTimeout(resolve, ms);
   });
 }
