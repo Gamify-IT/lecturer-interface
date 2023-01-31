@@ -7,14 +7,13 @@ import {
 import { ref, watch, Ref, defineProps } from "vue";
 
 const loadingMinigameSpecificStatistics = ref(false);
-const isEnoughDataForStatistic = ref(true);
 
 const inFocus = ref(false);
 
 watch(
   () => props.configurationId,
   (newValue) => {
-    loadMinigameStatistic(props.configurationId);
+    loadMinigameStatistic(newValue);
   },
   { deep: true }
 );

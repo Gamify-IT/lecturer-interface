@@ -17,7 +17,6 @@ const toast = useToast();
 const route = useRoute();
 const loading = ref(false);
 const loadingGeneralStatistics = ref(false);
-const isEnoughDataForStatistic = ref(true);
 
 const courseId = ref(route.params.courseId as string);
 const worldIndex = ref(route.params.worldIndex as string);
@@ -86,8 +85,7 @@ async function loadMinigameStatistic(
   }
   getMinigame(courseId, worldIndex, dungeonIndex, minigameIndex)
     .then(async (response) => {
-      const result: ITask = response.data;
-      minigame.value = result;
+      minigame.value = response.data;
       const promisesToWait = [
         loadAverageSuccessInPieChart(
           courseId,
@@ -170,7 +168,7 @@ loadMinigameStatistic(
         {{ worldIndex }}, Dungeon {{ dungeonIndex }}
       </h1>
       <b-alert show dismissible>
-        Here, you can see the statistic if the current miningame.</b-alert
+        Here, you can see the statistic of the current miningame.</b-alert
       >
       <b-button @click="goBack">Back</b-button>
       <b-overlay :show="loadingGeneralStatistics" rounded="sm">

@@ -58,11 +58,7 @@ export async function loadAverageSuccessInPieChart(
     labels = [...labels, `Nicht bestanden`];
     colors = [...colors, redColor];
 
-    if (series.reduce((x, y) => x + y) <= 0) {
-      pieChart.enoughDataToShow = false;
-    } else {
-      pieChart.enoughDataToShow = true;
-    }
+    pieChart.enoughDataToShow = series.reduce((x, y) => x + y) > 0;
 
     pieChart.series = series;
     pieChart.options = {
@@ -107,7 +103,6 @@ export async function loadHighscoreDistributionInRangeBar(
       const toPercentage: number = highscoreDistribution.toPercentage;
       const fromScore: number = highscoreDistribution.fromScore;
       const toScore: number = highscoreDistribution.toScore;
-      const count: number = highscoreDistribution.count;
       data.push({
         x: `${fromPercentage}% to ${toPercentage}% of players`,
         y: [fromScore, toScore],
