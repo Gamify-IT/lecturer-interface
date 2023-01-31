@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import config from "@/config";
-import { defineProps, defineEmits, ref, watch } from "vue";
+import { defineEmits, defineProps, ref, watch } from "vue";
 import { MapType } from "@/ts/models/overworld-models";
 
 const props = defineProps<{

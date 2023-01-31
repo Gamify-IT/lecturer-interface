@@ -6,7 +6,7 @@ import {
   loadAverageSuccessInPieChart,
   loadHighscoreDistributionInRangeBar,
 } from "@/ts/statistics/overworld-statistics";
-import { ref, watch, Ref } from "vue";
+import { ref, Ref, watch } from "vue";
 import { useRoute } from "vue-router";
 import { useToast } from "vue-toastification";
 import router from "@/router";

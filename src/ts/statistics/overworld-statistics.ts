@@ -1,6 +1,6 @@
 import {
-  getSuccessRateStatistic,
   getHighscoreDistributionStatistic,
+  getSuccessRateStatistic,
 } from "@/ts/rest-clients/minigame-statistics-rest-client";
 
 const greenColor = "#00FF00";

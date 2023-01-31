@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { defineEmits, nextTick, Ref, ref, watch } from "vue";
 import {
+  deleteCourse,
   getCourse,
   putCourse,
-  deleteCourse,
 } from "@/ts/rest-clients/course-rest-client";
 import { useRoute, useRouter } from "vue-router";
 import { useToast } from "vue-toastification";

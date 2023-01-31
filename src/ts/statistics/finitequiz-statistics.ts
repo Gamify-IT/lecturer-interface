@@ -1,6 +1,6 @@
 import {
-  getTimeSpentDistributionStatistic,
   getProblematicQuestionsStatistic,
+  getTimeSpentDistributionStatistic,
 } from "@/ts/rest-clients/finitequiz-minigame-statistics-rest-client";
 
 const greenColor = "#00FF00";

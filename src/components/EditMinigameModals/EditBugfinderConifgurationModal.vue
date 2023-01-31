@@ -11,7 +11,6 @@ import {
   postBugfinderConfig,
 } from "@/ts/rest-clients/bugfinder-rest-client";
 import { putMinigame } from "@/ts/rest-clients/minigame-rest-client";
-import { ViewportMaxHeightProperty } from "csstype";
 import { defineEmits, defineProps, ref, watch } from "vue";
 import { useRoute } from "vue-router";
 

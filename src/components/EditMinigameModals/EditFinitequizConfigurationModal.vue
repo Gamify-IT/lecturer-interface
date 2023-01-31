@@ -4,7 +4,7 @@ const compatibleVersions = ["v0.0.1"];
 import { saveAs } from "file-saver";
 import { arrayOf, object, string } from "checkeasy";
 import { importConfiguration } from "@/ts/import-configuration";
-import { defineProps, defineEmits, ref, watch } from "vue";
+import { defineEmits, defineProps, ref, watch } from "vue";
 import { ITask } from "@/ts/models/overworld-models";
 import {
   FinitequizConfiguration,

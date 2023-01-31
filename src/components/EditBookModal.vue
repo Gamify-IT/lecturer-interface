@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { defineProps, defineEmits, ref, watch, Ref } from "vue";
+import { defineEmits, defineProps, ref, Ref, watch } from "vue";
 import { IBook } from "@/ts/models/overworld-models";
 
 const props = defineProps<{

@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import { ApexOptions } from "apexcharts";
 import {
-  loadTimeSpentDistributionInRangeBar,
   loadProblematicQuestionsInBarChart,
+  loadTimeSpentDistributionInRangeBar,
 } from "@/ts/statistics/finitequiz-statistics";
-import { ref, watch, Ref, defineProps } from "vue";
+import { defineProps, Ref, ref, watch } from "vue";
 
 const loadingMinigameSpecificStatistics = ref(false);
 

@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import { saveAs } from "file-saver";
-import { arrayOf, defaultValue, object, string, int } from "checkeasy";
+import { arrayOf, defaultValue, int, object, string } from "checkeasy";
 import { importConfiguration } from "@/ts/import-configuration";
-import { defineProps, defineEmits, ref, watch } from "vue";
+import { defineEmits, defineProps, ref, watch } from "vue";
 import {
-  IChickenshockQuestion,
   ChickenshockConfiguration,
+  IChickenshockQuestion,
 } from "@/ts/models/chickenshock-models";
 import {
   getChickenshockConfig,
