@@ -86,67 +86,73 @@ async function loadMinigameStatistic(
   getMinigame(courseId, worldIndex, dungeonIndex, minigameIndex)
     .then(async (response) => {
       minigame.value = response.data;
-      const promisesToWait = [
+      await Promise.all([
         loadAverageSuccessInPieChart(
           courseId,
           worldIndex,
           dungeonIndex,
           minigameIndex,
-          successRatePieChart.value
+          successRatePieChart
         ),
         loadHighscoreDistributionInRangeBar(
           courseId,
           worldIndex,
           dungeonIndex,
           minigameIndex,
-          highscoreDistributionRangeBar.value
+          highscoreDistributionRangeBar
         ),
-      ];
-      await Promise.all(promisesToWait);
+      ]);
     })
     .catch((error) => {
       console.log(error);
       toast.error("There was an error loading the statistics!");
     })
-    .finally(() => (loadingGeneralStatistics.value = false));
+    .finally(() => {
+      loadingGeneralStatistics.value = false;
+    });
 }
 
 function goBack() {
   router.go(-1);
 }
 
-const successRatePieChart = ref({
+const successRatePieChart = {
   enoughDataToShow: true,
   width: 600,
   options: {
+    animations: {
+      enabled: false,
+    },
     chart: { type: "pie" },
     title: { text: "Average Success" },
   } as ApexOptions,
   series: [] as Array<number>,
-});
-const highscoreDistributionRangeBar = ref({
+};
+const highscoreDistributionRangeBar = {
   enoughDataToShow: true,
   width: 600,
   options: {
+    animations: {
+      enabled: false,
+    },
     chart: { type: "rangeBar" },
     title: { text: "Highscore Distribution" },
   } as ApexOptions,
   series: [] as Array<{
     data: Array<{ x: string; y: Array<number> }>;
   }>,
-});
+};
 
 const statistics = [
   successRatePieChart,
   highscoreDistributionRangeBar,
-] as Array<
-  Ref<{
-    enoughDataToShow: boolean;
-    width: number;
-    options: ApexOptions;
-    series: Array<any>;
-  }>
->;
+] as Array<{
+  enoughDataToShow: boolean;
+  refName: string;
+  width: number;
+  options: ApexOptions;
+  series: Array<any>;
+}>;
 
 loadMinigameStatistic(
   courseId.value,
@@ -175,15 +181,12 @@ loadMinigameStatistic(
       <b-overlay :show="loadingGeneralStatistics" rounded="sm">
         <b-row id="general-statistics" class="container mt-4">
           <h2>General minigame statistics</h2>
-          <b-col
-            v-for="statistic of statistics"
-            :key="statistic.value.options.title"
-          >
-            <b-overlay :show="!statistic.value.enoughDataToShow" rounded="sm">
+          <b-col v-for="statistic of statistics" :key="statistic.options.title">
+            <b-overlay :show="!statistic.enoughDataToShow" rounded="sm">
               <apexchart
-                :width="statistic.value.width"
-                :options="statistic.value.options"
-                :series="statistic.value.series"
+                :width="statistic.width"
+                :options="statistic.options"
+                :series="statistic.series"
               ></apexchart>
               <template #overlay v-if="!loadingGeneralStatistics">
                 <h6>Statistic has not enough data to show.</h6>

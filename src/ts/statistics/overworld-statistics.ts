@@ -94,22 +94,23 @@ export async function loadHighscoreDistributionInRangeBar(
     minigameIndex
   ).then(async (response) => {
     const result: Array<any> = response.data;
-    const data = [] as Array<{ x: string; y: Array<number> }>;
-    const series = [{ data: data }] as Array<{
-      data: Array<{ x: string; y: Array<number> }>;
-    }>;
+    let data = [] as Array<{ x: string; y: Array<number> }>;
     for (const highscoreDistribution of result) {
       const fromPercentage: number = highscoreDistribution.fromPercentage;
       const toPercentage: number = highscoreDistribution.toPercentage;
       const fromScore: number = highscoreDistribution.fromScore;
       const toScore: number = highscoreDistribution.toScore;
-      data.push({
-        x: `${fromPercentage}% to ${toPercentage}% of players`,
-        y: [fromScore, toScore],
-      });
+      data = [
+        ...data,
+        {
+          x: `${fromPercentage}% to ${toPercentage}% of players`,
+          y: [fromScore, toScore],
+        },
+      ];
     }
-    console.log(result);
-    console.log(data);
+    const series = [{ data: data }] as Array<{
+      data: Array<{ x: string; y: Array<number> }>;
+    }>;
 
     rangeBar.enoughDataToShow = true;
     data.forEach((dataPoint) => {
@@ -117,7 +118,6 @@ export async function loadHighscoreDistributionInRangeBar(
         rangeBar.enoughDataToShow = false;
       }
     });
-
     rangeBar.series = series;
     rangeBar.options = {
       ...rangeBar.options,
