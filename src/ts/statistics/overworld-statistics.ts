@@ -112,10 +112,11 @@ export async function loadHighscoreDistributionInRangeBar(
       data: Array<{ x: string; y: Array<number> }>;
     }>;
 
-    rangeBar.enoughDataToShow = true;
+    rangeBar.enoughDataToShow = false;
+    // at least one bar has a range > 0 that in the statistic at least one bar shows up
     data.forEach((dataPoint) => {
-      if (dataPoint.y[0] == dataPoint.y[1]) {
-        rangeBar.enoughDataToShow = false;
+      if (dataPoint.y[0] != dataPoint.y[1]) {
+        rangeBar.enoughDataToShow = true;
       }
     });
     rangeBar.series = series;
