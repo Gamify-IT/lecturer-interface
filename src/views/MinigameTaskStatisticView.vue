@@ -167,7 +167,7 @@ loadMinigameStatistic(
         Minigame Statistic from Minigame {{ minigameIndex }} in World
         {{ worldIndex }}, Dungeon {{ dungeonIndex }}
       </h1>
-      <h3>{{ minigame.description }}</h3>
+      <h3>{{ minigame?.description }}</h3>
       <b-alert show dismissible>
         Here, you can see the statistic of the current miningame.</b-alert
       >
