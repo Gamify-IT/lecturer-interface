@@ -50,17 +50,24 @@ const minigame = ref(props.minigame);
 const form = ref();
 const showModal = ref(props.showModal);
 
-let cardPairs: IMemoryCardPair[] = [];
+const cardPairs = ref<MemoryCardPair[]>([]);
 for (let index = 0; index < 6; index++) {
-  cardPairs[index] = new MemoryCardPair(
-    new MemoryCard("", MemoryCardType.TEXT),
-    new MemoryCard("", MemoryCardType.TEXT)
+  cardPairs.value.push(
+    new MemoryCardPair(
+      new MemoryCard("", MemoryCardType.TEXT),
+      new MemoryCard("", MemoryCardType.TEXT)
+    )
   );
 }
 
-const configuration = ref();
+const configuration = ref(new MemoryConfiguration([]));
+configuration.value.pairs.push(
+  new MemoryCardPair(
+    new MemoryCard("", MemoryCardType.TEXT),
+    new MemoryCard("", MemoryCardType.TEXT)
+  )
+);
 
-console.log("asdf" + JSON.stringify(configuration.value.pairs));
 const question = ref();
 const rightAnswer = ref();
 const showQuestionModal = ref();
@@ -75,17 +82,6 @@ let memoryCardTypeValues = Object.values(MemoryCardType);
 
 const memoryCardTypes = memoryCardTypeValues.map((item) => {
   return item.charAt(0) + item.slice(1).toLowerCase();
-});
-
-onMounted(() => {
-  const cardPairs: IMemoryCardPair[] = [];
-  for (let index = 0; index < 6; index++) {
-    cardPairs[index] = new MemoryCardPair(
-      new MemoryCard("", MemoryCardType.TEXT),
-      new MemoryCard("", MemoryCardType.TEXT)
-    );
-  }
-  configuration.value = new MemoryConfiguration(cardPairs);
 });
 
 watch(
@@ -277,28 +273,19 @@ async function importFile(event: any) {
         </b-button>
       </b-form-group>
       <b-form-group>
-        <!--<b-table :items="configuration.pairs">
-          <template #cell(edit)="data">
-            <b-button
-              variant="info"
-              id="edit-cardpair-button"
-              v-b-modal.edit-cards
-            >
-              Edit card pair
-              {{ data }}
-            </b-button>
-          </template>
+        <b-table :fields="fields" :items="cardPairs">
           <template #cell(card1)="data">
-            {{ data.item.card1.content }}
+            <div>{{ data.item.card1.type }}</div>
           </template>
           <template #cell(card2)="data">
-            {{ data.value.card2.content }}
+            <div>{{ data.item.card2.type }}</div>
           </template>
-        </b-table>-->
-        <div>{{ configuration.pairs.length }}</div>
-        <b-card v-for="pair in configuration.id" :key="pair">
-          {{ pair }}
-        </b-card>
+          <template #cell(edit)>
+            <b-button variant="outline-primary" v-b-modal.edit-cards
+              >Edit Pair</b-button
+            >
+          </template>
+        </b-table>
       </b-form-group>
     </form>
     <ImportExportConfiguration
