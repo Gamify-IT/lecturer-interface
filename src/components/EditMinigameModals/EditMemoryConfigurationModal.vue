@@ -2,7 +2,7 @@
 import { saveAs } from "file-saver";
 import { arrayOf, defaultValue, int, object, string } from "checkeasy";
 import { importConfiguration } from "@/ts/import-configuration";
-import { defineEmits, defineProps, ref, watch } from "vue";
+import { defineEmits, defineProps, onMounted, ref, watch } from "vue";
 import {
   getMemoryConfig,
   postMemoryConfig,
@@ -14,9 +14,12 @@ import { ITask } from "@/ts/models/overworld-models";
 import ImportExportConfiguration from "@/components/ImportExportConfiguration.vue";
 import {
   IMemoryCardPair,
+  MemoryCard,
+  MemoryCardPair,
   MemoryCardType,
   MemoryConfiguration,
 } from "@/ts/models/memory-models";
+import { config } from "process";
 
 const props = defineProps<{
   minigame: ITask;
@@ -25,16 +28,16 @@ const props = defineProps<{
 
 const fields = [
   {
-    key: "text",
-    label: "Pair Number",
-  },
-  {
     key: "card1",
     label: "Card 1",
   },
   {
     key: "card2",
     label: "Card 2",
+  },
+  {
+    key: "edit",
+    label: "Edit",
   },
 ];
 
@@ -46,7 +49,18 @@ const toast = useToast();
 const minigame = ref(props.minigame);
 const form = ref();
 const showModal = ref(props.showModal);
-let configuration = ref(new MemoryConfiguration([]));
+
+let cardPairs: IMemoryCardPair[] = [];
+for (let index = 0; index < 6; index++) {
+  cardPairs[index] = new MemoryCardPair(
+    new MemoryCard("", MemoryCardType.TEXT),
+    new MemoryCard("", MemoryCardType.TEXT)
+  );
+}
+
+const configuration = ref();
+
+console.log("asdf" + JSON.stringify(configuration.value.pairs));
 const question = ref();
 const rightAnswer = ref();
 const showQuestionModal = ref();
@@ -62,7 +76,17 @@ let memoryCardTypeValues = Object.values(MemoryCardType);
 const memoryCardTypes = memoryCardTypeValues.map((item) => {
   return item.charAt(0) + item.slice(1).toLowerCase();
 });
-console.log(memoryCardTypes);
+
+onMounted(() => {
+  const cardPairs: IMemoryCardPair[] = [];
+  for (let index = 0; index < 6; index++) {
+    cardPairs[index] = new MemoryCardPair(
+      new MemoryCard("", MemoryCardType.TEXT),
+      new MemoryCard("", MemoryCardType.TEXT)
+    );
+  }
+  configuration.value = new MemoryConfiguration(cardPairs);
+});
 
 watch(
   () => props.minigame,
@@ -194,11 +218,6 @@ function resetQuestionModal() {
   wrongAnswer.value = "";
 }
 
-function addWrongAnswer() {
-  wrongAnswers.value.push(wrongAnswer.value);
-  wrongAnswer.value = "";
-}
-
 function downloadConfiguration() {
   const { ["id"]: unused, ...clonedConfiguration } = configuration.value;
   const clonedCardPairs = Array<IMemoryCardPair>();
@@ -253,18 +272,33 @@ async function importFile(event: any) {
       v-if="minigame !== undefined"
     >
       <b-form-group>
-        <b-button variant="success" id="add-cards-button" v-b-modal.add-cards>
+        <b-button variant="success" id="add-cards-button" v-b-modal.edit-cards>
           add card pair
         </b-button>
       </b-form-group>
       <b-form-group>
-        <b-table :fields="fields" :items="configuration.pairs">
-          <!--<template #cell(wrongAnswers)="data">
-            <div v-for="answer in data.value" :key="answer">
-              <span>{{ answer }}</span>
-            </div>
-          </template>-->
-        </b-table>
+        <!--<b-table :items="configuration.pairs">
+          <template #cell(edit)="data">
+            <b-button
+              variant="info"
+              id="edit-cardpair-button"
+              v-b-modal.edit-cards
+            >
+              Edit card pair
+              {{ data }}
+            </b-button>
+          </template>
+          <template #cell(card1)="data">
+            {{ data.item.card1.content }}
+          </template>
+          <template #cell(card2)="data">
+            {{ data.value.card2.content }}
+          </template>
+        </b-table>-->
+        <div>{{ configuration.pairs.length }}</div>
+        <b-card v-for="pair in configuration.id" :key="pair">
+          {{ pair }}
+        </b-card>
       </b-form-group>
     </form>
     <ImportExportConfiguration
@@ -273,8 +307,8 @@ async function importFile(event: any) {
     />
   </b-modal>
   <b-modal
-    id="add-cards"
-    title="Add Cards to Memory configuration"
+    id="edit-cards"
+    title="Add and edit Cards to Memory configuration"
     v-model="showQuestionModal"
     @hidden="resetQuestionModal"
     @show="resetQuestionModal"

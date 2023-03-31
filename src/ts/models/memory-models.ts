@@ -30,12 +30,22 @@ export class MemoryConfiguration implements IMemoryConfiguration {
 
 export class MemoryCardPair implements IMemoryCardPair {
   id?: string;
-  public constructor(public card1: IMemoryCard, public card2: IMemoryCard) {}
+  public card1: IMemoryCard;
+  public card2: IMemoryCard;
+  public constructor(card1: IMemoryCard, card2: IMemoryCard) {
+    this.card1 = card1;
+    this.card2 = card2;
+  }
 }
 
 export class MemoryCard implements IMemoryCard {
   id?: string;
-  public constructor(public content: string, public type: MemoryCardType) {}
+  content: string;
+  type: MemoryCardType;
+  public constructor(content: string, type: MemoryCardType) {
+    this.content = content;
+    this.type = type;
+  }
 }
 
 export enum MemoryCardType {
