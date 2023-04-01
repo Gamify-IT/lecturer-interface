@@ -50,9 +50,9 @@ const minigame = ref(props.minigame);
 const form = ref();
 const showModal = ref(props.showModal);
 
-const cardPairs = ref<MemoryCardPair[]>([]);
+const cardPairs: MemoryCardPair[] = [];
 for (let index = 0; index < 6; index++) {
-  cardPairs.value.push(
+  cardPairs.push(
     new MemoryCardPair(
       new MemoryCard("", MemoryCardType.TEXT),
       new MemoryCard("", MemoryCardType.TEXT)
@@ -60,13 +60,8 @@ for (let index = 0; index < 6; index++) {
   );
 }
 
-const configuration = ref(new MemoryConfiguration([]));
-configuration.value.pairs.push(
-  new MemoryCardPair(
-    new MemoryCard("", MemoryCardType.TEXT),
-    new MemoryCard("", MemoryCardType.TEXT)
-  )
-);
+const configuration = ref(new MemoryConfiguration(cardPairs));
+const test = ref(configuration.value.pairs);
 
 const question = ref();
 const rightAnswer = ref();
@@ -76,7 +71,10 @@ const wrongAnswers = ref(Array<string>());
 const wrongAnswer = ref();
 
 const card1Type = ref();
+const card1Content = ref();
 const card2Type = ref();
+const card2Content = ref();
+const editIndex = ref(0);
 
 let memoryCardTypeValues = Object.values(MemoryCardType);
 
@@ -203,15 +201,46 @@ function loadModal() {
   }
 }
 
-function handleQuestionAbort() {
+function handlePairOk() {
+  if (card1Type.value == null || card2Type.value == null) {
+    toast.error("Card pair is not set up, yet");
+  }
+  cardPairs[editIndex.value] = {
+    card1: {
+      type: card1Type.value,
+      content: card1Content.value,
+    },
+    card2: {
+      type: card2Type.value,
+      content: card2Content.value,
+    },
+  };
   showModal.value = true;
 }
 
-function resetQuestionModal() {
-  question.value = "";
-  rightAnswer.value = "";
-  wrongAnswers.value = [];
-  wrongAnswer.value = "";
+function handlePairAbort() {
+  showModal.value = true;
+}
+
+function resetPairModal() {
+  card1Content.value = "";
+  card1Type.value = null;
+  card2Content.value = "";
+  card2Type.value = null;
+}
+
+function setupPairModal() {
+  console.log("Setup modal for pair: " + editIndex.value);
+  card1Content.value = cardPairs[editIndex.value].card1.content;
+  card1Type.value = cardPairs[editIndex.value].card1.type;
+  card2Content.value = cardPairs[editIndex.value].card2.content;
+  card2Type.value = cardPairs[editIndex.value].card2.type;
+  console.log("1 type is: " + card1Type.value);
+}
+
+function onEditClick(index: number) {
+  console.log("click event " + index);
+  editIndex.value = index;
 }
 
 function downloadConfiguration() {
@@ -275,17 +304,24 @@ async function importFile(event: any) {
       <b-form-group>
         <b-table :fields="fields" :items="cardPairs">
           <template #cell(card1)="data">
+            {{ data.index }}
             <div>{{ data.item.card1.type }}</div>
           </template>
           <template #cell(card2)="data">
             <div>{{ data.item.card2.type }}</div>
           </template>
-          <template #cell(edit)>
-            <b-button variant="outline-primary" v-b-modal.edit-cards
+          <template #cell(edit)="data">
+            <b-button
+              variant="outline-primary"
+              v-b-modal.edit-cards
+              @click="onEditClick(data.index)"
               >Edit Pair</b-button
             >
           </template>
         </b-table>
+        <!--<div v-for="(item, index) in cardPairs" :key="index">
+          {{ item }}{{ index }}
+        </div>-->
       </b-form-group>
     </form>
     <ImportExportConfiguration
@@ -297,21 +333,21 @@ async function importFile(event: any) {
     id="edit-cards"
     title="Add and edit Cards to Memory configuration"
     v-model="showQuestionModal"
-    @hidden="resetQuestionModal"
-    @show="resetQuestionModal"
-    @cancel="handleQuestionAbort"
+    @hidden="resetPairModal"
+    @show="setupPairModal"
+    @ok="handlePairOk"
+    @cancel="handlePairAbort"
   >
     <b-form-group label="Card 1" label-for="card-1">
       <b-form-select
         id="card1CardType"
         v-model="card1Type"
         :options="memoryCardTypes"
-        :value="null"
         required
       />
       <b-form-textarea
         id="card-1"
-        v-model="öaskdlf"
+        v-model="card1Content"
         v-if="card1Type === 'Text' || card1Type === 'Markdown'"
         placeholder="Enter card text here..."
         rows="5"
@@ -328,12 +364,11 @@ async function importFile(event: any) {
         id="card2CardType"
         v-model="card2Type"
         :options="memoryCardTypes"
-        :value="null"
         required
       />
       <b-form-textarea
         id="card-2"
-        v-model="KAISERSCHMARRN"
+        v-model="card2Content"
         v-if="card2Type === 'Text' || card2Type === 'Markdown'"
         placeholder="Enter card text here..."
         rows="5"
