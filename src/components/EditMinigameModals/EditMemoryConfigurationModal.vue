@@ -2,7 +2,7 @@
 import { saveAs } from "file-saver";
 import { arrayOf, defaultValue, int, object, string } from "checkeasy";
 import { importConfiguration } from "@/ts/import-configuration";
-import { defineEmits, defineProps, onMounted, ref, watch } from "vue";
+import { Ref, defineEmits, defineProps, onMounted, ref, watch } from "vue";
 import {
   getMemoryConfig,
   postMemoryConfig,
@@ -50,22 +50,22 @@ const minigame = ref(props.minigame);
 const form = ref();
 const showModal = ref(props.showModal);
 
-const cardPairs: MemoryCardPair[] = [];
+const cardPairs = ref([]) as Ref<MemoryCardPair[]>;
 for (let index = 0; index < 6; index++) {
-  cardPairs.push(
+  cardPairs.value.push(
     new MemoryCardPair(
-      new MemoryCard("", MemoryCardType.TEXT),
+      new MemoryCard(index.toString(), MemoryCardType.TEXT),
       new MemoryCard("", MemoryCardType.TEXT)
     )
   );
 }
 
-const configuration = ref(new MemoryConfiguration(cardPairs));
+const configuration = ref(new MemoryConfiguration(cardPairs.value));
 const test = ref(configuration.value.pairs);
 
 const question = ref();
 const rightAnswer = ref();
-const showQuestionModal = ref();
+const showEditModal = ref(false);
 const oldMinigame = ref();
 const wrongAnswers = ref(Array<string>());
 const wrongAnswer = ref();
@@ -74,12 +74,12 @@ const card1Type = ref();
 const card1Content = ref();
 const card2Type = ref();
 const card2Content = ref();
-const editIndex = ref(0);
+const editObject = ref();
 
 let memoryCardTypeValues = Object.values(MemoryCardType);
 
 const memoryCardTypes = memoryCardTypeValues.map((item) => {
-  return item.charAt(0) + item.slice(1).toLowerCase();
+  return { text: item.charAt(0) + item.slice(1).toLowerCase(), value: item };
 });
 
 watch(
@@ -183,7 +183,7 @@ function handleSubmit() {
 }
 
 function hiddenModal() {
-  if (!showQuestionModal.value) {
+  if (!showModal.value) {
     oldMinigame.value = null;
     console.log("Test");
   }
@@ -202,19 +202,12 @@ function loadModal() {
 }
 
 function handlePairOk() {
-  if (card1Type.value == null || card2Type.value == null) {
-    toast.error("Card pair is not set up, yet");
-  }
-  cardPairs[editIndex.value] = {
-    card1: {
-      type: card1Type.value,
-      content: card1Content.value,
-    },
-    card2: {
-      type: card2Type.value,
-      content: card2Content.value,
-    },
-  };
+  console.log("saving changes");
+  editObject.value.card1.content = card1Content.value;
+  editObject.value.card1.type = card1Type.value;
+  editObject.value.card2.content = card2Content.value;
+  editObject.value.card2.type = card2Type.value;
+  console.log(cardPairs);
   showModal.value = true;
 }
 
@@ -223,24 +216,23 @@ function handlePairAbort() {
 }
 
 function resetPairModal() {
-  card1Content.value = "";
-  card1Type.value = null;
-  card2Content.value = "";
-  card2Type.value = null;
+  editObject.value = null;
 }
 
 function setupPairModal() {
-  console.log("Setup modal for pair: " + editIndex.value);
-  card1Content.value = cardPairs[editIndex.value].card1.content;
-  card1Type.value = cardPairs[editIndex.value].card1.type;
-  card2Content.value = cardPairs[editIndex.value].card2.content;
-  card2Type.value = cardPairs[editIndex.value].card2.type;
+  showModal.value = false;
+  console.log("Setup modal for pair: " + editObject.value);
+  card1Content.value = editObject.value.card1.content;
+  card1Type.value = editObject.value.card1.type;
+  card2Content.value = editObject.value.card2.content;
+  card2Type.value = editObject.value.card2.type;
   console.log("1 type is: " + card1Type.value);
 }
 
-function onEditClick(index: number) {
-  console.log("click event " + index);
-  editIndex.value = index;
+function onEditClick(edit: any) {
+  console.log("click event " + edit);
+  editObject.value = edit;
+  showEditModal.value = true;
 }
 
 function downloadConfiguration() {
@@ -304,21 +296,18 @@ async function importFile(event: any) {
       <b-form-group>
         <b-table :fields="fields" :items="cardPairs">
           <template #cell(card1)="data">
-            {{ data.index }}
             <div>{{ data.item.card1.type }}</div>
           </template>
           <template #cell(card2)="data">
             <div>{{ data.item.card2.type }}</div>
           </template>
           <template #cell(edit)="data">
-            <b-button
-              variant="outline-primary"
-              v-b-modal.edit-cards
-              @click="onEditClick(data.index)"
+            <b-button variant="outline-primary" @click="onEditClick(data.item)"
               >Edit Pair</b-button
             >
           </template>
         </b-table>
+
         <!--<div v-for="(item, index) in cardPairs" :key="index">
           {{ item }}{{ index }}
         </div>-->
@@ -332,7 +321,7 @@ async function importFile(event: any) {
   <b-modal
     id="edit-cards"
     title="Add and edit Cards to Memory configuration"
-    v-model="showQuestionModal"
+    v-model="showEditModal"
     @hidden="resetPairModal"
     @show="setupPairModal"
     @ok="handlePairOk"
@@ -348,7 +337,10 @@ async function importFile(event: any) {
       <b-form-textarea
         id="card-1"
         v-model="card1Content"
-        v-if="card1Type === 'Text' || card1Type === 'Markdown'"
+        v-if="
+          card1Type === MemoryCardType.TEXT ||
+          card1Type === MemoryCardType.MARKDOWN
+        "
         placeholder="Enter card text here..."
         rows="5"
         required
@@ -369,7 +361,10 @@ async function importFile(event: any) {
       <b-form-textarea
         id="card-2"
         v-model="card2Content"
-        v-if="card2Type === 'Text' || card2Type === 'Markdown'"
+        v-if="
+          card2Type === MemoryCardType.TEXT ||
+          card2Type === MemoryCardType.MARKDOWN
+        "
         placeholder="Enter card text here..."
         rows="5"
         required
