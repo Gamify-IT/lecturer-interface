@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { saveAs } from "file-saver";
-import { arrayOf, defaultValue, int, object, string } from "checkeasy";
+import { arrayOf, defaultValue, int, object, oneOf, string } from "checkeasy";
 import { importConfiguration } from "@/ts/import-configuration";
 import { Ref, defineEmits, defineProps, onMounted, ref, watch } from "vue";
 import {
@@ -51,24 +51,12 @@ const form = ref();
 const showModal = ref(props.showModal);
 
 const cardPairs = ref([]) as Ref<MemoryCardPair[]>;
-for (let index = 0; index < 6; index++) {
-  cardPairs.value.push(
-    new MemoryCardPair(
-      new MemoryCard(index.toString(), MemoryCardType.TEXT),
-      new MemoryCard("", MemoryCardType.TEXT)
-    )
-  );
-}
+initializePairs();
 
 const configuration = ref(new MemoryConfiguration(cardPairs.value));
-const test = ref(configuration.value.pairs);
 
-const question = ref();
-const rightAnswer = ref();
 const showEditModal = ref(false);
-const oldMinigame = ref();
-const wrongAnswers = ref(Array<string>());
-const wrongAnswer = ref();
+const inEditModal = ref(false);
 
 const card1Type = ref();
 const card1Content = ref();
@@ -121,36 +109,50 @@ function checkFormValidity(): boolean {
   return form.value.checkValidity();
 }
 
-function resetModal() {
+function initializePairs() {
+  cardPairs.value = [];
+  for (let index = 0; index < 6; index++) {
+    cardPairs.value.push(
+      new MemoryCardPair(
+        new MemoryCard(index.toString(), MemoryCardType.TEXT),
+        new MemoryCard("", MemoryCardType.TEXT)
+      )
+    );
+  }
+}
+
+function loadConfig() {
   if (minigame.value.configurationId != undefined) {
     getMemoryConfig(minigame.value.configurationId)
       .then((response) => {
+        cardPairs.value = response.data.pairs;
         configuration.value = response.data;
       })
       .catch((error) => {
         console.log(error);
         if (error.response.status == 404) {
-          minigame.value.configurationId = undefined;
-          configuration.value.pairs = [];
+          resetConfig();
         }
       });
-    oldMinigame.value = minigame.value;
   } else {
-    configuration.value.id = undefined;
-    configuration.value.pairs = [];
-    oldMinigame.value = minigame.value;
+    resetConfig();
   }
-  console.log("Reset Modal");
+}
+
+function resetConfig() {
+  configuration.value.id = undefined;
+  configuration.value.pairs = [];
+  initializePairs();
 }
 
 function handleOk() {
-  postMemoryConfig(configuration.value)
+  console.log("@ok");
+  postMemoryConfig(new MemoryConfiguration(cardPairs.value))
     .then((response) => {
       minigame.value.configurationId = response.data.id;
       console.log("Submit Modal");
       console.log("id:" + response.data.id);
       console.log("minigameId" + minigame.value.configurationId);
-      oldMinigame.value = minigame.value;
       handleSubmit();
     })
     .then(() => {
@@ -171,7 +173,8 @@ function handleOk() {
       } else {
         toast.error("There was an error saving the configuration!");
       }
-    });
+    })
+    .finally(() => resetConfig());
 }
 
 function handleSubmit() {
@@ -183,54 +186,51 @@ function handleSubmit() {
 }
 
 function hiddenModal() {
-  if (!showModal.value) {
-    oldMinigame.value = null;
-    console.log("Test");
-  }
   console.log("Modal hidden");
   emit("closedModal");
 }
 
 function loadModal() {
-  if (oldMinigame.value != null) {
-    if (oldMinigame.value.id != minigame.value.id) {
-      resetModal();
-    }
-  } else {
-    resetModal();
+  if (!inEditModal.value) {
+    // coming from main menu
+    loadConfig();
   }
+  inEditModal.value = false;
+  console.log("Modal shown");
 }
 
 function handlePairOk() {
-  console.log("saving changes");
+  console.log("Saving pair changes (@ok)");
   editObject.value.card1.content = card1Content.value;
   editObject.value.card1.type = card1Type.value;
   editObject.value.card2.content = card2Content.value;
   editObject.value.card2.type = card2Type.value;
-  console.log(cardPairs);
+  console.log("New pairs: " + cardPairs.value);
   showModal.value = true;
 }
 
 function handlePairAbort() {
+  console.log("@cancel");
   showModal.value = true;
 }
 
 function resetPairModal() {
+  console.log("Resetting pair modal (@hidden)");
   editObject.value = null;
 }
 
 function setupPairModal() {
+  console.log("Setting up pair modal (@show)");
   showModal.value = false;
-  console.log("Setup modal for pair: " + editObject.value);
+  inEditModal.value = true;
   card1Content.value = editObject.value.card1.content;
   card1Type.value = editObject.value.card1.type;
   card2Content.value = editObject.value.card2.content;
   card2Type.value = editObject.value.card2.type;
-  console.log("1 type is: " + card1Type.value);
 }
 
 function onEditClick(edit: any) {
-  console.log("click event " + edit);
+  console.log("Edit button click");
   editObject.value = edit;
   showEditModal.value = true;
 }
@@ -238,7 +238,7 @@ function onEditClick(edit: any) {
 function downloadConfiguration() {
   const { ["id"]: unused, ...clonedConfiguration } = configuration.value;
   const clonedCardPairs = Array<IMemoryCardPair>();
-  for (let cardPair of configuration.value.pairs) {
+  for (let cardPair of cardPairs.value) {
     const { ["id"]: unused, ...clonedCardPair } = cardPair;
     clonedCardPairs.push(clonedCardPair);
   }
@@ -251,12 +251,24 @@ function downloadConfiguration() {
 async function importFile(event: any) {
   const file = event.target.files[0];
   const validator = object({
-    time: defaultValue(60, int()),
-    questions: arrayOf(
+    pairs: arrayOf(
       object({
-        text: string(),
-        rightAnswer: string(),
-        wrongAnswers: arrayOf(string()),
+        card1: object({
+          content: string(),
+          type: oneOf([
+            MemoryCardType.TEXT,
+            MemoryCardType.MARKDOWN,
+            MemoryCardType.IMAGE,
+          ] as const),
+        }),
+        card2: object({
+          content: string(),
+          type: oneOf([
+            MemoryCardType.TEXT,
+            MemoryCardType.MARKDOWN,
+            MemoryCardType.IMAGE,
+          ] as const),
+        }),
       })
     ),
   });
@@ -267,6 +279,7 @@ async function importFile(event: any) {
       toast
     );
     configuration.value = result;
+    cardPairs.value = result.pairs;
   } catch (e) {
     console.log("Import was not successful");
   }
@@ -279,9 +292,8 @@ async function importFile(event: any) {
     v-model="showModal"
     @hidden="hiddenModal"
     @ok="handleOk"
-    @cancel="resetModal"
     @show="loadModal"
-    @abort="resetModal"
+    @cancel="resetConfig"
   >
     <form
       ref="form"
