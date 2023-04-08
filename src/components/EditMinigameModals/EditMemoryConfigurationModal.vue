@@ -6,6 +6,7 @@ import { Ref, defineEmits, defineProps, onMounted, ref, watch } from "vue";
 import {
   getMemoryConfig,
   postMemoryConfig,
+  putMemoryConfig,
 } from "@/ts/rest-clients/memory-rest-client";
 import { useToast } from "vue-toastification";
 import { putMinigame } from "@/ts/rest-clients/minigame-rest-client";
@@ -147,7 +148,14 @@ function resetConfig() {
 
 function handleOk() {
   console.log("@ok");
-  postMemoryConfig(new MemoryConfiguration(cardPairs.value))
+  // based if configuration id is present or not send post or put request
+  const updateConfigurationRequest = configuration.value.id
+    ? putMemoryConfig(
+        configuration.value.id,
+        new MemoryConfiguration(cardPairs.value)
+      )
+    : postMemoryConfig(new MemoryConfiguration(cardPairs.value));
+  updateConfigurationRequest
     .then((response) => {
       minigame.value.configurationId = response.data.id;
       console.log("Submit Modal");
@@ -239,8 +247,9 @@ function downloadConfiguration() {
   const { ["id"]: unused, ...clonedConfiguration } = configuration.value;
   const clonedCardPairs = Array<IMemoryCardPair>();
   for (let cardPair of cardPairs.value) {
-    const { ["id"]: unused, ...clonedCardPair } = cardPair;
-    clonedCardPairs.push(clonedCardPair);
+    const { ["id"]: unused1, ...clonedCard1 } = cardPair.card1;
+    const { ["id"]: unused2, ...clonedCard2 } = cardPair.card2;
+    clonedCardPairs.push({ card1: clonedCard1, card2: clonedCard2 });
   }
   clonedConfiguration.pairs = clonedCardPairs;
   const blob = new Blob([JSON.stringify(clonedConfiguration)], {
