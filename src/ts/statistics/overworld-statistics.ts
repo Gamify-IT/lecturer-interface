@@ -71,21 +71,21 @@ export async function loadAverageSuccessInPieChart(
   });
 }
 /**
- * Loads the highscore distribution of a minigame task into the present bar chart.
+ * Loads the highscore distribution of a minigame task into the present line chart.
  *
  * @param courseId the id of the course the minigame task is part off
  * @param worldIndex the index of the world
  * @param dungeonIndex the index of the dungeon (optional, undefined if the area is a world)
  * @param minigameIndex the index of the minigame the statistic should be
- * @param rangeBar the range bar to update with highscore distribution
+ * @param lineChart the linechart to update with highscore distribution
  * @returns a promise that resolves after the chart has been updated
  */
-export async function loadHighscoreDistributionInRangeBar(
+export async function loadHighscoreDistributionInLineChart(
   courseId: string,
   worldIndex: number,
   dungeonIndex: number | undefined,
   minigameIndex: number,
-  rangeBar: any
+  lineChart: any
 ): Promise<any> {
   return getHighscoreDistributionStatistic(
     courseId,
@@ -94,39 +94,27 @@ export async function loadHighscoreDistributionInRangeBar(
     minigameIndex
   ).then(async (response) => {
     const result: Array<any> = response.data;
-    let data = [] as Array<{ x: string; y: Array<number> }>;
-    for (const highscoreDistribution of result) {
-      const fromPercentage: number = highscoreDistribution.fromPercentage;
-      const toPercentage: number = highscoreDistribution.toPercentage;
-      const fromScore: number = highscoreDistribution.fromScore;
-      const toScore: number = highscoreDistribution.toScore;
-      data = [
-        ...data,
-        {
-          x: `${fromPercentage}% to ${toPercentage}% of players`,
-          y: [fromScore, toScore],
-        },
-      ];
-    }
-    const series = [{ data: data }] as Array<{
-      data: Array<{ x: string; y: Array<number> }>;
-    }>;
+    const data = result.map((scoreHit) => scoreHit.amount) as Array<number>;
+    // we already expect here that the array is sorted by score
+    const categories = result.map(
+      (scoreHit) => scoreHit.score
+    ) as Array<number>;
+    const series = [{ name: "Highscore distribution", data: data }];
 
-    rangeBar.enoughDataToShow = false;
-    // at least one bar has a range > 0 that in the statistic at least one bar shows up
-    data.forEach((dataPoint) => {
-      if (dataPoint.y[0] != dataPoint.y[1]) {
-        rangeBar.enoughDataToShow = true;
-      }
-    });
-    rangeBar.series = series;
-    rangeBar.options = {
-      ...rangeBar.options,
+    lineChart.enoughDataToShow = false;
+    // at least one score has to be hit
+    if (data.reduce((x, y) => x + y) > 0) {
+      lineChart.enoughDataToShow = true;
+    }
+    lineChart.series = series;
+    lineChart.options = {
+      ...lineChart.options,
       ...{
-        yaxis: {
-          title: {
-            text: "Score",
-          },
+        xaxis: {
+          categories: categories,
+        },
+        stroke: {
+          curve: "smooth",
         },
       },
     };
