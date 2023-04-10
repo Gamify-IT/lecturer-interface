@@ -98,21 +98,27 @@ export async function loadHighscoreDistributionInLineChart(
     result.forEach((element) => {
       data.push({ x: element.score, y: element.amount });
     });
-    const series = [{ name: "Highscore distribution", data: data }];
+    const series = [{ name: "Players with score", data: data }];
 
-    lineChart.enoughDataToShow = false;
     // at least one score has to be hit
-    if (data.reduce((a, next) => a + next.y, 0) > 0) {
-      lineChart.enoughDataToShow = true;
-    }
+    lineChart.enoughDataToShow = data.reduce((a, next) => a + next.y, 0) > 0;
+
     lineChart.series = series;
     lineChart.options = {
       ...lineChart.options,
       ...{
         xaxis: {
+          title: {
+            text: "Score",
+          },
           min: 0,
           max: 100,
           type: "numeric",
+        },
+        yaxis: {
+          title: {
+            text: "Amount of players",
+          },
         },
         stroke: {
           curve: "smooth",
