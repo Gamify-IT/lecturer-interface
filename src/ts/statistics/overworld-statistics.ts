@@ -93,17 +93,16 @@ export async function loadHighscoreDistributionInLineChart(
     dungeonIndex,
     minigameIndex
   ).then(async (response) => {
-    const result: Array<any> = response.data;
-    const data = result.map((scoreHit) => scoreHit.amount) as Array<number>;
-    // we already expect here that the array is sorted by score
-    const categories = result.map(
-      (scoreHit) => scoreHit.score
-    ) as Array<number>;
+    const result: Array<{ score: number; amount: number }> = response.data;
+    const data = [] as Array<{ x: number; y: number }>;
+    result.forEach((element) => {
+      data.push({ x: element.score, y: element.amount });
+    });
     const series = [{ name: "Highscore distribution", data: data }];
 
     lineChart.enoughDataToShow = false;
     // at least one score has to be hit
-    if (data.reduce((x, y) => x + y) > 0) {
+    if (data.reduce((a, next) => a + next.y, 0) > 0) {
       lineChart.enoughDataToShow = true;
     }
     lineChart.series = series;
@@ -111,7 +110,9 @@ export async function loadHighscoreDistributionInLineChart(
       ...lineChart.options,
       ...{
         xaxis: {
-          categories: categories,
+          min: 0,
+          max: 100,
+          type: "numeric",
         },
         stroke: {
           curve: "smooth",
