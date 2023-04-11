@@ -4,7 +4,7 @@ import { ITask, Minigame } from "@/ts/models/overworld-models";
 import { getMinigame } from "@/ts/rest-clients/minigame-rest-client";
 import {
   loadAverageSuccessInPieChart,
-  loadHighscoreDistributionInRangeBar,
+  loadHighscoreDistributionInLineChart,
 } from "@/ts/statistics/overworld-statistics";
 import { ref, Ref, watch } from "vue";
 import { useRoute } from "vue-router";
@@ -94,12 +94,12 @@ async function loadMinigameStatistic(
           minigameIndex,
           successRatePieChart
         ),
-        loadHighscoreDistributionInRangeBar(
+        loadHighscoreDistributionInLineChart(
           courseId,
           worldIndex,
           dungeonIndex,
           minigameIndex,
-          highscoreDistributionRangeBar
+          highscoreDistributionLineChart
         ),
       ]);
     })
@@ -128,24 +128,24 @@ const successRatePieChart = {
   } as ApexOptions,
   series: [] as Array<number>,
 };
-const highscoreDistributionRangeBar = {
+const highscoreDistributionLineChart = {
   enoughDataToShow: true,
   width: 600,
   options: {
     animations: {
       enabled: false,
     },
-    chart: { type: "rangeBar" },
+    chart: { type: "line" },
     title: { text: "Highscore Distribution" },
   } as ApexOptions,
   series: [] as Array<{
-    data: Array<{ x: string; y: Array<number> }>;
+    data: Array<number>;
   }>,
 };
 
 const statistics = [
   successRatePieChart,
-  highscoreDistributionRangeBar,
+  highscoreDistributionLineChart,
 ] as Array<{
   enoughDataToShow: boolean;
   refName: string;

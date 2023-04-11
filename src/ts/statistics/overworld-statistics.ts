@@ -71,21 +71,21 @@ export async function loadAverageSuccessInPieChart(
   });
 }
 /**
- * Loads the highscore distribution of a minigame task into the present bar chart.
+ * Loads the highscore distribution of a minigame task into the present line chart.
  *
  * @param courseId the id of the course the minigame task is part off
  * @param worldIndex the index of the world
  * @param dungeonIndex the index of the dungeon (optional, undefined if the area is a world)
  * @param minigameIndex the index of the minigame the statistic should be
- * @param rangeBar the range bar to update with highscore distribution
+ * @param lineChart the linechart to update with highscore distribution
  * @returns a promise that resolves after the chart has been updated
  */
-export async function loadHighscoreDistributionInRangeBar(
+export async function loadHighscoreDistributionInLineChart(
   courseId: string,
   worldIndex: number,
   dungeonIndex: number | undefined,
   minigameIndex: number,
-  rangeBar: any
+  lineChart: any
 ): Promise<any> {
   return getHighscoreDistributionStatistic(
     courseId,
@@ -93,40 +93,35 @@ export async function loadHighscoreDistributionInRangeBar(
     dungeonIndex,
     minigameIndex
   ).then(async (response) => {
-    const result: Array<any> = response.data;
-    let data = [] as Array<{ x: string; y: Array<number> }>;
-    for (const highscoreDistribution of result) {
-      const fromPercentage: number = highscoreDistribution.fromPercentage;
-      const toPercentage: number = highscoreDistribution.toPercentage;
-      const fromScore: number = highscoreDistribution.fromScore;
-      const toScore: number = highscoreDistribution.toScore;
-      data = [
-        ...data,
-        {
-          x: `${fromPercentage}% to ${toPercentage}% of players`,
-          y: [fromScore, toScore],
-        },
-      ];
-    }
-    const series = [{ data: data }] as Array<{
-      data: Array<{ x: string; y: Array<number> }>;
-    }>;
-
-    rangeBar.enoughDataToShow = false;
-    // at least one bar has a range > 0 that in the statistic at least one bar shows up
-    data.forEach((dataPoint) => {
-      if (dataPoint.y[0] != dataPoint.y[1]) {
-        rangeBar.enoughDataToShow = true;
-      }
+    const result: Array<{ score: number; amount: number }> = response.data;
+    const data = [] as Array<{ x: number; y: number }>;
+    result.forEach((element) => {
+      data.push({ x: element.score, y: element.amount });
     });
-    rangeBar.series = series;
-    rangeBar.options = {
-      ...rangeBar.options,
+    const series = [{ name: "Players with score", data: data }];
+
+    // at least one score has to be hit
+    lineChart.enoughDataToShow = data.reduce((a, next) => a + next.y, 0) > 0;
+
+    lineChart.series = series;
+    lineChart.options = {
+      ...lineChart.options,
       ...{
-        yaxis: {
+        xaxis: {
           title: {
             text: "Score",
           },
+          min: 0,
+          max: 100,
+          type: "numeric",
+        },
+        yaxis: {
+          title: {
+            text: "Amount of players",
+          },
+        },
+        stroke: {
+          curve: "smooth",
         },
       },
     };
