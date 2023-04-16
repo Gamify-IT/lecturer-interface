@@ -14,7 +14,7 @@ import EditFinitequizConfigurationModal from "@/components/EditMinigameModals/Ed
 import EditTowercrushConfigurationModal from "@/components/EditMinigameModals/EditTowercrushConfigurationModal.vue";
 import EditCrosswordpuzzleModal from "@/components/EditMinigameModals/EditCrosswordpuzzleModal.vue";
 import MapImageModal from "@/components/MapImageModal.vue";
-import EditBugfinderConifgurationModal from "@/components/EditMinigameModals/EditBugfinderConifgurationModal.vue";
+import EditBugfinderConifgurationModal from "@/components/EditMinigameModals/EditBugfinderConfigurationModal.vue";
 import router from "@/router";
 
 const availableMinigames = Object.values(Minigame);
@@ -267,9 +267,10 @@ async function loadMinigames(
   getMinigames(courseId, worldIndex, dungeonIndex)
     .then((response) => {
       const result: ITask[] = response.data;
-      minigames.value = result.sort(
-        (task1, task2) => task1.index - task2.index
-      );
+
+      result.sort((task1, task2) => task1.index - task2.index);
+
+      minigames.value = result;
       console.log(result);
     })
     .catch((error) => {

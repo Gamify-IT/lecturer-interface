@@ -48,9 +48,9 @@ function handleOk() {
         emit("created", response.data);
         toast.success(`Course ${response.data.courseName} is created!`);
       })
-      .catch((error) => {
+      .catch((e) => {
         toast.error(`Course ${nameInput.value} could not be created created!`);
-        console.log(error);
+        console.log(e);
       });
   } else {
     error.value = "The semester must be in the format (SS/WS)-year(22)";

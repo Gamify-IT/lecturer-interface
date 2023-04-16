@@ -60,8 +60,8 @@ function toggledAreaSwitch(toggledArea: IArea) {
       console.log(error);
     });
 }
-function toggleAreaSwitch(area: IArea) {
-  document.getElementById("checkbox" + area.id)?.click();
+function toggleAreaSwitch(innerArea: IArea) {
+  document.getElementById("checkbox" + innerArea.id)?.click();
 }
 </script>
 

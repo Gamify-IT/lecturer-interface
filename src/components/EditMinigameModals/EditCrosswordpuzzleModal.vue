@@ -150,7 +150,7 @@ function loadModal() {
   resetModal();
 }
 
-function containsQuestion(questionText: string): boolean {
+function containsQuestion(_questionText: string): boolean {
   return (
     configuration.value.questions.find(
       (filtered) =>

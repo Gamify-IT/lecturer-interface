@@ -111,14 +111,17 @@ function loadMenu() {
     title: "Course: " + course.courseName,
     icon: "bi-book-half",
   });
-  const worlds: IWorld[] = course.worlds.sort(
-    (world1, world2) => world1.index - world2.index
-  );
+
+  course.worlds.sort((world1, world2) => world1.index - world2.index);
+
+  const worlds: IWorld[] = course.worlds;
 
   worlds.forEach((world: IWorld) => {
-    const dungeons: IDungeon[] = world.dungeons.sort(
+    world.dungeons.sort(
       (dungeon1, dungeon2) => dungeon1.index - dungeon2.index
     );
+
+    const dungeons: IDungeon[] = world.dungeons;
     const dungeonChild = dungeons.map((dungeon) => {
       return {
         title: "Dungeon " + dungeon.index,
@@ -234,7 +237,7 @@ async function getCourseIdFromRouter(): Promise<number> {
   return 0;
 }
 
-function clickUp() {
+function clickUp() { //NOSONAR
   if (showSideBarComputed.value && inFocus.value) {
     let elements = document.getElementsByClassName("vsm--link");
     let previousElement = elements.item(elements.length - 1);
@@ -268,7 +271,7 @@ function clickUp() {
   }
 }
 
-function clickDown() {
+function clickDown() { //NOSONAR
   if (showSideBarComputed.value && inFocus.value) {
     let elements = document.getElementsByClassName("vsm--link");
     let firstElement = elements.item(0);

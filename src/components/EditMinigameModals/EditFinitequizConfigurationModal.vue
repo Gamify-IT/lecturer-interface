@@ -180,9 +180,9 @@ function loadModal() {
 
 function removeQuestion(text: string) {
   let filteredQuestions: IFinitequizQuestion[] = [];
-  configuration.value.questions.forEach((question) => {
-    if (question.text != text) {
-      filteredQuestions.push(question);
+  configuration.value.questions.forEach((innerQuestion) => {
+    if (innerQuestion.text != text) {
+      filteredQuestions.push(innerQuestion);
     }
   });
   console.log(filteredQuestions);

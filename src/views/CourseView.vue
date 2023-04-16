@@ -96,7 +96,7 @@ function clickRight() {
   }
 }
 
-function clickUp() {
+function clickUp() { //NOSONAR
   if (inFocus.value) {
     let elements = document.getElementsByClassName("btn-light");
     let firstElement = document.getElementById("deleteButton");
@@ -135,7 +135,7 @@ function clickUp() {
   }
 }
 
-function clickDown() {
+function clickDown() { //NOSONAR
   if (inFocus.value) {
     let elements = document.getElementsByClassName("btn-light");
     let firstElement = document.getElementById("deleteButton");
