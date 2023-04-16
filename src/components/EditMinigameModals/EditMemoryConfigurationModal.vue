@@ -115,7 +115,7 @@ function initializePairs() {
   for (let index = 0; index < 6; index++) {
     cardPairs.value.push(
       new MemoryCardPair(
-        new MemoryCard(index.toString(), MemoryCardType.TEXT),
+        new MemoryCard("", MemoryCardType.TEXT),
         new MemoryCard("", MemoryCardType.TEXT)
       )
     );
@@ -310,17 +310,30 @@ async function importFile(event: any) {
       v-if="minigame !== undefined"
     >
       <b-form-group>
-        <b-button variant="success" id="add-cards-button" v-b-modal.edit-cards>
-          add card pair
-        </b-button>
-      </b-form-group>
-      <b-form-group>
         <b-table :fields="fields" :items="cardPairs">
           <template #cell(card1)="data">
             <div>{{ data.item.card1.type }}</div>
+            <span
+              v-if="
+                data.item.card1.type == MemoryCardType.TEXT ||
+                data.item.card1.type == MemoryCardType.MARKDOWN
+              "
+            >
+              {{ data.item.card1.content.slice(0, 10) }}
+            </span>
+            <span v-if="data.item.card1.content.length > 10">...</span>
           </template>
           <template #cell(card2)="data">
             <div>{{ data.item.card2.type }}</div>
+            <span
+              v-if="
+                data.item.card2.type == MemoryCardType.TEXT ||
+                data.item.card2.type == MemoryCardType.MARKDOWN
+              "
+            >
+              {{ data.item.card2.content.slice(0, 10) }}
+            </span>
+            <span v-if="data.item.card2.content.length > 10">...</span>
           </template>
           <template #cell(edit)="data">
             <b-button variant="outline-primary" @click="onEditClick(data.item)"
@@ -328,10 +341,6 @@ async function importFile(event: any) {
             >
           </template>
         </b-table>
-
-        <!--<div v-for="(item, index) in cardPairs" :key="index">
-          {{ item }}{{ index }}
-        </div>-->
       </b-form-group>
     </form>
     <ImportExportConfiguration
