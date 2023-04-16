@@ -111,7 +111,6 @@ function handleOk() {
           (word.errorType =
             (word.errorType as string) === "" ? undefined : word.errorType)
       );
-      row.filter((word) => word.correctValue.trim().length !== 0);
     });
     code.words = code.words.filter((row) => row.length !== 0);
   });
