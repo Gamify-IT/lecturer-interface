@@ -150,11 +150,10 @@ function loadModal() {
   resetModal();
 }
 
-function containsQuestion(_questionText: string): boolean {
+function containsQuestion(questionText: string): boolean {
   return (
     configuration.value.questions.find(
-      (filtered) =>
-        filtered.questionText == currentEditingQuestion.value.questionText
+      (filtered) => filtered.questionText == questionText
     ) != null
   );
 }
