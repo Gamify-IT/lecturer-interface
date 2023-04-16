@@ -99,9 +99,13 @@ export async function loadHighscoreDistributionInLineChart(
       data.push({ x: element.score, y: element.amount });
     });
     const series = [{ name: "Players with score", data: data }];
+    const average =
+      result.reduce((current, next) => current + next.score * next.amount, 0) /
+      result.reduce((current, next) => current + next.score, 0);
 
     // at least one score has to be hit
-    lineChart.enoughDataToShow = data.reduce((a, next) => a + next.y, 0) > 0;
+    lineChart.enoughDataToShow =
+      data.reduce((current, next) => current + next.y, 0) > 0;
 
     lineChart.series = series;
     lineChart.options = {
@@ -122,6 +126,23 @@ export async function loadHighscoreDistributionInLineChart(
         },
         stroke: {
           curve: "smooth",
+        },
+        annotations: {
+          yaxis: [
+            {
+              y: average,
+              borderColor: "red",
+              strokeDashArray: 0,
+              label: {
+                borderColor: "#999",
+                style: {
+                  color: "#fff",
+                  background: "red",
+                },
+                text: "Average",
+              },
+            },
+          ],
         },
       },
     };
