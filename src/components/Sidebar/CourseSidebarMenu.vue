@@ -237,7 +237,8 @@ async function getCourseIdFromRouter(): Promise<number> {
   return 0;
 }
 
-function clickUp() { //NOSONAR
+function clickUp() {
+  //NOSONAR
   if (showSideBarComputed.value && inFocus.value) {
     let elements = document.getElementsByClassName("vsm--link");
     let previousElement = elements.item(elements.length - 1);
@@ -271,7 +272,8 @@ function clickUp() { //NOSONAR
   }
 }
 
-function clickDown() { //NOSONAR
+function clickDown() {
+  //NOSONAR
   if (showSideBarComputed.value && inFocus.value) {
     let elements = document.getElementsByClassName("vsm--link");
     let firstElement = elements.item(0);

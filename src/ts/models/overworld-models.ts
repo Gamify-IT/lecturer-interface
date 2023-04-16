@@ -147,7 +147,8 @@ export class World implements IWorld {
   npcs: INPC[];
   books: IBook[];
 
-  public constructor( //NOSONAR
+  public constructor(
+    //NOSONAR
     id: string,
     index: number,
     staticName: string,
@@ -180,7 +181,8 @@ export class Dungeon implements IDungeon {
   npcs: INPC[];
   books: IBook[];
 
-  public constructor( //NOSONAR
+  public constructor(
+    //NOSONAR
     id: string,
     index: number,
     staticName: string,
@@ -248,7 +250,8 @@ export class Book implements IBook {
   description: string;
   text: string;
 
-  public constructor( //NOSONAR
+  public constructor(
+    //NOSONAR
     id: string,
     index: number,
     description: string,
