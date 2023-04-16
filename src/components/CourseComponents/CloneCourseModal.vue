@@ -56,7 +56,9 @@ function handleOk() {
         let cloneCourse: ICloneCourse = response.data;
         emit("cloned", cloneCourse);
         if (cloneCourse.errorMessages?.length != 0) {
-          toast.error(`The following errors occured:` + cloneCourse.errorMessages);
+          toast.error(
+            `The following errors occured:` + cloneCourse.errorMessages
+          );
         } else {
           toast.success(`Course ${response.data.courseName} is created!`);
         }
