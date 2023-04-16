@@ -111,7 +111,6 @@ function handleOk() {
           (word.errorType =
             (word.errorType as string) === "" ? undefined : word.errorType)
       );
-      row = row.filter((word) => word.correctValue.trim().length !== 0);
     });
     code.words = code.words.filter((row) => row.length !== 0);
   });
@@ -202,16 +201,15 @@ function inputChanged(
   const word = getWord(codeId, row, col);
   word.correctValue = newString;
   // remove empty columns
-  for (let rowIndex = 0; rowIndex < code.words.length; rowIndex++) {
+  for (const rowIndex in code.words) {
     code.words[rowIndex] = code.words[rowIndex].filter(
-      (col) => col.correctValue.trim().length !== 0
+      (colum) => colum.correctValue.trim().length !== 0
     );
   }
   // remove empty rows
-  code.words = code.words.filter((row) => row.length !== 0);
+  code.words = code.words.filter((innerRow) => innerRow.length !== 0);
   // add missing columns
-  for (let rowIndex = 0; rowIndex < code.words.length; rowIndex++) {
-    const currentRow = code.words[rowIndex];
+  for (const currentRow of code.words) {
     if (currentRow.length === 0) {
       continue;
     }

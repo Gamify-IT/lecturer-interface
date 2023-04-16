@@ -153,8 +153,7 @@ function loadModal() {
 function containsQuestion(questionText: string): boolean {
   return (
     configuration.value.questions.find(
-      (filtered) =>
-        filtered.questionText == currentEditingQuestion.value.questionText
+      (filtered) => filtered.questionText == questionText
     ) != null
   );
 }

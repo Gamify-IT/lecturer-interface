@@ -92,7 +92,7 @@ export interface CourseInitialData {
 }
 
 export enum MapType {
-  NPC,
+  NPC, //NOSONAR
   BOOK,
   MINIGAME,
   DUNGEON,
@@ -148,6 +148,7 @@ export class World implements IWorld {
   books: IBook[];
 
   public constructor(
+    //NOSONAR
     id: string,
     index: number,
     staticName: string,
@@ -181,6 +182,7 @@ export class Dungeon implements IDungeon {
   books: IBook[];
 
   public constructor(
+    //NOSONAR
     id: string,
     index: number,
     staticName: string,
@@ -249,6 +251,7 @@ export class Book implements IBook {
   text: string;
 
   public constructor(
+    //NOSONAR
     id: string,
     index: number,
     description: string,

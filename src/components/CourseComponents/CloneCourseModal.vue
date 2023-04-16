@@ -53,17 +53,19 @@ function handleOk() {
       course.value.id
     )
       .then((response) => {
-        let course: ICloneCourse = response.data;
-        emit("cloned", course);
-        if (course.errorMessages?.length != 0) {
-          toast.error(`The following errors occured:` + course.errorMessages);
+        let cloneCourse: ICloneCourse = response.data;
+        emit("cloned", cloneCourse);
+        if (cloneCourse.errorMessages?.length != 0) {
+          toast.error(
+            `The following errors occured:` + cloneCourse.errorMessages
+          );
         } else {
           toast.success(`Course ${response.data.courseName} is created!`);
         }
       })
-      .catch((error) => {
+      .catch((e) => {
         toast.error(`Course ${course.value.id} could not be cloned!`);
-        console.log(error);
+        console.log(e);
       });
   } else {
     console.log("error");

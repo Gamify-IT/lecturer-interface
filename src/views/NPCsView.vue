@@ -207,7 +207,8 @@ async function loadNPCs(courseId: any, worldIndex: any, dungeonIndex: any) {
   getArea(courseId, worldIndex, dungeonIndex)
     .then((response) => {
       const result: IWorld = response.data;
-      npcs.value = result.npcs.sort((npc1, npc2) => npc1.index - npc2.index);
+      result.npcs.sort((npc1, npc2) => npc1.index - npc2.index);
+      npcs.value = result.npcs;
       console.log(npcs.value);
     })
     .catch((error) => {

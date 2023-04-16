@@ -178,9 +178,9 @@ function loadModal() {
 
 function removeQuestion(text: string) {
   let filteredQuestions: IChickenshockQuestion[] = [];
-  configuration.value.questions.forEach((question) => {
-    if (question.text != text) {
-      filteredQuestions.push(question);
+  configuration.value.questions.forEach((innerQuestion) => {
+    if (innerQuestion.text != text) {
+      filteredQuestions.push(innerQuestion);
     }
   });
   console.log(filteredQuestions);
@@ -229,8 +229,8 @@ function addWrongAnswer() {
 function downloadConfiguration() {
   const { ["id"]: unused, ...clonedConfiguration } = configuration.value;
   const clonedQuestions = Array<IChickenshockQuestion>();
-  for (let question of configuration.value.questions) {
-    const { ["id"]: unused, ...clonedQuestion } = question;
+  for (let innerQuestion of configuration.value.questions) {
+    const { ["id"]: unused, ...clonedQuestion } = innerQuestion;
     clonedQuestions.push(clonedQuestion);
   }
   clonedConfiguration.questions = clonedQuestions;

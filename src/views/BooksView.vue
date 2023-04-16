@@ -207,9 +207,10 @@ async function loadBooks(courseId: any, worldIndex: any, dungeonIndex: any) {
   getArea(courseId, worldIndex, dungeonIndex)
     .then((response) => {
       const result: IWorld = response.data;
-      books.value = result.books.sort(
-        (book1, book2) => book1.index - book2.index
-      );
+
+      result.books.sort((book1, book2) => book1.index - book2.index);
+
+      books.value = result.books;
       console.log(books.value);
     })
     .catch((error) => {

@@ -4,7 +4,7 @@ import {
   loadProblematicQuestionsInBarChart,
   loadTimeSpentDistributionInRangeBar,
 } from "@/ts/statistics/finitequiz-statistics";
-import { defineProps, Ref, ref, watch } from "vue";
+import { defineProps, ref, watch } from "vue";
 
 const loadingMinigameSpecificStatistics = ref(false);
 
