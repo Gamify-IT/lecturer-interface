@@ -209,8 +209,7 @@ function inputChanged(
   // remove empty rows
   code.words = code.words.filter((innerRow) => innerRow.length !== 0);
   // add missing columns
-  for (const element of code.words) {
-    const currentRow = element;
+  for (const currentRow of code.words) {
     if (currentRow.length === 0) {
       continue;
     }
