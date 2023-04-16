@@ -201,7 +201,7 @@ function inputChanged(
   const word = getWord(codeId, row, col);
   word.correctValue = newString;
   // remove empty columns
-  for (let rowIndex = 0; rowIndex < code.words.length; rowIndex++) {
+  for (const rowIndex in code.words) {
     code.words[rowIndex] = code.words[rowIndex].filter(
       (colum) => colum.correctValue.trim().length !== 0
     );
