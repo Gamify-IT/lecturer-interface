@@ -7,4 +7,5 @@ export default {
   towercrushApiUrl: "/minigames/towercrush/api/v1",
   crosswordpuzzleApiUrl: "/minigames/crosswordpuzzle/api/v1",
   mapCommitHash: "d79ab209e9d6501892008943592b1ff3eab3f340",
+  memoryApiUrl: "/minigames/memory/api/v1",
 };

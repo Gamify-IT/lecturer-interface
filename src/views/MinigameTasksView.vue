@@ -13,6 +13,7 @@ import EditChickenshockConfigurationModal from "@/components/EditMinigameModals/
 import EditFinitequizConfigurationModal from "@/components/EditMinigameModals/EditFinitequizConfigurationModal.vue";
 import EditTowercrushConfigurationModal from "@/components/EditMinigameModals/EditTowercrushConfigurationModal.vue";
 import EditCrosswordpuzzleModal from "@/components/EditMinigameModals/EditCrosswordpuzzleModal.vue";
+import EditMemoryConfigurationModal from "@/components/EditMinigameModals/EditMemoryConfigurationModal.vue";
 import MapImageModal from "@/components/MapImageModal.vue";
 import EditBugfinderConifgurationModal from "@/components/EditMinigameModals/EditBugfinderConfigurationModal.vue";
 import router from "@/router";
@@ -40,6 +41,7 @@ const showFinitequizModal = ref(false);
 const showTowercrushModal = ref(false);
 const showCrosswordpuzzleModal = ref(false);
 const showBugfinderModal = ref(false);
+const showMemoryModal = ref(false);
 
 watch(
   () => [
@@ -322,6 +324,9 @@ function editMinigameConfiguration(task: ITask) {
     case Minigame.BUGFINDER:
       showBugfinderModal.value = true;
       break;
+    case Minigame.MEMORY:
+      showMemoryModal.value = true;
+      break;
     default:
       console.log(
         "This minigame is currently not supported to be edited here."
@@ -361,6 +366,7 @@ function closedEditModal() {
   showTowercrushModal.value = false;
   showCrosswordpuzzleModal.value = false;
   showBugfinderModal.value = false;
+  showMemoryModal.value = false;
 }
 
 function redirectToStatisticView(task: ITask) {
@@ -496,6 +502,12 @@ function redirectToStatisticView(task: ITask) {
   />
   <EditBugfinderConifgurationModal
     :showModal="showBugfinderModal"
+    :minigame="editedMinigame"
+    @updateMinigameConfiguration="updateMinigameConfiguration"
+    @closedModal="closedEditModal"
+  />
+  <EditMemoryConfigurationModal
+    :showModal="showMemoryModal"
     :minigame="editedMinigame"
     @updateMinigameConfiguration="updateMinigameConfiguration"
     @closedModal="closedEditModal"

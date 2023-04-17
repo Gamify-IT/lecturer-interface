@@ -76,6 +76,16 @@ services:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
 
+  memory-db:
+    container_name: memory-db
+    image: postgres:14-alpine
+    restart: always
+    expose:
+      - "5432"
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+
   #backends
   keycloak:
     container_name: keycloak
@@ -115,6 +125,7 @@ services:
       - CROSSWORDPUZZLE_URL=http://crosswordpuzzle-backend/api/v1
       - FINITEQUIZ_URL=http://finitequiz-backend/api/v1
       - BUGFINDER_URL=http://bugfinder-backend/api/v1
+      - MEMORY_URL=http://memory-backend/api/v1
       - KEYCLOAK_ISSUER=http://localhost/keycloak/realms/Gamify-IT
       - KEYCLOAK_URL=http://keycloak/keycloak/realms/Gamify-IT
 
@@ -186,6 +197,23 @@ services:
       - KEYCLOAK_ISSUER=http://localhost/keycloak/realms/Gamify-IT
       - KEYCLOAK_URL=http://keycloak/keycloak/realms/Gamify-IT
 
+  memory-backend:
+    container_name: memory-backend
+    image: ghcr.io/gamify-it/memory-backend:main
+    restart: always
+    pull_policy: always
+    expose:
+      - "80"
+    depends_on:
+      - memory-db
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_URL=postgresql://memory-db:5432/postgres
+      - OVERWORLD_URL=http://overworld-backend/api/v1
+      - KEYCLOAK_ISSUER=http://localhost/keycloak/realms/Gamify-IT
+      - KEYCLOAK_URL=http://keycloak/keycloak/realms/Gamify-IT
+
   #frontends
   landing-page:
     container_name: landing-page
@@ -236,6 +264,14 @@ services:
   bugfinder:
     container_name: bugfinder
     image: ghcr.io/gamify-it/bugfinder:main
+    pull_policy: always
+    restart: always
+    expose:
+      - "80"
+
+  memory:
+    container_name: memory
+    image: ghcr.io/gamify-it/memory:main
     pull_policy: always
     restart: always
     expose:
