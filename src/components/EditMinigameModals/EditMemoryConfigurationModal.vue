@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { saveAs } from "file-saver";
-import { arrayOf, defaultValue, int, object, oneOf, string } from "checkeasy";
+import { arrayOf, object, oneOf, string } from "checkeasy";
 import { importConfiguration } from "@/ts/import-configuration";
-import { Ref, defineEmits, defineProps, onMounted, ref, watch } from "vue";
+import { Ref, defineEmits, defineProps, ref, watch } from "vue";
 import {
   getMemoryConfig,
   postMemoryConfig,
@@ -20,7 +20,6 @@ import {
   MemoryCardType,
   MemoryConfiguration,
 } from "@/ts/models/memory-models";
-import { config } from "process";
 
 const props = defineProps<{
   minigame: ITask;
@@ -51,6 +50,7 @@ const minigame = ref(props.minigame);
 const form = ref();
 const showModal = ref(props.showModal);
 
+const numberOfPairs = 6;
 const cardPairs = ref([]) as Ref<MemoryCardPair[]>;
 initializePairs();
 
@@ -65,7 +65,7 @@ const card2Type = ref();
 const card2Content = ref();
 const editObject = ref();
 
-let memoryCardTypeValues = Object.values(MemoryCardType);
+const memoryCardTypeValues = Object.values(MemoryCardType);
 
 const memoryCardTypes = memoryCardTypeValues.map((item) => {
   return { text: item.charAt(0) + item.slice(1).toLowerCase(), value: item };
@@ -112,7 +112,7 @@ function checkFormValidity(): boolean {
 
 function initializePairs() {
   cardPairs.value = [];
-  for (let index = 0; index < 6; index++) {
+  for (let index = 0; index < numberOfPairs; index++) {
     cardPairs.value.push(
       new MemoryCardPair(
         new MemoryCard("", MemoryCardType.TEXT),
@@ -218,7 +218,6 @@ function handlePairOk() {
 }
 
 function handlePairAbort() {
-  console.log("@cancel");
   showModal.value = true;
 }
 
@@ -238,7 +237,6 @@ function setupPairModal() {
 }
 
 function onEditClick(edit: any) {
-  console.log("Edit button click");
   editObject.value = edit;
   showEditModal.value = true;
 }
@@ -312,7 +310,9 @@ async function importFile(event: any) {
       <b-form-group>
         <b-table :fields="fields" :items="cardPairs">
           <template #cell(card1)="data">
-            <div>{{ data.item.card1.type }}</div>
+            <div style="color: slategray; font-weight: 600">
+              {{ data.item.card1.type }}
+            </div>
             <span
               v-if="
                 data.item.card1.type == MemoryCardType.TEXT ||
@@ -324,7 +324,9 @@ async function importFile(event: any) {
             <span v-if="data.item.card1.content.length > 10">...</span>
           </template>
           <template #cell(card2)="data">
-            <div>{{ data.item.card2.type }}</div>
+            <div style="color: slategray; font-weight: 600">
+              {{ data.item.card2.type }}
+            </div>
             <span
               v-if="
                 data.item.card2.type == MemoryCardType.TEXT ||
