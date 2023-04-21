@@ -283,7 +283,7 @@ function backToLandingPage() {
         class="float-right"
         @click="backToLandingPage"
       >
-        Back to landing page
+        Leave
       </b-button>
       <CreateCourseModal
         :showModal="showCreateModal"
