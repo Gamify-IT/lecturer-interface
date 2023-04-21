@@ -225,6 +225,10 @@ function resetFocus(row: ICourse) {
   currentFocus.value = -1;
   console.log(currentFocus.value);
 }
+
+function backToLandingPage() {
+  window.parent.postMessage("CLOSE ME");
+}
 </script>
 
 <template>
@@ -272,7 +276,14 @@ function resetFocus(row: ICourse) {
         </template>
       </b-table>
       <b-button variant="success" @click="showCreateModalFun">
-        create new course
+        Create new course
+      </b-button>
+      <b-button
+        variant="primary"
+        class="float-right"
+        @click="backToLandingPage"
+      >
+        Leave
       </b-button>
       <CreateCourseModal
         :showModal="showCreateModal"
@@ -303,5 +314,8 @@ function resetFocus(row: ICourse) {
 }
 .invisible-button:focus {
   outline: none;
+}
+.float-right {
+  float: right;
 }
 </style>
