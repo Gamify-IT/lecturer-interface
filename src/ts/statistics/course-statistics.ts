@@ -7,30 +7,61 @@ import { LineChart, PieChart } from "../models/statistic-models";
 const greenColor = "#00FF00";
 
 /**
- * Loads the total player statistic in the present pie chart.
+ * Loads the total player statistic in the present line chart with informations when players joined the course.
  *
  * @param courseId the id of the course the statistic should be loaded for
- * @param pieChart the pie chart to update with success rate data
+ * @param lineChart the line chart to update with the players joined date
  * @returns a promise that resolves after the chart has been updated
  */
 export async function loadTotalPlayerStatistic(
   courseId: number,
-  pieChart: PieChart
+  lineChart: LineChart
 ): Promise<any> {
   return getTotalPlayerStatistic(courseId).then(async (response) => {
-    const result: { totalPlayers: number } = { totalPlayers: 50 };
-    const labels = ["Total players"];
-    const series = [result.totalPlayers];
-    const colors = [greenColor];
+    const result: {
+      totalPlayers: number;
+      joined: Array<{ date: Date; players: number }>;
+    } = {
+      totalPlayers: 50,
+      joined: [
+        { date: new Date("2023-04-19"), players: 5 },
+        { date: new Date("2023-04-22"), players: 25 },
+        { date: new Date("2023-04-23"), players: 10 },
+        { date: new Date("2023-04-24"), players: 7 },
+        { date: new Date("2023-04-25"), players: 3 },
+      ],
+    };
+    let totalPlayers = 0;
+    const data = [] as Array<{ x: any; y: number }>;
+    result.joined.forEach((element) => {
+      totalPlayers += element.players;
+      data.push({ x: element.date.getTime(), y: totalPlayers });
+    });
+    const series = [{ name: "Players in course", data: data }];
 
-    pieChart.enoughDataToShow = series.reduce((x, y) => x + y) > 0;
+    lineChart.enoughDataToShow =
+      result.joined.reduce((a, next) => a + next.players, 0) > 0;
 
-    pieChart.series = series;
-    pieChart.options = {
-      ...pieChart.options,
+    lineChart.series = series;
+    lineChart.options = {
+      ...lineChart.options,
       ...{
-        labels: labels,
-        colors: colors,
+        xaxis: {
+          type: "datetime",
+          labels: {
+            formatter: function (value) {
+              return new Date(value).toLocaleDateString();
+            },
+          },
+          title: {
+            text: "Date",
+          },
+        },
+        yaxis: {
+          title: {
+            text: "Amount of players in course",
+          },
+        },
       },
     };
   });
@@ -64,6 +95,10 @@ export async function loadActivePlayerStatistic(
     });
     const series = [{ name: "Players last activity in hours", data: data }];
 
+    const averageTimeInHours =
+      data.reduce((a, next) => a + next.x * next.y, 0) /
+      data.reduce((a, next) => a + next.y, 0);
+
     // at least one score has to be hit
     lineChart.enoughDataToShow = data.reduce((a, next) => a + next.y, 0) > 0;
 
@@ -80,7 +115,7 @@ export async function loadActivePlayerStatistic(
             formatter: function (value) {
               const hours = parseInt(value);
               if (hours > 24) {
-                return (hours / 24).toFixed(0) + " day";
+                return (hours / 24).toFixed(0) + " days";
               }
               return value + (hours == 1 ? " hour" : " hours");
             },
@@ -93,6 +128,23 @@ export async function loadActivePlayerStatistic(
         },
         stroke: {
           curve: "smooth",
+        },
+        annotations: {
+          xaxis: [
+            {
+              x: averageTimeInHours,
+              borderColor: "red",
+              strokeDashArray: 0,
+              label: {
+                borderColor: "#999",
+                style: {
+                  color: "#fff",
+                  background: "red",
+                },
+                text: "Average",
+              },
+            },
+          ],
         },
       },
     };
@@ -123,6 +175,8 @@ export async function loadPlayerUnlockedAreaStatistic(
       { level: 8, name: "World 3 - Dungeon 1", players: 0 },
       { level: 9, name: "World 3 - Dungeon 2", players: 0 },
     ];
+    // sort by level
+    result.sort((a, b) => a.level - b.level);
     const data = [] as Array<number>;
     const categories = [] as Array<string>;
     result.forEach((element) => {
@@ -174,14 +228,14 @@ export async function loadPlayerCompletedMinigameStatistic(
       { amountOfCompletedMinigames: 0, players: 5 },
       { amountOfCompletedMinigames: 1, players: 2 },
       { amountOfCompletedMinigames: 2, players: 4 },
-      { amountOfCompletedMinigames: 3, players: 6 },
-      { amountOfCompletedMinigames: 4, players: 7 },
-      { amountOfCompletedMinigames: 5, players: 10 },
-      { amountOfCompletedMinigames: 6, players: 15 },
-      { amountOfCompletedMinigames: 7, players: 20 },
-      { amountOfCompletedMinigames: 8, players: 25 },
-      { amountOfCompletedMinigames: 9, players: 14 },
-      { amountOfCompletedMinigames: 10, players: 9 },
+      { amountOfCompletedMinigames: 3, players: 5 },
+      { amountOfCompletedMinigames: 4, players: 5 },
+      { amountOfCompletedMinigames: 5, players: 9 },
+      { amountOfCompletedMinigames: 6, players: 14 },
+      { amountOfCompletedMinigames: 7, players: 17 },
+      { amountOfCompletedMinigames: 8, players: 20 },
+      { amountOfCompletedMinigames: 9, players: 8 },
+      { amountOfCompletedMinigames: 10, players: 3 },
     ];
     const data = [] as Array<{ x: number; y: number }>;
     let resultBefore = 0;

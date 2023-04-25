@@ -43,7 +43,7 @@ async function loadCourseStatistics() {
   }
   loadingStatistics.value = true;
   const promisesToWait = [
-    loadTotalPlayerStatistic(props.courseId, totalPlayerPieChart),
+    loadTotalPlayerStatistic(props.courseId, totalPlayerLineChart),
     loadActivePlayerStatistic(props.courseId, activePlayerLineChart),
     loadPlayerUnlockedAreaStatistic(
       props.courseId,
@@ -58,11 +58,11 @@ async function loadCourseStatistics() {
   loadingStatistics.value = false;
 }
 
-const totalPlayerPieChart: LineChart = {
+const totalPlayerLineChart: LineChart = {
   enoughDataToShow: true,
   width: 600,
   options: {
-    chart: { type: "pie" },
+    chart: { type: "line" },
     title: { text: "Total players" },
   },
   series: [] as Array<number>,
@@ -75,9 +75,7 @@ const activePlayerLineChart: LineChart = {
     chart: { type: "line" },
     title: { text: "Active players" },
   },
-  series: [] as Array<{
-    data: Array<number>;
-  }>,
+  series: [],
 };
 
 const playerUnlockedAreaLineChart: LineChart = {
@@ -87,9 +85,7 @@ const playerUnlockedAreaLineChart: LineChart = {
     chart: { type: "line" },
     title: { text: "Player unlocked areas" },
   },
-  series: [] as Array<{
-    data: Array<number>;
-  }>,
+  series: [],
 };
 
 const playerCompletedMinigamesLineChart: LineChart = {
@@ -99,13 +95,11 @@ const playerCompletedMinigamesLineChart: LineChart = {
     chart: { type: "line" },
     title: { text: "Player completed minigames" },
   },
-  series: [] as Array<{
-    data: Array<number>;
-  }>,
+  series: [],
 };
 
 const statistics = [
-  totalPlayerPieChart,
+  totalPlayerLineChart,
   activePlayerLineChart,
   playerUnlockedAreaLineChart,
   playerCompletedMinigamesLineChart,
