@@ -238,18 +238,17 @@ export async function loadPlayerCompletedMinigameStatistic(
       { amountOfCompletedMinigames: 10, players: 3 },
     ];
     const data = [] as Array<{ x: number; y: number }>;
-    let resultBefore = 0;
-    result
-      .sort(
-        (a, b) => a.amountOfCompletedMinigames - b.amountOfCompletedMinigames
-      )
-      .reverse();
     result.forEach((element) => {
+      const playersWithMoreThanXMinigames = result
+        .filter(
+          (e) =>
+            e.amountOfCompletedMinigames <= element.amountOfCompletedMinigames
+        )
+        .reduce((a, next) => a + next.players, 0);
       data.push({
         x: element.amountOfCompletedMinigames,
-        y: element.players + resultBefore,
+        y: playersWithMoreThanXMinigames,
       });
-      resultBefore += element.players;
     });
     const series = [
       { name: "Players completed at least x minigames", data: data },

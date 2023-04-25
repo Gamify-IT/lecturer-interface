@@ -5,7 +5,7 @@ import {
   loadPlayerUnlockedAreaStatistic,
   loadPlayerCompletedMinigameStatistic,
 } from "@/ts/statistics/course-statistics";
-import { LineChart, PieChart, ChartToShow } from "@/ts/models/statistic-models";
+import { LineChart, ChartToShow } from "@/ts/models/statistic-models";
 import { defineProps, ref, watch } from "vue";
 
 const loadingStatistics = ref(false);
