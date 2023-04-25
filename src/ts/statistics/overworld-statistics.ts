@@ -115,8 +115,6 @@ export async function loadHighscoreDistributionInLineChart(
           title: {
             text: "Score",
           },
-          min: 0,
-          max: 100,
           type: "numeric",
         },
         yaxis: {
