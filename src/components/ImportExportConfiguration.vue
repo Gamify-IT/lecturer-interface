@@ -18,7 +18,7 @@ const emit = defineEmits<{
     />
   </label>
   <b-button @click="emit('export')"
-    >Export confiugration <em class="bi bi-download"
+    >Export configuration <em class="bi bi-download"
   /></b-button>
 </template>
 <style scoped>
