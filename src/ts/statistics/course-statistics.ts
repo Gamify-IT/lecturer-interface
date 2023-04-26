@@ -22,13 +22,13 @@ export async function loadTotalPlayerStatistic(
       totalPlayers: number;
       joined: Array<{ date: Date; players: number }>;
     } = {
-      totalPlayers: 50,
+      totalPlayers: 75,
       joined: [
         { date: new Date("2023-04-19"), players: 5 },
-        { date: new Date("2023-04-22"), players: 25 },
-        { date: new Date("2023-04-23"), players: 10 },
-        { date: new Date("2023-04-24"), players: 7 },
-        { date: new Date("2023-04-25"), players: 3 },
+        { date: new Date("2023-04-22"), players: 43 },
+        { date: new Date("2023-04-23"), players: 12 },
+        { date: new Date("2023-04-24"), players: 9 },
+        { date: new Date("2023-04-25"), players: 6 },
       ],
     };
     let totalPlayers = 0;
@@ -83,10 +83,10 @@ export async function loadActivePlayerStatistic(
     const result: Array<{ hour: number; players: number }> = [
       { hour: 1, players: 3 },
       { hour: 3, players: 7 },
-      { hour: 12, players: 24 },
-      { hour: 24, players: 50 },
-      { hour: 24 * 3, players: 20 },
-      { hour: 24 * 7, players: 10 },
+      { hour: 12, players: 10 },
+      { hour: 24, players: 29 },
+      { hour: 24 * 3, players: 15 },
+      { hour: 24 * 7, players: 9 },
       { hour: 24 * 14, players: 2 },
     ];
     const data = [] as Array<{ x: number; y: number }>;
@@ -165,14 +165,14 @@ export async function loadPlayerUnlockedAreaStatistic(
   return getActivePlayerStatistic(courseId).then(async (response) => {
     // example data for multiple hours:
     const result: Array<{ level: number; name: string; players: number }> = [
-      { level: 1, name: "World 1", players: 50 },
-      { level: 2, name: "World 1 - Dungeon 1", players: 39 },
-      { level: 3, name: "World 1 - Dungeon 2", players: 30 },
-      { level: 4, name: "World 2", players: 20 },
-      { level: 5, name: "World 2 - Dungeon 1", players: 10 },
+      { level: 1, name: "World 1", players: 75 },
+      { level: 2, name: "World 1 - Dungeon 1", players: 50 },
+      { level: 3, name: "World 1 - Dungeon 2", players: 43 },
+      { level: 4, name: "World 2", players: 28 },
+      { level: 5, name: "World 2 - Dungeon 1", players: 19 },
       { level: 6, name: "World 2 - Dungeon 2", players: 5 },
       { level: 7, name: "World 3", players: 2 },
-      { level: 8, name: "World 3 - Dungeon 1", players: 0 },
+      { level: 8, name: "World 3 - Dungeon 1", players: 1 },
       { level: 9, name: "World 3 - Dungeon 2", players: 0 },
     ];
     // sort by level
@@ -228,11 +228,11 @@ export async function loadPlayerCompletedMinigameStatistic(
       { amountOfCompletedMinigames: 0, players: 5 },
       { amountOfCompletedMinigames: 1, players: 2 },
       { amountOfCompletedMinigames: 2, players: 4 },
-      { amountOfCompletedMinigames: 3, players: 5 },
-      { amountOfCompletedMinigames: 4, players: 5 },
-      { amountOfCompletedMinigames: 5, players: 9 },
+      { amountOfCompletedMinigames: 3, players: 3 },
+      { amountOfCompletedMinigames: 4, players: 2 },
+      { amountOfCompletedMinigames: 5, players: 4 },
       { amountOfCompletedMinigames: 6, players: 14 },
-      { amountOfCompletedMinigames: 7, players: 17 },
+      { amountOfCompletedMinigames: 7, players: 10 },
       { amountOfCompletedMinigames: 8, players: 20 },
       { amountOfCompletedMinigames: 9, players: 8 },
       { amountOfCompletedMinigames: 10, players: 3 },
