@@ -239,15 +239,15 @@ export async function loadPlayerCompletedMinigameStatistic(
     ];
     const data = [] as Array<{ x: number; y: number }>;
     result.forEach((element) => {
-      const playersWithMoreThanXMinigames = result
+      const playersWithMoreAndEqualThanXMinigames = result
         .filter(
           (e) =>
-            e.amountOfCompletedMinigames <= element.amountOfCompletedMinigames
+            e.amountOfCompletedMinigames >= element.amountOfCompletedMinigames
         )
         .reduce((a, next) => a + next.players, 0);
       data.push({
         x: element.amountOfCompletedMinigames,
-        y: playersWithMoreThanXMinigames,
+        y: playersWithMoreAndEqualThanXMinigames,
       });
     });
     const series = [
