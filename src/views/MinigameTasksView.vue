@@ -372,6 +372,7 @@ function closedEditModal() {
   showCrosswordpuzzleModal.value = false;
   showBugfinderModal.value = false;
   showMemoryModal.value = false;
+  showRegexGameModal.value = false;
 }
 
 function redirectToStatisticView(task: ITask) {
