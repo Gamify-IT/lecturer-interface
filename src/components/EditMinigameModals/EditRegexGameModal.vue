@@ -107,6 +107,18 @@ function resetModal() {
 }
 
 function handleOk() {
+  if (!timeEnable.value) configuration.value.riddleTimeoutSeconds = 0;
+  console.log(structureCheckboxes.value);
+  configuration.value.allowedRegexStructures = new Set();
+  Object.entries(structureCheckboxes.value).forEach((type) => {
+    if (type[1])
+      configuration.value.allowedRegexStructures.add(
+        Object.entries(RegexStructure)
+          .filter((s) => typeof s[1] !== "string")
+          .find((s) => s[0] === type[0])![1] as RegexStructure
+      );
+  });
+  console.log(configuration.value);
   postRegexGameConfig(configuration.value)
     .then((response) => {
       minigame.value.configurationId = response.data.id;
