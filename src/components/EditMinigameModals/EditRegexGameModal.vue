@@ -279,6 +279,12 @@ async function importFile(event: any) {
           {{ regexStructureDescriptions.get(structure[1] as RegexStructure) }}
         </b-form-checkbox>
       </b-form-group>
+      <b-button
+        href="https://gamifyit-docs.readthedocs.io/en/latest/user-manuals/minigames/regexgame.html"
+        target="_blank"
+      >
+        Documentation
+      </b-button>
     </form>
     <ImportExportConfiguration
       @export="downloadConfiguration"
