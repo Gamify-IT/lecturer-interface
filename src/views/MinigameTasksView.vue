@@ -14,6 +14,7 @@ import EditFinitequizConfigurationModal from "@/components/EditMinigameModals/Ed
 import EditTowercrushConfigurationModal from "@/components/EditMinigameModals/EditTowercrushConfigurationModal.vue";
 import EditCrosswordpuzzleModal from "@/components/EditMinigameModals/EditCrosswordpuzzleModal.vue";
 import EditMemoryConfigurationModal from "@/components/EditMinigameModals/EditMemoryConfigurationModal.vue";
+import EditRegexGameModal from "@/components/EditMinigameModals/EditRegexGameModal.vue";
 import MapImageModal from "@/components/MapImageModal.vue";
 import EditBugfinderConifgurationModal from "@/components/EditMinigameModals/EditBugfinderConfigurationModal.vue";
 import router from "@/router";
@@ -42,6 +43,7 @@ const showTowercrushModal = ref(false);
 const showCrosswordpuzzleModal = ref(false);
 const showBugfinderModal = ref(false);
 const showMemoryModal = ref(false);
+const showRegexGameModal = ref(false);
 
 watch(
   () => [
@@ -327,6 +329,9 @@ function editMinigameConfiguration(task: ITask) {
     case Minigame.MEMORY:
       showMemoryModal.value = true;
       break;
+    case Minigame.REGEXGAME:
+      showRegexGameModal.value = true;
+      break;
     default:
       console.log(
         "This minigame is currently not supported to be edited here."
@@ -367,6 +372,7 @@ function closedEditModal() {
   showCrosswordpuzzleModal.value = false;
   showBugfinderModal.value = false;
   showMemoryModal.value = false;
+  showRegexGameModal.value = false;
 }
 
 function redirectToStatisticView(task: ITask) {
@@ -508,6 +514,12 @@ function redirectToStatisticView(task: ITask) {
   />
   <EditMemoryConfigurationModal
     :showModal="showMemoryModal"
+    :minigame="editedMinigame"
+    @updateMinigameConfiguration="updateMinigameConfiguration"
+    @closedModal="closedEditModal"
+  />
+  <EditRegexGameModal
+    :showModal="showRegexGameModal"
     :minigame="editedMinigame"
     @updateMinigameConfiguration="updateMinigameConfiguration"
     @closedModal="closedEditModal"
