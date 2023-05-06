@@ -181,7 +181,7 @@ function downloadConfiguration() {
   const blob = new Blob([JSON.stringify(clonedConfiguration)], {
     type: "text/json",
   });
-  saveAs(blob, "RegexGame-configuration.json");
+  saveAs(blob, "regexgame-configuration.json");
 }
 async function importFile(event: any) {
   const file = event.target.files[0];
