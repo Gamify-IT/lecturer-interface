@@ -83,33 +83,40 @@ function resetModal() {
     getRegexGameConfig(minigame.value.configurationId)
       .then((response) => {
         configuration.value = response.data;
+        setupModal();
       })
       .catch((error) => {
         console.log(error);
         if (error.response.status == 404) {
           minigame.value.configurationId = undefined;
         }
+        setupModal();
       });
   } else {
     configuration.value.id = undefined;
+    setupModal();
   }
   oldMinigame.value = minigame.value;
+  console.log("Reset Modal");
+}
+
+function setupModal() {
+  console.log("load configuration", configuration.value);
   Object.entries(RegexStructure)
     .filter((s) => typeof s[1] !== "string")
     .forEach(
       (k) =>
         (structureCheckboxes.value[k[0]] =
-          configuration.value.allowedRegexStructures.has(
-            k[1] as RegexStructure
-          ))
+          configuration.value.allowedRegexStructures.includes(k[0]))
     );
-  console.log("Reset Modal");
+  if (configuration.value.riddleTimeoutSeconds === 0) timeEnable.value = false;
 }
 
 function handleOk() {
   if (!timeEnable.value) configuration.value.riddleTimeoutSeconds = 0;
   let allowedRegexStructures = new Set<string>();
   Object.entries(structureCheckboxes.value).forEach((checkbox) => {
+    console.log("check checkbox", checkbox[0], checkbox[1]);
     if (checkbox[1])
       allowedRegexStructures.add(
         Object.entries(RegexStructure)
@@ -118,7 +125,7 @@ function handleOk() {
       );
   });
   // eslint-disable-next-line
-  configuration.value.allowedRegexStructures = Array.from(configuration.value.allowedRegexStructures);
+  configuration.value.allowedRegexStructures = Array.from(allowedRegexStructures);
   postRegexGameConfig(configuration.value)
     .then((response) => {
       minigame.value.configurationId = response.data.id;
@@ -229,7 +236,7 @@ async function importFile(event: any) {
           type="number"
           v-if="timeEnable"
           v-model="configuration.riddleTimeoutSeconds"
-          :state="configuration.riddleTimeoutSeconds >= 0"
+          :state="configuration.riddleTimeoutSeconds >= 1"
         />
       </b-form-group>
       <b-form-group
