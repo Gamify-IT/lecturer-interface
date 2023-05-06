@@ -108,17 +108,17 @@ function resetModal() {
 
 function handleOk() {
   if (!timeEnable.value) configuration.value.riddleTimeoutSeconds = 0;
-  console.log(structureCheckboxes.value);
-  configuration.value.allowedRegexStructures = new Set();
-  Object.entries(structureCheckboxes.value).forEach((type) => {
-    if (type[1])
-      configuration.value.allowedRegexStructures.add(
+  let allowedRegexStructures = new Set<string>();
+  Object.entries(structureCheckboxes.value).forEach((checkbox) => {
+    if (checkbox[1])
+      allowedRegexStructures.add(
         Object.entries(RegexStructure)
           .filter((s) => typeof s[1] !== "string")
-          .find((s) => s[0] === type[0])![1] as RegexStructure
+          .find((s) => s[0] === checkbox[0])![0]
       );
   });
-  console.log(configuration.value);
+  // eslint-disable-next-line
+  configuration.value.allowedRegexStructures = Array.from(configuration.value.allowedRegexStructures);
   postRegexGameConfig(configuration.value)
     .then((response) => {
       minigame.value.configurationId = response.data.id;
