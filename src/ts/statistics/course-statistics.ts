@@ -26,7 +26,7 @@ export async function loadPlayersJoinedStatistic(
     const data = [] as Array<{ x: any; y: number }>;
     result.joined.forEach((element) => {
       totalPlayers += element.players;
-      data.push({ x: element.date.getTime(), y: totalPlayers });
+      data.push({ x: new Date(element.date).getTime(), y: totalPlayers });
     });
     const series = [{ name: "Players in course", data: data }];
 
@@ -45,7 +45,7 @@ export async function loadPlayersJoinedStatistic(
             },
           },
           title: {
-            text: "Date",
+            text: "Date players joined",
           },
         },
         yaxis: {
@@ -90,7 +90,7 @@ export async function loadActivePlayerStatistic(
       ...{
         xaxis: {
           title: {
-            text: "Time",
+            text: "Time since last activity",
           },
           type: "numeric",
           labels: {
@@ -167,7 +167,7 @@ export async function loadPlayerUnlockedAreaStatistic(
         xaxis: {
           categories: categories,
           title: {
-            text: "Area",
+            text: "Area unlocked",
           },
         },
         yaxis: {
