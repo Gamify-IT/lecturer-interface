@@ -11,7 +11,7 @@ export async function getPlayersJoinedStatistic(
   courseId: number
 ): Promise<AxiosResponse> {
   return axios.get(
-    `${config.overworldApiUrl}/courses/${courseId}/players-joined`
+    `${config.overworldApiUrl}/courses/${courseId}/statistic/players-joined`
   );
 }
 
@@ -24,7 +24,7 @@ export async function getActivePlayersStatistic(
   courseId: number
 ): Promise<AxiosResponse> {
   return axios.get(
-    `${config.overworldApiUrl}/courses/${courseId}/active-players`
+    `${config.overworldApiUrl}/courses/${courseId}/statistic/last-played`
   );
 }
 
@@ -37,7 +37,7 @@ export async function getUnlockedAreasStatistic(
   courseId: number
 ): Promise<AxiosResponse> {
   return axios.get(
-    `${config.overworldApiUrl}/courses/${courseId}/unlocked-areas`
+    `${config.overworldApiUrl}/courses/${courseId}/statistic/unlocked-areas`
   );
 }
 
@@ -50,6 +50,6 @@ export async function getCompletedMinigamesStatistic(
   courseId: number
 ): Promise<AxiosResponse> {
   return axios.get(
-    `${config.overworldApiUrl}/courses/${courseId}/completed-minigames`
+    `${config.overworldApiUrl}/courses/${courseId}/statistic/completed-minigames`
   );
 }

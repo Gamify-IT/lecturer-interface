@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import {
-  loadTotalPlayerStatistic,
+  loadPlayersJoinedStatistic,
   loadActivePlayerStatistic,
   loadPlayerUnlockedAreaStatistic,
   loadPlayerCompletedMinigameStatistic,
@@ -43,7 +43,7 @@ async function loadCourseStatistics() {
   }
   loadingStatistics.value = true;
   const promisesToWait = [
-    loadTotalPlayerStatistic(props.courseId, totalPlayerLineChart),
+    loadPlayersJoinedStatistic(props.courseId, totalPlayerLineChart),
     loadActivePlayerStatistic(props.courseId, activePlayerLineChart),
     loadPlayerUnlockedAreaStatistic(
       props.courseId,
