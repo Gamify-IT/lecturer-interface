@@ -1,10 +1,10 @@
 import {
-  getTotalPlayerStatistic,
-  getActivePlayerStatistic,
+  getActivePlayersStatistic,
+  getPlayersJoinedStatistic,
+  getCompletedMinigamesStatistic,
+  getUnlockedAreasStatistic,
 } from "@/ts/rest-clients/course-statistics-rest-client";
-import { LineChart, PieChart } from "../models/statistic-models";
-
-const greenColor = "#00FF00";
+import { LineChart } from "../models/statistic-models";
 
 /**
  * Loads the total player statistic in the present line chart with informations when players joined the course.
@@ -13,24 +13,15 @@ const greenColor = "#00FF00";
  * @param lineChart the line chart to update with the players joined date
  * @returns a promise that resolves after the chart has been updated
  */
-export async function loadTotalPlayerStatistic(
+export async function loadPlayersJoinedStatistic(
   courseId: number,
   lineChart: LineChart
 ): Promise<any> {
-  return getTotalPlayerStatistic(courseId).then(async (response) => {
+  return getPlayersJoinedStatistic(courseId).then(async (response) => {
     const result: {
       totalPlayers: number;
       joined: Array<{ date: Date; players: number }>;
-    } = {
-      totalPlayers: 75,
-      joined: [
-        { date: new Date("2023-04-19"), players: 5 },
-        { date: new Date("2023-04-22"), players: 43 },
-        { date: new Date("2023-04-23"), players: 12 },
-        { date: new Date("2023-04-24"), players: 9 },
-        { date: new Date("2023-04-25"), players: 6 },
-      ],
-    };
+    } = response.data;
     let totalPlayers = 0;
     const data = [] as Array<{ x: any; y: number }>;
     result.joined.forEach((element) => {
@@ -78,17 +69,8 @@ export async function loadActivePlayerStatistic(
   courseId: number,
   lineChart: LineChart
 ): Promise<any> {
-  return getActivePlayerStatistic(courseId).then(async (response) => {
-    // example data for multiple hours:
-    const result: Array<{ hour: number; players: number }> = [
-      { hour: 1, players: 3 },
-      { hour: 3, players: 7 },
-      { hour: 12, players: 10 },
-      { hour: 24, players: 29 },
-      { hour: 24 * 3, players: 15 },
-      { hour: 24 * 7, players: 9 },
-      { hour: 24 * 14, players: 2 },
-    ];
+  return getActivePlayersStatistic(courseId).then(async (response) => {
+    const result: Array<{ hour: number; players: number }> = response.data;
     const data = [] as Array<{ x: number; y: number }>;
     result.forEach((element) => {
       data.push({ x: element.hour, y: element.players });
@@ -162,19 +144,9 @@ export async function loadPlayerUnlockedAreaStatistic(
   courseId: number,
   lineChart: LineChart
 ): Promise<any> {
-  return getActivePlayerStatistic(courseId).then(async (response) => {
-    // example data for multiple hours:
-    const result: Array<{ level: number; name: string; players: number }> = [
-      { level: 1, name: "World 1", players: 75 },
-      { level: 2, name: "World 1 - Dungeon 1", players: 50 },
-      { level: 3, name: "World 1 - Dungeon 2", players: 43 },
-      { level: 4, name: "World 2", players: 28 },
-      { level: 5, name: "World 2 - Dungeon 1", players: 19 },
-      { level: 6, name: "World 2 - Dungeon 2", players: 5 },
-      { level: 7, name: "World 3", players: 2 },
-      { level: 8, name: "World 3 - Dungeon 1", players: 1 },
-      { level: 9, name: "World 3 - Dungeon 2", players: 0 },
-    ];
+  return getUnlockedAreasStatistic(courseId).then(async (response) => {
+    const result: Array<{ level: number; name: string; players: number }> =
+      response.data;
     // sort by level
     result.sort((a, b) => a.level - b.level);
     const data = [] as Array<number>;
@@ -219,24 +191,11 @@ export async function loadPlayerCompletedMinigameStatistic(
   courseId: number,
   lineChart: LineChart
 ): Promise<any> {
-  return getActivePlayerStatistic(courseId).then(async (response) => {
-    // example data for multiple hours:
+  return getCompletedMinigamesStatistic(courseId).then(async (response) => {
     const result: Array<{
       amountOfCompletedMinigames: number;
       players: number;
-    }> = [
-      { amountOfCompletedMinigames: 0, players: 5 },
-      { amountOfCompletedMinigames: 1, players: 2 },
-      { amountOfCompletedMinigames: 2, players: 4 },
-      { amountOfCompletedMinigames: 3, players: 3 },
-      { amountOfCompletedMinigames: 4, players: 2 },
-      { amountOfCompletedMinigames: 5, players: 4 },
-      { amountOfCompletedMinigames: 6, players: 14 },
-      { amountOfCompletedMinigames: 7, players: 10 },
-      { amountOfCompletedMinigames: 8, players: 20 },
-      { amountOfCompletedMinigames: 9, players: 8 },
-      { amountOfCompletedMinigames: 10, players: 3 },
-    ];
+    }> = response.data;
     const data = [] as Array<{ x: number; y: number }>;
     result.forEach((element) => {
       const playersWithMoreAndEqualThanXMinigames = result
