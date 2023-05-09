@@ -5,6 +5,7 @@ import {
   loadTimeSpentDistributionInRangeBar,
 } from "@/ts/statistics/finitequiz-statistics";
 import { defineProps, ref, watch } from "vue";
+import { ChartToShow } from "@/ts/models/statistic-models";
 
 const loadingMinigameSpecificStatistics = ref(false);
 
@@ -56,37 +57,32 @@ async function loadMinigameStatistic(configurationId: string | undefined) {
   loadingMinigameSpecificStatistics.value = false;
 }
 
-const timeSpentDistributionRangeBar = {
+const timeSpentDistributionRangeBar: ChartToShow = {
   enoughDataToShow: true,
   width: 600,
   options: {
     chart: { type: "rangeBar" },
     title: { text: "Time spent per minigame run" },
-  } as ApexOptions,
+  },
   series: [] as Array<{
     data: Array<{ x: string; y: Array<number> }>;
   }>,
 };
 
-const problematicQuestionsBarChart = {
+const problematicQuestionsBarChart: ChartToShow = {
   enoughDataToShow: true,
   width: 600,
   options: {
     chart: { type: "bar" },
     title: { text: "Problematic questions per minigame run" },
-  } as ApexOptions,
+  },
   series: [] as Array<{ name: string; data: Array<number> }>,
 };
 
 const statistics = [
   timeSpentDistributionRangeBar,
   problematicQuestionsBarChart,
-] as Array<{
-  enoughDataToShow: boolean;
-  width: number;
-  options: ApexOptions;
-  series: Array<any>;
-}>;
+] as Array<ChartToShow>;
 
 loadMinigameStatistic(props.configurationId);
 </script>

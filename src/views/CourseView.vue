@@ -9,6 +9,7 @@ import { useRoute, useRouter } from "vue-router";
 import { useToast } from "vue-toastification";
 import EditableStringAttribute from "@/components/EditableStringAttribute.vue";
 import { ICourse } from "@/ts/models/overworld-models";
+import CourseStatisticBox from "@/components/CourseStatisticBox.vue";
 
 const route = useRoute();
 const router = useRouter();
@@ -368,6 +369,7 @@ function deleteCurrentCourse() {
             ></b-form-checkbox>
           </b-col>
         </b-row>
+        <CourseStatisticBox style="margin-top: 30px" :course-id="course.id" />
       </div>
       <div v-if="errorText">
         <div

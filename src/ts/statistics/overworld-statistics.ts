@@ -2,6 +2,7 @@ import {
   getHighscoreDistributionStatistic,
   getSuccessRateStatistic,
 } from "@/ts/rest-clients/minigame-statistics-rest-client";
+import { LineChart, PieChart } from "../models/statistic-models";
 
 const greenColor = "#00FF00";
 const redColor = "#FF0000";
@@ -21,7 +22,7 @@ export async function loadAverageSuccessInPieChart(
   worldIndex: number,
   dungeonIndex: number | undefined,
   minigameIndex: number,
-  pieChart: any
+  pieChart: PieChart
 ): Promise<any> {
   return getSuccessRateStatistic(
     courseId,
@@ -85,7 +86,7 @@ export async function loadHighscoreDistributionInLineChart(
   worldIndex: number,
   dungeonIndex: number | undefined,
   minigameIndex: number,
-  lineChart: any
+  lineChart: LineChart
 ): Promise<any> {
   return getHighscoreDistributionStatistic(
     courseId,

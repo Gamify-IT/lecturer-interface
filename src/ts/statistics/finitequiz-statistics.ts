@@ -2,6 +2,7 @@ import {
   getProblematicQuestionsStatistic,
   getTimeSpentDistributionStatistic,
 } from "@/ts/rest-clients/finitequiz-minigame-statistics-rest-client";
+import { ChartToShow } from "../models/statistic-models";
 
 const greenColor = "#00FF00";
 const redColor = "#FF0000";
@@ -15,7 +16,7 @@ const redColor = "#FF0000";
  */
 export async function loadTimeSpentDistributionInRangeBar(
   configurationId: string,
-  rangeBar: any
+  rangeBar: ChartToShow
 ): Promise<any> {
   return getTimeSpentDistributionStatistic(configurationId).then(
     async (response) => {
@@ -72,7 +73,7 @@ export async function loadTimeSpentDistributionInRangeBar(
  */
 export async function loadProblematicQuestionsInBarChart(
   configurationId: string,
-  barChart: any
+  barChart: ChartToShow
 ): Promise<any> {
   return getProblematicQuestionsStatistic(configurationId).then(
     async (response) => {
@@ -103,11 +104,13 @@ export async function loadProblematicQuestionsInBarChart(
           xaxis: {
             categories: categories,
             labels: {
-              formatter: (val: any) => {
+              formatter: (val) => {
                 return val + " tries";
               },
             },
-            title: "Tries",
+            title: {
+              text: "Number of tries",
+            },
           },
           yaxis: {
             title: {
