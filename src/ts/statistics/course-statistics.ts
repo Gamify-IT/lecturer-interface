@@ -30,8 +30,8 @@ export async function loadPlayersJoinedStatistic(
     });
     const series = [{ name: "Players in course", data: data }];
 
-    lineChart.enoughDataToShow =
-      result.joined.reduce((a, next) => a + next.players, 0) > 0;
+    /*lineChart.enoughDataToShow =
+      result.joined.reduce((a, next) => a + next.players, 0) > 0;*/
 
     lineChart.series = series;
     lineChart.options = {
