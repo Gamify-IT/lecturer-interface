@@ -7,7 +7,7 @@ import {
 import { LineChart } from "../models/statistic-models";
 
 /**
- * Loads the total player statistic in the present line chart with informations when players joined the course.
+ * Loads the total player statistic in the present line chart with information when players joined the course.
  *
  * @param courseId the id of the course the statistic should be loaded for
  * @param lineChart the line chart to update with the players joined date
@@ -30,8 +30,8 @@ export async function loadPlayersJoinedStatistic(
     });
     const series = [{ name: "Players in course", data: data }];
 
-    /*lineChart.enoughDataToShow =
-      result.joined.reduce((a, next) => a + next.players, 0) > 0;*/
+    lineChart.enoughDataToShow =
+      result.joined.reduce((a, next) => a + next.players, 0) > 0;
 
     lineChart.series = series;
     lineChart.options = {
