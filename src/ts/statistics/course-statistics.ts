@@ -22,6 +22,7 @@ export async function loadPlayersJoinedStatistic(
       totalPlayers: number;
       joined: Array<{ date: Date; players: number }>;
     } = response.data;
+    result.joined.sort((a, b) => (a.date > b.date ? 1 : -1));
     let totalPlayers = 0;
     const data = [] as Array<{ x: any; y: number }>;
     result.joined.forEach((element) => {
