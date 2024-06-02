@@ -7,7 +7,7 @@ import {
 import { LineChart } from "../models/statistic-models";
 
 /**
- * Loads the total player statistic in the present line chart with informations when players joined the course.
+ * Loads the total player statistic in the present line chart with information when players joined the course.
  *
  * @param courseId the id of the course the statistic should be loaded for
  * @param lineChart the line chart to update with the players joined date
@@ -22,6 +22,7 @@ export async function loadPlayersJoinedStatistic(
       totalPlayers: number;
       joined: Array<{ date: Date; players: number }>;
     } = response.data;
+    result.joined.sort((a, b) => (a.date > b.date ? 1 : -1));
     let totalPlayers = 0;
     const data = [] as Array<{ x: any; y: number }>;
     result.joined.forEach((element) => {
