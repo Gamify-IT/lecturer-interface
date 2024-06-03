@@ -285,6 +285,7 @@ services:
   lecturer-interface:
     image: ghcr.io/gamify-it/lecturer-interface:main
     restart: always
+    pull_policy: always
     expose:
       - "80"
 
