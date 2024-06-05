@@ -299,7 +299,7 @@ function changedMinigame(task: ITask) {
     task
   ).then((response) => {
     task = response.data;
-    toast.success(`Minigame in Task was updated to ${task.game}!`);
+    toast.success(`Minigame in task was updated to ${task.game}!`);
     console.log("Changed minigame to " + task.game);
   });
 }
@@ -349,12 +349,12 @@ function saveDescription(task: ITask, description: string) {
     task
   ).then((response) => {
     task = response.data;
-    toast.success(`Description in Task was updated!`);
+    toast.success(`Description in task was updated!`);
   });
 }
 
 function cancelEditDescription() {
-  toast.warning(`Description in Task was not updated!`);
+  toast.warning(`Description in task was not updated!`);
 }
 
 function updateMinigameConfiguration(task: ITask) {
@@ -406,7 +406,7 @@ function redirectToStatisticView(task: ITask) {
         Minigames from World {{ worldIndex }}
       </h1>
       <h1 v-else>
-        Minigames from World World {{ worldIndex }}, Dungeon {{ dungeonIndex }}
+        Minigames from World {{ worldIndex }}, Dungeon {{ dungeonIndex }}
       </h1>
       <b-alert show dismissible>
         Here, you can see all minigames present in this area.<br />
@@ -416,7 +416,7 @@ function redirectToStatisticView(task: ITask) {
         minigame.<br />
         To find out where which minigame is, click on 'Show map'.</b-alert
       >
-      <b-button @click="showMapModal = true">Show Map</b-button>
+      <b-button @click="showMapModal = true">Show map</b-button>
 
       <b-card v-for="task in minigames" :key="task.id" class="mt-1">
         <b-row>

@@ -266,7 +266,7 @@ function saveDescription(book: IBook, description: string) {
 }
 
 function cancelEditDescription() {
-  toast.warning(`Description in book was not updated!`);
+  toast.warning(`Description in the book was not updated!`);
 }
 
 function closedEditModal() {
@@ -291,7 +291,7 @@ function closedEditModal() {
         <br />
         To find out where which book is, click on 'Show map'.</b-alert
       >
-      <b-button @click="showMapModal = true">Show Map</b-button>
+      <b-button @click="showMapModal = true">Show map</b-button>
       <b-card v-for="book in books" :key="book.id" class="mt-1">
         <b-row>
           <b-col sm="2">{{ book.index }}</b-col>
