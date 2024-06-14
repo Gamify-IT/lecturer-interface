@@ -305,13 +305,6 @@ services:
     expose:
       - "80"
 
-  lecturer-interface:
-    image: ghcr.io/gamify-it/lecturer-interface:development
-    restart: always
-    pull_policy: always
-    expose:
-      - "80"
-
   # reverse-proxy
   reverse-proxy:
     container_name: reverse-proxy

@@ -1,89 +1,44 @@
 # Lecturer-Interface
 
 ![grafik](https://user-images.githubusercontent.com/39833217/192109229-da9ad9f8-5f6b-4b4b-9878-8aa4eea3dcfd.png)
-An easy to use interface that lecturers can use to configure the areas of the overworld and the shown minigames.
+An easy-to-use interface that lecturers can use to configure the areas of the overworld and the shown minigames.
 
 ## Development
 
+> Beginning of additions (that work)
 ### Getting started
 
-Clone the repository  
+Clone the repository
 ```sh
 git clone https://github.com/Gamify-IT/lecturer-interface.git
 ```
 
-Install the dependencies  
+Install the dependencies
 ```sh
 npm install
 ```
 
-#### Run with Docker-compose
-
-Start all dependencies with our docker-compose files.
-Check the [manual for docker-compose](https://github.com/Gamify-IT/docs/blob/main/dev-manuals/languages/docker/docker-compose.md).
-
-To run the main branch with minimal dependencies use the `docker-compose.yaml` file.\
-To run the latest changes on any other branch than `main` use the `docker-compose-dev.yaml` file.
-
-
 ### Compile and Hot-Reload for Development
-
+To run the project locally with your IDE feature and have all necessary dependencies running,
+start the dependencies via docker:
+```sh
+docker compose -f docker-compose-dev.yaml up
+```
+Then start the frontend with:
 ```sh
 npm run serve
 ```
+You can now access the game at [localhost](http://localhost).
 
-### Test
-
-Run the tests:
+### Build your local changes as a docker container
+To build and run your local changes as a docker container use:
 ```sh
-npm run test:unit
+docker compose up --build
 ```
+You can remove the container with:
 
-To also get the test coverage:
 ```sh
-npm run test:unit -- --coverage
-```
-
-### Build
-
-Build the Docker-Container
-```sh
-docker build -t lecturer-interface-dev .
-```
-And run it at port 8000 with
-```sh
-docker run -d -p 8000:80 --name lecturer-interface-dev lecturer-interface-dev
+docker compose down
 ```
 
-To monitor, stop and remove the container you can use the following commands:
-```sh
-docker ps -a -f name=lecturer-interface-dev
-```
-```sh
-docker stop lecturer-interface-dev
-```
-```sh
-docker rm lecturer-interface-dev
-```
-
-## User manual
-
-Run the docker container with the following command at port 8000:
-```sh
-docker run -d -p 8000:80 --name lecturer-interface ghcr.io/gamify-it/lecturer-interface:latest
-```
-Now you can access it at [http://localhost:8000](http://localhost:8000).  
-To access it externally replace localhost with your IP.  
-
-To monitor the container you can use the following command:
-```sh
-docker ps -a -f name=lecturer-interface
-```
-To stop the container you can use the following command:
-```sh
-docker stop lecturer-interface
-```
-To remove the container you can use the following command:
-```sh
-docker rm lecturer-interface
-```
+> End of additions
