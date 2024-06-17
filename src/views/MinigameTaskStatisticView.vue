@@ -175,7 +175,7 @@ loadMinigameStatistic(
       </h1>
       <h3>{{ minigame?.description }}</h3>
       <b-alert show dismissible>
-        Here, you can see the statistic of the current miningame.</b-alert
+        Here, you can see the statistic of the current minigame.</b-alert
       >
       <b-button @click="goBack">Back</b-button>
       <b-overlay :show="loadingGeneralStatistics" rounded="sm">

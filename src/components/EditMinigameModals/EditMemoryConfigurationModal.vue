@@ -176,7 +176,7 @@ function handleOk() {
       const errorMessages = error.response.data.errors;
       if (statusCode == 400) {
         for (let errorMessage of errorMessages) {
-          toast.error("Error on saving configuration: " + errorMessage);
+          toast.error("Error while saving configuration: " + errorMessage);
         }
       } else {
         toast.error("There was an error saving the configuration!");
@@ -288,7 +288,7 @@ async function importFile(event: any) {
     configuration.value = result;
     cardPairs.value = result.pairs;
   } catch (e) {
-    console.log("Import was not successful");
+    console.log("Import was not successful.");
   }
 }
 </script>
@@ -339,7 +339,7 @@ async function importFile(event: any) {
           </template>
           <template #cell(edit)="data">
             <b-button variant="outline-primary" @click="onEditClick(data.item)"
-              >Edit Pair</b-button
+              >Edit pair</b-button
             >
           </template>
         </b-table>
@@ -352,7 +352,7 @@ async function importFile(event: any) {
   </b-modal>
   <b-modal
     id="edit-cards"
-    title="Add and edit Cards to Memory configuration"
+    title="Add and edit cards to Memory configuration"
     v-model="showEditModal"
     @hidden="resetPairModal"
     @show="setupPairModal"

@@ -35,7 +35,7 @@ const fields = [
   },
   {
     key: "remove",
-    label: "remove",
+    label: "Remove",
   },
 ];
 
@@ -264,7 +264,7 @@ async function importFile(event: any) {
         v-model="currentEditingQuestion.answer"
         placeholder="Enter the answer"
       ></b-form-input>
-      <b-button @click="addQuestion" variant="success">Add Question</b-button>
+      <b-button @click="addQuestion" variant="success">Add question</b-button>
     </b-form-group>
     <ImportExportConfiguration
       @export="downloadConfiguration"

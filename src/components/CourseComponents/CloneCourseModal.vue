@@ -57,10 +57,10 @@ function handleOk() {
         emit("cloned", cloneCourse);
         if (cloneCourse.errorMessages?.length != 0) {
           toast.error(
-            `The following errors occured:` + cloneCourse.errorMessages
+            `The following errors occurred:` + cloneCourse.errorMessages
           );
         } else {
-          toast.success(`Course ${response.data.courseName} is created!`);
+          toast.success(`Course ${response.data.courseName} was created!`);
         }
       })
       .catch((e) => {
@@ -120,10 +120,10 @@ function handleCancel() {
         variant="secondary"
         @click="handleCancel"
       >
-        cancel
+        Cancel
       </b-button>
       <b-button type="button" class="btn" variant="primary" @click="handleOk">
-        ok
+        Ok
       </b-button>
     </template>
   </b-modal>

@@ -148,7 +148,7 @@ function handleOk() {
       const errorMessages = error.response.data.errors;
       if (statusCode == 400) {
         for (let errorMessage of errorMessages) {
-          toast.error("Error on saving configuration: " + errorMessage);
+          toast.error("Error while saving configuration: " + errorMessage);
         }
       } else {
         toast.error("There was an error saving the configuration!");
@@ -203,7 +203,7 @@ async function importFile(event: any) {
     );
     configuration.value = result;
   } catch (e) {
-    console.log("Import was not successful");
+    console.log("Import was not successful.");
   }
 }
 </script>
@@ -225,7 +225,7 @@ async function importFile(event: any) {
     >
       <b-form-group
         label-cols-lg="6"
-        label="Riddle Time (in seconds)"
+        label="Riddle time (in seconds)"
         label-for="time-input"
       >
         <b-form-checkbox id="time-enable" type="checkbox" v-model="timeEnable">
@@ -266,7 +266,7 @@ async function importFile(event: any) {
 
       <b-form-group
         label-cols-lg="6"
-        label="Regex Structures"
+        label="Regex structures"
         label-for="regexStructures-input"
       >
         <b-form-checkbox
