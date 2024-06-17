@@ -46,7 +46,7 @@ function handleOk() {
     })
       .then((response) => {
         emit("created", response.data);
-        toast.success(`Course ${response.data.courseName} is created!`);
+        toast.success(`Course ${response.data.courseName} was created!`);
       })
       .catch((e) => {
         toast.error(`Course ${nameInput.value} could not be created created!`);
@@ -104,10 +104,10 @@ function handleHidden() {
         variant="secondary"
         @click="handleCancel"
       >
-        cancel
+        Cancel
       </b-button>
       <b-button type="button" class="btn" variant="primary" @click="handleOk">
-        ok
+        Ok
       </b-button>
     </template>
   </b-modal>

@@ -237,7 +237,7 @@ function backToLandingPage() {
       <b-alert show dismissible>
         Here is the course overview. <br />
         You can view your course by clicking on the row or create a new course
-        on the button below.
+        with the button below.
       </b-alert>
       <b-table bordered striped hover :fields="fields" :items="courseItems">
         <template
@@ -270,7 +270,7 @@ function backToLandingPage() {
               :id="'invisible-button' + data.item.id"
             ></button>
             <b-button @click="startClone(data.item)" size="sm">
-              clone
+              Clone
             </b-button>
           </div>
         </template>

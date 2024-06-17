@@ -250,7 +250,7 @@ function saveDescription(npc: INPC, description: string) {
 }
 
 function cancelEditDescription() {
-  toast.warning(`Description in NPC was not updated!`);
+  toast.warning(`Description of NPC was not updated!`);
 }
 
 function closedEditModal() {
@@ -266,7 +266,7 @@ function closedEditModal() {
         NPCs from World {{ worldIndex }}
       </h1>
       <h1 v-else>
-        NPCs from World World {{ worldIndex }}, Dungeon {{ dungeonIndex }}
+        NPCs from World {{ worldIndex }}, Dungeon {{ dungeonIndex }}
       </h1>
       <b-alert show dismissible>
         Here, you can see all NPCs present in this area.<br />
@@ -276,7 +276,7 @@ function closedEditModal() {
         <br />
         To find out where which NPC is, click on 'Show map'.</b-alert
       >
-      <b-button @click="showMapModal = true">Show Map</b-button>
+      <b-button @click="showMapModal = true">Show map</b-button>
       <b-card v-for="npc in npcs" :key="npc.id" class="mt-1">
         <b-row>
           <b-col sm="2">{{ npc.index }}</b-col>

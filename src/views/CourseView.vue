@@ -297,7 +297,7 @@ function deleteCurrentCourse() {
   deleteCourse(course.value.id)
     .then(() => {
       toast.success(
-        `Course ${course.value.courseName} was deleted sucessfully!`
+        `Course ${course.value.courseName} was deleted successfully!`
       );
       router.push("/");
     })
@@ -331,7 +331,7 @@ function deleteCurrentCourse() {
               v-b-modal.delete-confirmation-modal
               id="deleteButton"
             >
-              Delete Course
+              Delete course
             </b-button>
           </b-col>
         </b-row>
@@ -396,7 +396,7 @@ function deleteCurrentCourse() {
     @ok="deleteCurrentCourse"
     v-if="course != null"
   >
-    Are you sure you want to delete course
+    Are you sure you want to delete the course
     <strong>{{ course.courseName }}</strong> of semester {{ course.semester }}?
   </b-modal>
 </template>

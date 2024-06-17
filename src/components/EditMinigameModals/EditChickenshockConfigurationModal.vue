@@ -33,11 +33,11 @@ const fields = [
   },
   {
     key: "wrongAnswers",
-    label: "wrong Answers",
+    label: "Wrong Answers",
   },
   {
     key: "remove",
-    label: "remove",
+    label: "Remove",
   },
 ];
 
@@ -141,7 +141,7 @@ function handleOk() {
       const errorMessages = error.response.data.errors;
       if (statusCode == 400) {
         for (let errorMessage of errorMessages) {
-          toast.error("Error on saving configuration: " + errorMessage);
+          toast.error("Error while saving configuration: " + errorMessage);
         }
       } else {
         toast.error("There was an error saving the configuration!");
@@ -205,7 +205,7 @@ function handleQuestionOk() {
       wrongAnswers: wrongAnswers.value,
     });
   } else {
-    toast.error("Question already exists");
+    toast.error("Question already exists.");
   }
   showModal.value = true;
 }
@@ -285,7 +285,7 @@ async function importFile(event: any) {
           id="add-question-button"
           v-b-modal.add-question
         >
-          add question
+          Add question
         </b-button>
         <b-form-group
           label-cols-lg="6"
@@ -353,7 +353,7 @@ async function importFile(event: any) {
           @click="addWrongAnswer"
           variant="success"
           id="button-wrong-answer"
-          >add</b-button
+          >Add</b-button
         >
       </div>
     </b-form-group>
