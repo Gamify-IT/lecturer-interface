@@ -292,6 +292,12 @@ function toggledCourseSwitch() {
 function toggleCourseSwitch() {
   document.getElementById("active-toggle")?.click();
 }
+function toggleLeaderboardActiveSwitch() {
+  document.getElementById("active-toggle")?.click();
+}
+
+
+
 
 function deleteCurrentCourse() {
   deleteCourse(course.value.id)
@@ -365,6 +371,21 @@ function deleteCurrentCourse() {
               name="check-button"
               id="active-toggle"
               @keydown.enter="toggleCourseSwitch"
+              switch
+            ></b-form-checkbox>
+          </b-col>
+        </b-row>
+        <b-row>
+          <b-col>
+            <h4>activate leaderboard:</h4>
+          </b-col>
+          <b-col>
+            <b-form-checkbox
+              v-model="course.leaderboardActive"
+              @change="toggledCourseSwitch"
+              name="check-button"
+              id="leaderboard-toggle"
+              @keydown.enter="toggleLeaderboardActiveSwitch"
               switch
             ></b-form-checkbox>
           </b-col>

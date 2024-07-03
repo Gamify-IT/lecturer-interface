@@ -6,6 +6,7 @@ export interface ICourse {
 
   active: boolean;
   worlds: IWorld[];
+  leaderboardActive: boolean;
 }
 
 export interface ICloneCourse {
@@ -117,6 +118,7 @@ export class Course implements ICourse {
   description: string;
   active: boolean;
   worlds: IWorld[];
+  leaderboardActive: boolean;
 
   public constructor(
     id: number,
@@ -124,7 +126,8 @@ export class Course implements ICourse {
     semester: string,
     description: string,
     active: boolean,
-    worlds: IWorld[]
+    worlds: IWorld[],
+    leaderboardActive: boolean
   ) {
     this.id = id;
     this.semester = semester;
@@ -132,6 +135,7 @@ export class Course implements ICourse {
     this.description = description;
     this.active = active;
     this.worlds = worlds;
+    this.leaderboardActive = leaderboardActive;
   }
 }
 
