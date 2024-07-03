@@ -21,7 +21,9 @@ describe("CoursesView.vue", () => {
           "WS-22",
           "Course to teach students basics",
           true,
-          []
+          [],
+          true
+
         ),
       ],
     };
