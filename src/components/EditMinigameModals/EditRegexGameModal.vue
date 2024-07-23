@@ -78,25 +78,18 @@ function checkFormValidity(): boolean {
   return form.value.checkValidity();
 }
 
-function checkRegexCombinationValidity(): boolean {
-  // TODO: implement, so that only valid combination can be submitted
-  return true;
-}
-
 function resetModal() {
   if (minigame.value.configurationId != undefined) {
     getRegexGameConfig(minigame.value.configurationId)
       .then((response) => {
-        console.log("response: ",response)
         configuration.value = response.data;
-        console.log("after config copy, before setup")
         setupModal();
       }).catch((error) => {
-        //console.log(error);
+        console.log(error);
         if (error.response.status == 404) {
           minigame.value.configurationId = undefined;
         }
-        setupModal(); //FIXME not setting boxes correctly
+        setupModal();
       });
   } else {
     configuration.value.id = undefined;
@@ -108,12 +101,15 @@ function resetModal() {
 
 function setupModal() {
   console.log("load configuration", configuration.value);
+  let configuredStructures: Set<RegexStructure> = configuration.value.allowedRegexStructures;
   Object.entries(RegexStructure)
     .filter((s) => typeof s[1] !== "string")
-    .forEach((k) => (
-      structureCheckboxes.value[k[0]] = configuration.value.allowedRegexStructures.has(k[0]) // error has is not a function
-      )
+    .forEach((k) => {
+      structureCheckboxes.value[k[0]] = configuredStructures.includes(k[0])
+      }
     );
+
+
   if (configuration.value.riddleTimeoutSeconds === 0) timeEnable.value = false;
 }
 
