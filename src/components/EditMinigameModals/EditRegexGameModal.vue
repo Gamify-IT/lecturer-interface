@@ -84,7 +84,8 @@ function resetModal() {
       .then((response) => {
         configuration.value = response.data;
         setupModal();
-      }).catch((error) => {
+      })
+      .catch((error) => {
         console.log(error);
         if (error.response.status == 404) {
           minigame.value.configurationId = undefined;
@@ -101,14 +102,13 @@ function resetModal() {
 
 function setupModal() {
   console.log("load configuration", configuration.value);
-  let configuredStructures: Set<RegexStructure> = configuration.value.allowedRegexStructures;
+  let configuredStructures: Set<RegexStructure> =
+    configuration.value.allowedRegexStructures;
   Object.entries(RegexStructure)
     .filter((s) => typeof s[1] !== "string")
     .forEach((k) => {
-      structureCheckboxes.value[k[0]] = configuredStructures.includes(k[0])
-      }
-    );
-
+      structureCheckboxes.value[k[0]] = configuredStructures.includes(k[0]);
+    });
 
   if (configuration.value.riddleTimeoutSeconds === 0) timeEnable.value = false;
 }
@@ -126,7 +126,9 @@ function handleOk() {
       );
   });
   // eslint-disable-next-line
-  configuration.value.allowedRegexStructures = Array.from(allowedRegexStructures);
+  configuration.value.allowedRegexStructures = Array.from(
+    allowedRegexStructures
+  );
   postRegexGameConfig(configuration.value)
     .then((response) => {
       minigame.value.configurationId = response.data.id;
@@ -276,15 +278,17 @@ async function importFile(event: any) {
             (s) => typeof s[1] !== 'string'
           )"
           v-bind:key="structure"
-          v-model="structureCheckboxes[structure[0]]">
+          v-model="structureCheckboxes[structure[0]]"
+        >
           {{ regexStructureDescriptions.get(structure[1] as RegexStructure) }}
         </b-form-checkbox>
       </b-form-group>
-      <span style="color:#e70a0a; font-size:smaller">
-        <b>Note:</b> make sure to choose a sensible selection of regex structures, since
-        some combinations may lead to the game malfunctioning. <br>
+      <span style="color: #e70a0a; font-size: smaller">
+        <b>Note:</b> make sure to choose a sensible selection of regex
+        structures, since some combinations may lead to the game malfunctioning.
+        <br />
         E.g. make sure to include some characters, not only quantifiers.
-        <br>
+        <br />
       </span>
       <b-button
         href="https://gamifyit-docs.readthedocs.io/en/latest/user-manuals/minigames/regexgame.html"
