@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script lang="ts" setup>
 import { saveAs } from "file-saver";
 import { arrayOf, defaultValue, int, object, string } from "checkeasy";
 import { importConfiguration } from "@/ts/import-configuration";
@@ -37,7 +37,7 @@ let configuration = ref(
 );
 const timeEnable = ref(true);
 const oldMinigame = ref();
-const structureCheckboxes = ref({});
+const structureCheckboxes: any = ref({});
 
 watch(
   () => props.minigame,
@@ -102,13 +102,14 @@ function resetModal() {
 
 function setupModal() {
   console.log("load configuration", configuration.value);
+  let configuredStructures: Set<RegexStructure> =
+    configuration.value.allowedRegexStructures;
   Object.entries(RegexStructure)
     .filter((s) => typeof s[1] !== "string")
-    .forEach(
-      (k) =>
-        (structureCheckboxes.value[k[0]] =
-          configuration.value.allowedRegexStructures.includes(k[0]))
-    );
+    .forEach((k) => {
+      structureCheckboxes.value[k[0]] = configuredStructures.includes(k[0]);
+    });
+
   if (configuration.value.riddleTimeoutSeconds === 0) timeEnable.value = false;
 }
 
@@ -125,7 +126,9 @@ function handleOk() {
       );
   });
   // eslint-disable-next-line
-  configuration.value.allowedRegexStructures = Array.from(allowedRegexStructures);
+  configuration.value.allowedRegexStructures = Array.from(
+    allowedRegexStructures
+  );
   postRegexGameConfig(configuration.value)
     .then((response) => {
       minigame.value.configurationId = response.data.id;
@@ -183,6 +186,7 @@ function downloadConfiguration() {
   });
   saveAs(blob, "regexgame-configuration.json");
 }
+
 async function importFile(event: any) {
   const file = event.target.files[0];
   const validator = object({
@@ -209,64 +213,64 @@ async function importFile(event: any) {
 </script>
 <template>
   <b-modal
-    title="Edit RegexGame configuration"
     id="edit-modal"
     v-model="showModal"
+    title="Edit RegexGame configuration"
+    @abort="resetModal"
+    @cancel="resetModal"
     @hidden="hiddenModal"
     @ok="handleOk"
-    @cancel="resetModal"
     @show="loadModal"
-    @abort="resetModal"
   >
     <form
+      v-if="minigame !== undefined"
       ref="form"
       @submit.stop.prevent="handleSubmit"
-      v-if="minigame !== undefined"
     >
       <b-form-group
-        label-cols-lg="6"
         label="Riddle time (in seconds)"
+        label-cols-lg="6"
         label-for="time-input"
       >
-        <b-form-checkbox id="time-enable" type="checkbox" v-model="timeEnable">
+        <b-form-checkbox id="time-enable" v-model="timeEnable" type="checkbox">
           Enable Countdown
         </b-form-checkbox>
         <b-form-input
-          id="time-input"
-          type="number"
           v-if="timeEnable"
+          id="time-input"
           v-model="configuration.riddleTimeoutSeconds"
           :state="configuration.riddleTimeoutSeconds >= 1"
+          type="number"
         />
       </b-form-group>
       <b-form-group
-        label-cols-lg="6"
         label="Amount of answers for each riddle"
+        label-cols-lg="6"
         label-for="answers-input"
       >
         <b-form-input
           id="answers-input"
-          type="number"
           v-model="configuration.answerCount"
           :state="configuration.answerCount > 0"
+          type="number"
         />
       </b-form-group>
       <b-form-group
-        label-cols-lg="6"
         label="Necessary rounds for completion"
+        label-cols-lg="6"
         label-for="completedRounds-input"
       >
         <b-form-input
           id="completedRounds-input"
-          type="number"
           v-model="configuration.minimumCompletedRounds"
           :state="configuration.minimumCompletedRounds > 0"
+          type="number"
         />
       </b-form-group>
 
       <b-form-group
-        label-cols-lg="6"
         label="Regex structures"
+        label-cols-lg="6"
         label-for="regexStructures-input"
       >
         <b-form-checkbox
@@ -279,6 +283,13 @@ async function importFile(event: any) {
           {{ regexStructureDescriptions.get(structure[1] as RegexStructure) }}
         </b-form-checkbox>
       </b-form-group>
+      <span style="color: #e70a0a; font-size: smaller">
+        <b>Note:</b> make sure to choose a sensible selection of regex
+        structures, since some combinations may lead to the game malfunctioning.
+        <br />
+        E.g. make sure to include some characters, not only quantifiers.
+        <br />
+      </span>
       <b-button
         href="https://gamifyit-docs.readthedocs.io/en/latest/user-manuals/minigames/regexgame.html"
         target="_blank"
