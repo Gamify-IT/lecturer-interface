@@ -108,6 +108,7 @@ export enum Minigame {
   MEMORY = "MEMORY",
   REGEXGAME = "REGEXGAME",
   TOWERCRUSH = "TOWERCRUSH",
+  TOWERDEFENSE = "TOWERDEFENSE",
 }
 
 export class Course implements ICourse {

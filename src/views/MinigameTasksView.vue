@@ -15,6 +15,7 @@ import EditTowercrushConfigurationModal from "@/components/EditMinigameModals/Ed
 import EditCrosswordpuzzleModal from "@/components/EditMinigameModals/EditCrosswordpuzzleModal.vue";
 import EditMemoryConfigurationModal from "@/components/EditMinigameModals/EditMemoryConfigurationModal.vue";
 import EditRegexGameModal from "@/components/EditMinigameModals/EditRegexGameModal.vue";
+import EditTowerDefenseConfigurationModal from "@/components/EditMinigameModals/EditTowerDefenseConfigurationModal.vue";
 import MapImageModal from "@/components/MapImageModal.vue";
 import EditBugfinderConifgurationModal from "@/components/EditMinigameModals/EditBugfinderConfigurationModal.vue";
 import router from "@/router";
@@ -44,6 +45,7 @@ const showCrosswordpuzzleModal = ref(false);
 const showBugfinderModal = ref(false);
 const showMemoryModal = ref(false);
 const showRegexGameModal = ref(false);
+const showTowerDefenseModal = ref(false);
 
 watch(
   () => [
@@ -332,6 +334,9 @@ function editMinigameConfiguration(task: ITask) {
     case Minigame.REGEXGAME:
       showRegexGameModal.value = true;
       break;
+    case Minigame.TOWERDEFENSE:
+      showTowerDefenseModal.value = true;
+      break;
     default:
       console.log(
         "This minigame is currently not supported to be edited here."
@@ -373,6 +378,7 @@ function closedEditModal() {
   showBugfinderModal.value = false;
   showMemoryModal.value = false;
   showRegexGameModal.value = false;
+  showTowerDefenseModal.value = false;
 }
 
 function redirectToStatisticView(task: ITask) {
@@ -520,6 +526,12 @@ function redirectToStatisticView(task: ITask) {
   />
   <EditRegexGameModal
     :showModal="showRegexGameModal"
+    :minigame="editedMinigame"
+    @updateMinigameConfiguration="updateMinigameConfiguration"
+    @closedModal="closedEditModal"
+  />
+  <EditTowerDefenseConfigurationModal
+    :showModal="showTowerDefenseModal"
     :minigame="editedMinigame"
     @updateMinigameConfiguration="updateMinigameConfiguration"
     @closedModal="closedEditModal"

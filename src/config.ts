@@ -9,4 +9,5 @@ export default {
   mapCommitHash: "d79ab209e9d6501892008943592b1ff3eab3f340",
   memoryApiUrl: "/minigames/memory/api/v1",
   regexgameApiUrl: "/minigames/regexgame/api/v1",
+  towerdefenseApiUrl: "/minigames/towerdefense/api/v1",
 };
