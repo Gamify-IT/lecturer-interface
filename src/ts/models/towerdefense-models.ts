@@ -14,6 +14,6 @@ export class TowerDefenseConfiguration implements ITowerDefenseConfiguration {
 export interface ITowerDefenseQuestion {
   id?: string;
   text: string;
-  rightAnswer: string;
+  correctAnswer: string;
   wrongAnswers: string[];
 }

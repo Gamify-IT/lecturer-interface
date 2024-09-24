@@ -28,7 +28,7 @@ const fields = [
     label: "Question",
   },
   {
-    key: "rightAnswer",
+    key: "correctAnswer",
     label: "Correct Answer",
   },
   {
@@ -51,7 +51,7 @@ const form = ref();
 const showModal = ref(props.showModal);
 let configuration = ref(new TowerDefenseConfiguration([]));
 const question = ref();
-const rightAnswer = ref();
+const correctAnswer = ref();
 const showQuestionModal = ref();
 const oldMinigame = ref();
 const wrongAnswers = ref(Array<string>());
@@ -201,7 +201,7 @@ function handleQuestionOk() {
   if (!contains) {
     configuration.value.questions.push({
       text: question.value,
-      rightAnswer: rightAnswer.value,
+      correctAnswer: correctAnswer.value,
       wrongAnswers: wrongAnswers.value,
     });
   } else {
@@ -216,7 +216,7 @@ function handleQuestionAbort() {
 
 function resetQuestionModal() {
   question.value = "";
-  rightAnswer.value = "";
+  correctAnswer.value = "";
   wrongAnswers.value = [];
   wrongAnswer.value = "";
 }
@@ -245,7 +245,7 @@ async function importFile(event: any) {
     questions: arrayOf(
       object({
         text: string(),
-        rightAnswer: string(),
+        correctAnswer: string(),
         wrongAnswers: arrayOf(string()),
       })
     ),
@@ -324,7 +324,7 @@ async function importFile(event: any) {
       <b-form-input id="question-input" v-model="question" required />
     </b-form-group>
     <b-form-group label="Correct Answer" label-for="correct-answer">
-      <b-form-input id="correct-answer" v-model="rightAnswer" required />
+      <b-form-input id="correct-answer" v-model="correctAnswer" required />
     </b-form-group>
     <b-form-group label="Wrong Answers">
       <div v-for="answer in wrongAnswers" :key="answer">
