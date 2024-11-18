@@ -53,6 +53,7 @@ function returnFocus() {
         :leftClicked="leftClicked"
         @return="returnFocus"
       ></router-view>
+      <br /><br />
       <footer class="py-2 footer">
         <div class="notice-right">
           <a href="/third-party-license-notice">License notice</a>
