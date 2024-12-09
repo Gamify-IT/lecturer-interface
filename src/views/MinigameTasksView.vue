@@ -19,6 +19,7 @@ import EditTowerDefenseConfigurationModal from "@/components/EditMinigameModals/
 import MapImageModal from "@/components/MapImageModal.vue";
 import EditBugfinderConifgurationModal from "@/components/EditMinigameModals/EditBugfinderConfigurationModal.vue";
 import router from "@/router";
+import { getCourse } from "@/ts/rest-clients/course-rest-client";
 
 const availableMinigames = Object.values(Minigame);
 
@@ -46,6 +47,7 @@ const showBugfinderModal = ref(false);
 const showMemoryModal = ref(false);
 const showRegexGameModal = ref(false);
 const showTowerDefenseModal = ref(false);
+const courseName = ref<string>("");
 
 watch(
   () => [
@@ -287,6 +289,29 @@ async function loadMinigames(
 
 loadMinigames(courseId.value, worldIndex.value, dungeonIndex.value);
 
+/**
+ * Fetches the course name based on the provided course ID.
+ * Sets the `courseName` variable to the fetched name, or to "Unknown Course" in case of an error.
+ *
+ * @param courseId - The ID of the course to fetch the name for.
+ */
+async function fetchCourseName(courseId: number) {
+  try {
+    const response = await getCourse(courseId);
+    courseName.value = response.data.courseName;
+  } catch (error) {
+    console.error("Failed to fetch course name:", error);
+    courseName.value = "Unknown Course";
+  }
+}
+
+/**
+ * Handles changes to the minigame configuration for a specific task.
+ * Updates the task's `game` and `configurationId` properties and sends the update to the backend.
+ * Also fetches the course name and provides user feedback via a toast notification.
+ *
+ * @param task - The task object whose minigame settings need to be updated.
+ */
 function changedMinigame(task: ITask) {
   if (task.game == null) {
     task.game = Minigame.NONE;
@@ -294,6 +319,9 @@ function changedMinigame(task: ITask) {
   if (task.game == Minigame.NONE) {
     task.configurationId = null;
   }
+
+  fetchCourseName(parseInt(courseId.value));
+
   putMinigame(
     parseInt(courseId.value),
     parseInt(worldIndex.value),
@@ -301,8 +329,12 @@ function changedMinigame(task: ITask) {
     task
   ).then((response) => {
     task = response.data;
-    toast.success(`Minigame in task was updated to ${task.game}!`);
-    console.log("Changed minigame to " + task.game);
+    toast.success(
+      `Minigame in ${courseName.value} was updated to ${task.game}! )`
+    );
+    console.log(
+      "Changed minigame to " + task.game + " in course " + courseName.value
+    );
   });
 }
 
