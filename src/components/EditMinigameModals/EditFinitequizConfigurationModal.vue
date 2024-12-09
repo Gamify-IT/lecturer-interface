@@ -1,5 +1,7 @@
 <script setup lang="ts">
 // compatible finitequiz versions: v0.0.1
+import axios from "axios";
+
 const compatibleVersions = ["v0.0.1"];
 import { saveAs } from "file-saver";
 import { arrayOf, object, string } from "checkeasy";
@@ -18,6 +20,7 @@ import {
   postFinitequizConfig,
 } from "@/ts/rest-clients/finitequiz-rest-client";
 import ImportExportConfiguration from "@/components/ImportExportConfiguration.vue";
+import config from "@/config";
 
 const props = defineProps<{
   minigame: ITask;
@@ -58,6 +61,11 @@ const showQuestionModal = ref();
 const oldMinigame = ref();
 const wrongAnswers = ref(Array<string>());
 const wrongAnswer = ref();
+const selectedImageCount = ref<number | null>(null);
+const showImageModal = ref(false);
+const imageButtons = ref<Array<string>>([]);
+const selectedImages = ref<Array<File | null>>([]);
+const fileNames = ref<Array<string>>([]);
 
 watch(
   () => props.minigame,
@@ -88,6 +96,42 @@ watch(
   },
   { deep: true }
 );
+
+watch(selectedImageCount, (newCount) => {
+  if (newCount) {
+    imageButtons.value = Array.from(
+      { length: newCount },
+      (_, i) => `Image ${i + 1}`
+    );
+  }
+});
+
+function triggerFileInput(index: number) {
+  const input = document.getElementById(
+    `file-input-${index}`
+  ) as HTMLInputElement;
+  if (input) {
+    input.click();
+  }
+}
+
+function addImage(index: number) {
+  const input = document.getElementById(
+    `file-input-${index}`
+  ) as HTMLInputElement;
+  if (input) {
+    input.click();
+  }
+}
+
+function handleFileChange(event: Event, index: number) {
+  const target = event.target as HTMLInputElement;
+  if (target.files && target.files[0]) {
+    const file = target.files[0];
+    selectedImages.value[index] = file;
+    fileNames.value[index] = file.name;
+  }
+}
 
 const emit = defineEmits<{
   (e: "updateMinigameConfiguration", minigame: ITask): void;
@@ -120,35 +164,24 @@ function resetModal() {
   console.log("Reset Modal");
 }
 
-function handleOk() {
-  postFinitequizConfig(configuration.value)
-    .then((response) => {
-      minigame.value.configurationId = response.data.id;
-      console.log("Submit Modal");
-      console.log("id:" + response.data.id);
-      console.log("minigameId" + minigame.value.configurationId);
-      oldMinigame.value = minigame.value;
-      handleSubmit();
-    })
-    .then(() => {
-      putMinigame(
-        parseInt(courseId.value),
-        parseInt(worldIndex.value),
-        parseInt(dungeonIndex.value),
-        minigame.value
-      );
-    })
-    .catch((error) => {
-      const statusCode = error.response.status;
-      const errorMessages = error.response.data.errors;
-      if (statusCode == 400) {
-        for (let errorMessage of errorMessages) {
-          toast.error("Error while saving configuration: " + errorMessage);
-        }
-      } else {
-        toast.error("There was an error saving the configuration!");
-      }
-    });
+async function handleOk() {
+  try {
+    const response = await postFinitequizConfig(configuration.value);
+    minigame.value.configurationId = response.data.id;
+    console.log(
+      "Finitequiz configuration saved with questions:",
+      configuration.value.questions
+    );
+
+    await putMinigame(
+      parseInt(courseId.value),
+      parseInt(worldIndex.value),
+      parseInt(dungeonIndex.value),
+      minigame.value
+    );
+  } catch (error) {
+    toast.error("Error while saving configuration!");
+  }
 }
 
 function handleSubmit() {
@@ -189,26 +222,53 @@ function removeQuestion(text: string) {
   configuration.value.questions = filteredQuestions;
 }
 
-function handleQuestionOk() {
-  //removes the need to press add
+async function handleQuestionOk() {
   if (wrongAnswer.value != "") {
     wrongAnswers.value.push(wrongAnswer.value);
   }
+
   let contains = false;
   configuration.value.questions.forEach((pQuestion) => {
     if (pQuestion.text == question.value) {
       contains = true;
     }
   });
+
   if (!contains) {
-    configuration.value.questions.push({
-      text: question.value,
-      rightAnswer: rightAnswer.value,
-      wrongAnswers: wrongAnswers.value,
-    });
+    if (selectedImages.value.length > 0) {
+      const validImages = selectedImages.value.filter(
+        (imageFile) => imageFile !== null
+      );
+
+      if (validImages.length > 0) {
+        const imageUrls = await Promise.all(
+          validImages.map((imageFile) => uploadImage(imageFile as File))
+        );
+
+        configuration.value.questions.push({
+          text: question.value,
+          rightAnswer: rightAnswer.value,
+          wrongAnswers: wrongAnswers.value,
+          images: imageUrls,
+        });
+      } else {
+        configuration.value.questions.push({
+          text: question.value,
+          rightAnswer: rightAnswer.value,
+          wrongAnswers: wrongAnswers.value,
+        });
+      }
+    } else {
+      configuration.value.questions.push({
+        text: question.value,
+        rightAnswer: rightAnswer.value,
+        wrongAnswers: wrongAnswers.value,
+      });
+    }
   } else {
     toast.error("Question already exists.");
   }
+
   showModal.value = true;
 }
 
@@ -221,6 +281,8 @@ function resetQuestionModal() {
   rightAnswer.value = "";
   wrongAnswers.value = [];
   wrongAnswer.value = "";
+  selectedImages.value = [];
+  fileNames.value = [];
 }
 
 function addWrongAnswer() {
@@ -260,6 +322,56 @@ async function importFile(event: any) {
     configuration.value = result;
   } catch (e) {
     console.log("Import was not successful");
+  }
+}
+
+function handleImageButtonClick() {
+  // eslint-disable-next-line no-undef
+  showImageModal.value = true;
+}
+
+async function handleImageModalOk() {
+  showImageModal.value = false;
+  console.log("Selected image count:", selectedImageCount.value);
+
+  if (selectedImages.value.length > 0) {
+    const validImages = selectedImages.value.filter(
+      (imageFile) => imageFile !== null
+    );
+
+    if (validImages.length === 0) {
+      console.log("No valid images to upload");
+      return;
+    }
+
+    const imageUrls = await Promise.all(
+      validImages.map((imageFile) => uploadImage(imageFile as File))
+    );
+
+    const currentQuestion =
+      configuration.value.questions[configuration.value.questions.length - 1];
+    currentQuestion.images = imageUrls;
+  }
+}
+
+async function uploadImage(file: File): Promise<string> {
+  const formData = new FormData();
+  formData.append("file", file);
+
+  try {
+    const response = await axios.post(
+      `${config.finitequizApiUrl}/upload`,
+      formData,
+      {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      }
+    );
+    return response.data.url;
+  } catch (error) {
+    console.error("Error uploading image:", error);
+    return "";
   }
 }
 </script>
@@ -312,12 +424,34 @@ async function importFile(event: any) {
           </template>
         </b-table>
       </b-form-group>
+
+      <b-form-group label="Question">
+        <b-form-input
+          v-model="question"
+          placeholder="Enter your question"
+          required
+        />
+      </b-form-group>
+
+      <div v-if="fileNames.length > 0">
+        <b-row>
+          <b-col
+            v-for="(fileName, index) in fileNames"
+            :key="index"
+            cols="4"
+            class="mb-2"
+          >
+            <small>{{ fileName }}</small>
+          </b-col>
+        </b-row>
+      </div>
     </form>
     <ImportExportConfiguration
       @export="downloadConfiguration"
       @importFile="importFile"
     />
   </b-modal>
+
   <b-modal
     id="add-question-finitequiz"
     title="Add Question to Finitequiz configuration"
@@ -330,6 +464,13 @@ async function importFile(event: any) {
     <b-form-group label="Question" label-for="question-input">
       <b-form-input id="question-input" v-model="question" required />
     </b-form-group>
+    <b-button
+      variant="secondary"
+      id="add-images-button"
+      @click="handleImageButtonClick"
+    >
+      Add Images to Your Question
+    </b-button>
     <b-form-group label="Correct Answer" label-for="correct-answer">
       <b-form-input id="correct-answer" v-model="rightAnswer" required />
     </b-form-group>
@@ -347,9 +488,53 @@ async function importFile(event: any) {
           @click="addWrongAnswer"
           variant="success"
           id="button-wrong-answer"
-          >Add</b-button
         >
+          Add
+        </b-button>
       </div>
     </b-form-group>
+  </b-modal>
+
+  <b-modal
+    id="add-images-modal"
+    title="Add Images"
+    v-model="showImageModal"
+    @ok="handleImageModalOk"
+  >
+    <b-form-group label="How many images would you like to add?">
+      <div v-for="count in [1, 2, 3, 4]" :key="count">
+        <b-form-radio
+          :value="count"
+          v-model="selectedImageCount"
+          :id="'image-count-' + count"
+        >
+          {{ count }}
+        </b-form-radio>
+      </div>
+    </b-form-group>
+
+    <b-container v-if="imageButtons.length > 0">
+      <b-row>
+        <b-col
+          v-for="(buttonLabel, index) in imageButtons"
+          :key="'button-' + index"
+          cols="6"
+          class="mb-2"
+        >
+          <b-button variant="primary" @click.prevent="triggerFileInput(index)">
+            {{ buttonLabel }}
+          </b-button>
+          <input
+            type="file"
+            :id="'file-input-' + index"
+            class="d-none"
+            @change="handleFileChange($event, index)"
+          />
+          <small v-if="fileNames[index]" class="text-muted">
+            {{ fileNames[index] }}
+          </small>
+        </b-col>
+      </b-row>
+    </b-container>
   </b-modal>
 </template>

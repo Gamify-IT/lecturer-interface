@@ -8,6 +8,7 @@ export interface IFinitequizQuestion {
   text: string;
   rightAnswer: string;
   wrongAnswers: string[];
+  images?: string[];
 }
 
 export class FinitequizConfiguration implements IFinitequizConfiguration {
