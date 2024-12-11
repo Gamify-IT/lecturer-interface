@@ -1,5 +1,7 @@
 <script setup lang="ts">
 // compatible crosswordpuzzle versions: v0.0.6
+import { BFormTextarea } from "bootstrap-vue-3";
+
 const compatibleVersions = ["v0.0.6"];
 import { saveAs } from "file-saver";
 import { arrayOf, object, optional, string } from "checkeasy";
@@ -247,23 +249,23 @@ async function importFile(event: any) {
     <h6>Add Question</h6>
     <b-form-group>
       <label for="current-question">Question:</label>
-      <b-form-input
+      <b-form-textarea
         id="current-question"
         label="Question"
         v-model="currentEditingQuestion.questionText"
         :state="!containsQuestion(currentEditingQuestion.questionText)"
         aria-describedby="current-question-feedback"
         placeholder="Enter a question"
-      ></b-form-input>
+      />
       <b-form-invalid-feedback id="current-question-feedback">
         The Question already exists.
       </b-form-invalid-feedback>
       <label for="current-question-answer">Answer:</label>
-      <b-form-input
+      <b-form-textarea
         id="current-question-answer"
         v-model="currentEditingQuestion.answer"
         placeholder="Enter the answer"
-      ></b-form-input>
+      />
       <b-button @click="addQuestion" variant="success">Add question</b-button>
     </b-form-group>
     <ImportExportConfiguration
