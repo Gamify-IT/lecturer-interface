@@ -106,30 +106,12 @@ watch(selectedImageCount, (newCount) => {
   }
 });
 
-function triggerFileInput(index: number) {
-  const input = document.getElementById(
-    `file-input-${index}`
-  ) as HTMLInputElement;
-  if (input) {
-    input.click();
-  }
-}
-
 function addImage(index: number) {
   const input = document.getElementById(
     `file-input-${index}`
   ) as HTMLInputElement;
   if (input) {
     input.click();
-  }
-}
-
-function handleFileChange(event: Event, index: number) {
-  const target = event.target as HTMLInputElement;
-  if (target.files && target.files[0]) {
-    const file = target.files[0];
-    selectedImages.value[index] = file;
-    fileNames.value[index] = file.name;
   }
 }
 
@@ -375,6 +357,7 @@ async function uploadImage(file: File): Promise<string> {
   }
 }
 </script>
+
 <template>
   <b-modal
     title="Edit Finitequiz configuration"
@@ -521,18 +504,9 @@ async function uploadImage(file: File): Promise<string> {
           cols="6"
           class="mb-2"
         >
-          <b-button variant="primary" @click.prevent="triggerFileInput(index)">
+          <b-button variant="primary" @click="addImage(index)">
             {{ buttonLabel }}
           </b-button>
-          <input
-            type="file"
-            :id="'file-input-' + index"
-            class="d-none"
-            @change="handleFileChange($event, index)"
-          />
-          <small v-if="fileNames[index]" class="text-muted">
-            {{ fileNames[index] }}
-          </small>
         </b-col>
       </b-row>
     </b-container>
