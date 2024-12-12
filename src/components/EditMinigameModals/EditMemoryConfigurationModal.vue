@@ -3,23 +3,15 @@ import { saveAs } from "file-saver";
 import { arrayOf, object, oneOf, string } from "checkeasy";
 import { importConfiguration } from "@/ts/import-configuration";
 import { Ref, defineEmits, defineProps, ref, watch } from "vue";
-import {
-  getMemoryConfig,
-  postMemoryConfig,
-  putMemoryConfig,
-} from "@/ts/rest-clients/memory-rest-client";
+import { getMemoryConfig, postMemoryConfig, putMemoryConfig} from "@/ts/rest-clients/memory-rest-client";
+import { postMemoryImage } from "@/ts/rest-clients/image-rest-client";
 import { useToast } from "vue-toastification";
 import { putMinigame } from "@/ts/rest-clients/minigame-rest-client";
 import { useRoute } from "vue-router";
 import { ITask } from "@/ts/models/overworld-models";
 import ImportExportConfiguration from "@/components/ImportExportConfiguration.vue";
-import {
-  IMemoryCardPair,
-  MemoryCard,
-  MemoryCardPair,
-  MemoryCardType,
-  MemoryConfiguration,
-} from "@/ts/models/memory-models";
+import { IMemoryCardPair, MemoryCard, MemoryCardPair, MemoryCardType, MemoryConfiguration } from "@/ts/models/memory-models";
+import { v4 as uuidv4 } from "uuid";
 
 const props = defineProps<{
   minigame: ITask;
@@ -64,6 +56,8 @@ const card1Content = ref();
 const card2Type = ref();
 const card2Content = ref();
 const editObject = ref();
+const card1Image = ref();
+const card2Image = ref();
 
 const memoryCardTypeValues = Object.values(MemoryCardType);
 
@@ -208,13 +202,46 @@ function loadModal() {
 }
 
 function handlePairOk() {
-  console.log("Saving pair changes (@ok)");
-  editObject.value.card1.content = card1Content.value;
-  editObject.value.card1.type = card1Type.value;
-  editObject.value.card2.content = card2Content.value;
-  editObject.value.card2.type = card2Type.value;
+  if(card1Type.value !== MemoryCardType.IMAGE && card2Type.value !== MemoryCardType.IMAGE) {
+    console.log("Saving pair changes (@ok)");
+    editObject.value.card1.content = card1Content.value;
+    editObject.value.card1.type = card1Type.value;
+    editObject.value.card2.content = card2Content.value;
+    editObject.value.card2.type = card2Type.value;
+
+  } else if(card1Type.value == MemoryCardType.IMAGE) {
+    let image:File = card1Image.value.files;
+    let uuid:string = uuidv4();
+    postMemoryImage(uuid, image);
+    editObject.value.card1.content = uuid;
+    editObject.value.card1.type = card1Type.value;
+    editObject.value.card2.content = card2Content.value;
+    editObject.value.card2.type = card2Type.value;
+
+  } else if(card2Type.value == MemoryCardType.IMAGE) {
+    let image:File = card2Image.value.files;
+    let uuid:string = uuidv4();
+    postMemoryImage(uuid, image);
+    editObject.value.card1.content = card1Content.value;
+    editObject.value.card1.type = card1Type.value;
+    editObject.value.card2.content = uuid
+    editObject.value.card2.type = card2Type.value;
+
+  } else {
+    let image1:File = card1Image.value.files;
+    let uuid1:string = uuidv4();
+    postMemoryImage(uuid1, image1);
+    let image2:File = card2Image.value.files;
+    let uuid2:string = uuidv4();
+    postMemoryImage(uuid2, image2);
+    editObject.value.card1.content = uuid1;
+    editObject.value.card1.type = card1Type.value;
+    editObject.value.card2.content = uuid2;
+    editObject.value.card2.type = card2Type.value;
+  }
   console.log("New pairs: " + cardPairs.value);
   showModal.value = true;
+
 }
 
 function handlePairAbort() {
@@ -377,10 +404,11 @@ async function importFile(event: any) {
         rows="5"
         required
       />
-      <div v-if="card1Type === 'Image'">
-        <label class="form-label" for="customFile">Input your image</label>
-        <input type="file" class="form-control" id="customFile" />
+      <div v-if="card1Type === MemoryCardType.IMAGE">
+        <br>
+        <input type="file" class="form-control" id="card1file" accept="image/*" ref="card1Image"/>
       </div>
+      <br>
     </b-form-group>
 
     <b-form-group label="Card 2" label-for="card-2">
@@ -401,9 +429,9 @@ async function importFile(event: any) {
         rows="5"
         required
       />
-      <div v-if="card2Type === 'Image'">
-        <label class="form-label" for="customFile">Input your image</label>
-        <input type="file" class="form-control" id="customFile" />
+      <div v-if="card2Type === MemoryCardType.IMAGE">
+        <br>
+        <input type="file" class="form-control" id="card2file" accept="image/*" ref="card2Image"/>
       </div>
     </b-form-group>
   </b-modal>
