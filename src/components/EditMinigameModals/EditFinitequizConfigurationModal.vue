@@ -2,7 +2,7 @@
 // compatible finitequiz versions: v0.0.1
 const compatibleVersions = ["v0.0.1"];
 import { saveAs } from "file-saver";
-import { arrayOf, object, string } from "checkeasy";
+import { arrayOf, object, string, optional, int, nullable } from "checkeasy";
 import { importConfiguration } from "@/ts/import-configuration";
 import { defineEmits, defineProps, ref, watch } from "vue";
 import { ITask } from "@/ts/models/overworld-models";
@@ -250,6 +250,7 @@ async function importFile(event: any) {
         wrongAnswers: arrayOf(string()),
       })
     ),
+    volumeLevel: optional(nullable(int())),
   });
   try {
     const result: FinitequizConfiguration = await importConfiguration(

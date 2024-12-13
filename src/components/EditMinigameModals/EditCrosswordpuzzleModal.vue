@@ -2,7 +2,7 @@
 // compatible crosswordpuzzle versions: v0.0.6
 const compatibleVersions = ["v0.0.6"];
 import { saveAs } from "file-saver";
-import { arrayOf, object, optional, string } from "checkeasy";
+import { arrayOf, object, optional, string, int, nullable } from "checkeasy";
 import { importConfiguration } from "@/ts/import-configuration";
 import { defineEmits, defineProps, ref, watch } from "vue";
 import { ITask } from "@/ts/models/overworld-models";
@@ -198,6 +198,7 @@ async function importFile(event: any) {
         answer: string(),
       })
     ),
+    volumeLevel: optional(nullable(int())),
   });
   try {
     const result: CrosswordpuzzleConfiguration = await importConfiguration(

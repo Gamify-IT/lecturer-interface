@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { saveAs } from "file-saver";
-import { arrayOf, object, string } from "checkeasy";
+import { arrayOf, object, string, optional, int, nullable } from "checkeasy";
 import { importConfiguration } from "@/ts/import-configuration";
 import { defineEmits, defineProps, ref, watch } from "vue";
 import {
@@ -249,6 +249,7 @@ async function importFile(event: any) {
         wrongAnswers: arrayOf(string()),
       })
     ),
+    volumeLevel: optional(nullable(int())),
   });
   try {
     const result: TowerDefenseConfiguration = await importConfiguration(

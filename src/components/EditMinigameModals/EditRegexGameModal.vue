@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { saveAs } from "file-saver";
-import { arrayOf, defaultValue, int, object, string } from "checkeasy";
+import { arrayOf, int, object, string, optional, nullable } from "checkeasy";
 import { importConfiguration } from "@/ts/import-configuration";
 import { defineEmits, defineProps, ref, watch } from "vue";
 import {
@@ -107,7 +107,7 @@ function setupModal() {
   Object.entries(RegexStructure)
     .filter((s) => typeof s[1] !== "string")
     .forEach((k) => {
-      structureCheckboxes.value[k[0]] = configuredStructures.includes(k[0]);
+      structureCheckboxes.value[k[0]] = configuredStructures.has(k[0]);
     });
 
   if (configuration.value.riddleTimeoutSeconds === 0) timeEnable.value = false;
@@ -122,7 +122,7 @@ function handleOk() {
       allowedRegexStructures.add(
         Object.entries(RegexStructure)
           .filter((s) => typeof s[1] !== "string")
-          .find((s) => s[0] === checkbox[0])![0]
+          .find((s) => s[0] === checkbox[0])?.[0]
       );
   });
   // eslint-disable-next-line
@@ -190,14 +190,11 @@ function downloadConfiguration() {
 async function importFile(event: any) {
   const file = event.target.files[0];
   const validator = object({
-    time: defaultValue(60, int()),
-    questions: arrayOf(
-      object({
-        text: string(),
-        rightAnswer: string(),
-        wrongAnswers: arrayOf(string()),
-      })
-    ),
+    allowedRegexStructures: arrayOf(string()),
+    minimumCompletedRounds: int(),
+    answerCount: int(),
+    riddleTimeoutSeconds: int(),
+    volumeLevel: optional(nullable(int())),
   });
   try {
     const result: RegexGameConfiguration = await importConfiguration(
@@ -205,6 +202,18 @@ async function importFile(event: any) {
       validator,
       toast
     );
+    // process allowedRegexStructures
+    const allowedStructuresSet = new Set(
+      result.allowedRegexStructures.map((structure: string) => {
+        return RegexStructure[structure as keyof typeof RegexStructure];
+      })
+    );
+    // update the checkboxes for the new values
+    Object.entries(RegexStructure)
+      .filter(([key, value]) => typeof value !== "string")
+      .forEach(([key, value]) => {
+        structureCheckboxes.value[key] = allowedStructuresSet.has(value);
+      });
     configuration.value = result;
   } catch (e) {
     console.log("Import was not successful.");

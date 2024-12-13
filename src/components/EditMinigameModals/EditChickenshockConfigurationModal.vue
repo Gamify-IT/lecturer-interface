@@ -1,6 +1,14 @@
 <script setup lang="ts">
 import { saveAs } from "file-saver";
-import { arrayOf, defaultValue, int, object, string } from "checkeasy";
+import {
+  arrayOf,
+  object,
+  optional,
+  string,
+  int,
+  nullable,
+  defaultValue,
+} from "checkeasy";
 import { importConfiguration } from "@/ts/import-configuration";
 import { defineEmits, defineProps, ref, watch } from "vue";
 import {
@@ -250,6 +258,7 @@ async function importFile(event: any) {
         wrongAnswers: arrayOf(string()),
       })
     ),
+    volumeLevel: optional(nullable(int())),
   });
   try {
     const result: ChickenshockConfiguration = await importConfiguration(
