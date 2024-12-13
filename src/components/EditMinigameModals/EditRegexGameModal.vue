@@ -247,7 +247,7 @@ async function importFile(event: any) {
         <b-form-input
           v-if="timeEnable"
           id="time-input"
-          v-model="configuration.riddleTimeoutSeconds"
+          v-model.number="configuration.riddleTimeoutSeconds"
           :state="configuration.riddleTimeoutSeconds >= 1"
           type="number"
         />
@@ -259,7 +259,7 @@ async function importFile(event: any) {
       >
         <b-form-input
           id="answers-input"
-          v-model="configuration.answerCount"
+          v-model.number="configuration.answerCount"
           :state="configuration.answerCount > 0"
           type="number"
         />
@@ -271,7 +271,7 @@ async function importFile(event: any) {
       >
         <b-form-input
           id="completedRounds-input"
-          v-model="configuration.minimumCompletedRounds"
+          v-model.number="configuration.minimumCompletedRounds"
           :state="configuration.minimumCompletedRounds > 0"
           type="number"
         />

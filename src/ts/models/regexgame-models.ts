@@ -32,20 +32,24 @@ export const defaultRegexStructures: Set<RegexStructure> = new Set([
     .map((entry) => entry[1] as RegexStructure),
 ]);
 
-export class RegexGameConfiguration {
+export interface IRegexGameConfiguration {
   id?: string;
-
   allowedRegexStructures: Set<RegexStructure>;
+  minimumCompletedRounds: number;
+  riddleTimeoutSeconds: number;
+  answerCount: number;
+}
 
+export class RegexGameConfiguration implements IRegexGameConfiguration {
+  id?: string;
+  allowedRegexStructures: Set<RegexStructure>;
   minimumCompletedRounds = 20;
-
   /**
    * how many seconds the user has to solve a given riddle
    * the timeout will accumulate over the riddles,
    * so the remaining time will be carried over to the next riddle
    */
   riddleTimeoutSeconds = 10;
-
   answerCount = 3;
 
   constructor(
