@@ -20,7 +20,7 @@ export async function importConfiguration(
         toast.error(
           "Something went wrong while reading the configuration file!"
         );
-        reject();
+        reject(new Error("File read error"));
         return;
       }
       try {
