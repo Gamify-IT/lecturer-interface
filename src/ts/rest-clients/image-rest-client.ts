@@ -9,7 +9,7 @@ export async function postMemoryImage(
   formData.append("uuid", uuid);
   formData.append("image", image);
 
-  return axios.post(`${config.memoryApiUrl}/images`, formData, {
+  return axios.post(`${config.memoryApiUrl}/configurations/images`, formData, {
     headers: {
       "Content-Type": "multipart/formdata",
     },
