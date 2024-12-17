@@ -1,10 +1,8 @@
 <script setup lang="ts">
 // compatible finitequiz versions: v0.0.1
-import axios from "axios";
-
 const compatibleVersions = ["v0.0.1"];
 import { saveAs } from "file-saver";
-import { arrayOf, object, string } from "checkeasy";
+import { arrayOf, object, string, optional, int, nullable } from "checkeasy";
 import { importConfiguration } from "@/ts/import-configuration";
 import { defineEmits, defineProps, ref, watch } from "vue";
 import { ITask } from "@/ts/models/overworld-models";
@@ -20,7 +18,8 @@ import {
   postFinitequizConfig,
 } from "@/ts/rest-clients/finitequiz-rest-client";
 import ImportExportConfiguration from "@/components/ImportExportConfiguration.vue";
-import config from "@/config";
+import { v4 as uuidv4 } from "uuid";
+import { postFinitequizImage } from "@/ts/rest-clients/image-rest-client";
 
 const props = defineProps<{
   minigame: ITask;
@@ -61,6 +60,7 @@ const showQuestionModal = ref();
 const oldMinigame = ref();
 const wrongAnswers = ref(Array<string>());
 const wrongAnswer = ref();
+
 const selectedImageCount = ref<number | null>(null);
 const showImageModal = ref(false);
 const imageButtons = ref<Array<string>>([]);
@@ -106,15 +106,6 @@ watch(selectedImageCount, (newCount) => {
   }
 });
 
-function addImage(index: number) {
-  const input = document.getElementById(
-    `file-input-${index}`
-  ) as HTMLInputElement;
-  if (input) {
-    input.click();
-  }
-}
-
 const emit = defineEmits<{
   (e: "updateMinigameConfiguration", minigame: ITask): void;
   (e: "closedModal"): void;
@@ -146,24 +137,35 @@ function resetModal() {
   console.log("Reset Modal");
 }
 
-async function handleOk() {
-  try {
-    const response = await postFinitequizConfig(configuration.value);
-    minigame.value.configurationId = response.data.id;
-    console.log(
-      "Finitequiz configuration saved with questions:",
-      configuration.value.questions
-    );
-
-    await putMinigame(
-      parseInt(courseId.value),
-      parseInt(worldIndex.value),
-      parseInt(dungeonIndex.value),
-      minigame.value
-    );
-  } catch (error) {
-    toast.error("Error while saving configuration!");
-  }
+function handleOk() {
+  postFinitequizConfig(configuration.value)
+    .then((response) => {
+      minigame.value.configurationId = response.data.id;
+      console.log("Submit Modal");
+      console.log("id:" + response.data.id);
+      console.log("minigameId" + minigame.value.configurationId);
+      oldMinigame.value = minigame.value;
+      handleSubmit();
+    })
+    .then(() => {
+      putMinigame(
+        parseInt(courseId.value),
+        parseInt(worldIndex.value),
+        parseInt(dungeonIndex.value),
+        minigame.value
+      );
+    })
+    .catch((error) => {
+      const statusCode = error.response.status;
+      const errorMessages = error.response.data.errors;
+      if (statusCode == 400) {
+        for (let errorMessage of errorMessages) {
+          toast.error("Error while saving configuration: " + errorMessage);
+        }
+      } else {
+        toast.error("There was an error saving the configuration!");
+      }
+    });
 }
 
 function handleSubmit() {
@@ -205,6 +207,7 @@ function removeQuestion(text: string) {
 }
 
 async function handleQuestionOk() {
+  const questionUUID = uuidv4();
   if (wrongAnswer.value != "") {
     wrongAnswers.value.push(wrongAnswer.value);
   }
@@ -217,41 +220,32 @@ async function handleQuestionOk() {
   });
 
   if (!contains) {
+    configuration.value.questions.push({
+      text: question.value,
+      rightAnswer: rightAnswer.value,
+      wrongAnswers: wrongAnswers.value,
+      uuid: questionUUID,
+    });
     if (selectedImages.value.length > 0) {
       const validImages = selectedImages.value.filter(
         (imageFile) => imageFile !== null
       );
 
       if (validImages.length > 0) {
-        const imageUrls = await Promise.all(
-          validImages.map((imageFile) => uploadImage(imageFile as File))
-        );
-
-        configuration.value.questions.push({
-          text: question.value,
-          rightAnswer: rightAnswer.value,
-          wrongAnswers: wrongAnswers.value,
-          images: imageUrls,
-        });
-      } else {
-        configuration.value.questions.push({
-          text: question.value,
-          rightAnswer: rightAnswer.value,
-          wrongAnswers: wrongAnswers.value,
-        });
+        for (let image of validImages) {
+          if (image) {
+            console.log(image.name);
+            await postFinitequizImage(questionUUID, image);
+          }
+        }
       }
-    } else {
-      configuration.value.questions.push({
-        text: question.value,
-        rightAnswer: rightAnswer.value,
-        wrongAnswers: wrongAnswers.value,
-      });
     }
+
+    showQuestionModal.value = false;
+    showModal.value = true; // Originalmodal öffnen
   } else {
     toast.error("Question already exists.");
   }
-
-  showModal.value = true;
 }
 
 function handleQuestionAbort() {
@@ -294,6 +288,7 @@ async function importFile(event: any) {
         wrongAnswers: arrayOf(string()),
       })
     ),
+    volumeLevel: optional(nullable(int())),
   });
   try {
     const result: FinitequizConfiguration = await importConfiguration(
@@ -325,39 +320,29 @@ async function handleImageModalOk() {
       console.log("No valid images to upload");
       return;
     }
-
-    const imageUrls = await Promise.all(
-      validImages.map((imageFile) => uploadImage(imageFile as File))
-    );
-
-    const currentQuestion =
-      configuration.value.questions[configuration.value.questions.length - 1];
-    currentQuestion.images = imageUrls;
   }
 }
 
-async function uploadImage(file: File): Promise<string> {
-  const formData = new FormData();
-  formData.append("file", file);
+function addImage(index: number) {
+  const input = document.getElementById(
+    `file-input-${index}`
+  ) as HTMLInputElement;
+  if (input) {
+    input.click();
+  }
+}
 
-  try {
-    const response = await axios.post(
-      `${config.finitequizApiUrl}/upload`,
-      formData,
-      {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      }
-    );
-    return response.data.url;
-  } catch (error) {
-    console.error("Error uploading image:", error);
-    return "";
+function handleImageChange(index: number, event: Event) {
+  const input = event.target as HTMLInputElement;
+  if (input.files && input.files[0]) {
+    const file = input.files[0];
+    selectedImages.value[index] = file; // Store selected file
+    fileNames.value[index] = file.name; // Store file name if needed
+    console.log("Selected image:", file);
+    console.log(selectedImages);
   }
 }
 </script>
-
 <template>
   <b-modal
     title="Edit Finitequiz configuration"
@@ -407,34 +392,12 @@ async function uploadImage(file: File): Promise<string> {
           </template>
         </b-table>
       </b-form-group>
-
-      <b-form-group label="Question">
-        <b-form-input
-          v-model="question"
-          placeholder="Enter your question"
-          required
-        />
-      </b-form-group>
-
-      <div v-if="fileNames.length > 0">
-        <b-row>
-          <b-col
-            v-for="(fileName, index) in fileNames"
-            :key="index"
-            cols="4"
-            class="mb-2"
-          >
-            <small>{{ fileName }}</small>
-          </b-col>
-        </b-row>
-      </div>
     </form>
     <ImportExportConfiguration
       @export="downloadConfiguration"
       @importFile="importFile"
     />
   </b-modal>
-
   <b-modal
     id="add-question-finitequiz"
     title="Add Question to Finitequiz configuration"
@@ -471,13 +434,11 @@ async function uploadImage(file: File): Promise<string> {
           @click="addWrongAnswer"
           variant="success"
           id="button-wrong-answer"
+          >Add</b-button
         >
-          Add
-        </b-button>
       </div>
     </b-form-group>
   </b-modal>
-
   <b-modal
     id="add-images-modal"
     title="Add Images"
@@ -507,6 +468,17 @@ async function uploadImage(file: File): Promise<string> {
           <b-button variant="primary" @click="addImage(index)">
             {{ buttonLabel }}
           </b-button>
+
+          <input
+            type="file"
+            :id="'file-input-' + index"
+            accept="image/*"
+            style="display: none"
+            @change="handleImageChange(index, $event)"
+          />
+          <div v-if="fileNames[index]">
+            <small>{{ fileNames[index] }}</small>
+          </div>
         </b-col>
       </b-row>
     </b-container>
