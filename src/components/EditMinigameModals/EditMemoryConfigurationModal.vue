@@ -318,7 +318,7 @@ async function importFile(event: any) {
   }
 }
 
-function handleImageChange(index: number, event: Event) {
+function handleImage(index: number, event: Event) {
   const input = event.target as HTMLInputElement;
   if(input.files && input.files[0]) {
     if(index == 1) {
