@@ -222,7 +222,7 @@ function handlePairOk() {
     editObject.value.card2.content = card2Content.value;
     editObject.value.card2.type = card2Type.value;
   } else if (card1Type.value == MemoryCardType.IMAGE) {
-    let image: Blob = card1Image.value.files;
+    let image: Blob = card1Image.value.files[0];
     let uuid: string = uuidv4();
     postMemoryImage(uuid, image);
     editObject.value.card1.content = uuid;
@@ -230,7 +230,7 @@ function handlePairOk() {
     editObject.value.card2.content = card2Content.value;
     editObject.value.card2.type = card2Type.value;
   } else if (card2Type.value == MemoryCardType.IMAGE) {
-    let image: Blob = card2Image.value.files;
+    let image: Blob = card2Image.value.files[0];
     let uuid: string = uuidv4();
     postMemoryImage(uuid, image);
     editObject.value.card1.content = card1Content.value;
@@ -238,10 +238,10 @@ function handlePairOk() {
     editObject.value.card2.content = uuid;
     editObject.value.card2.type = card2Type.value;
   } else {
-    let image1: Blob = card1Image.value.files;
+    let image1: Blob = card1Image.value.files[0];
     let uuid1: string = uuidv4();
     postMemoryImage(uuid1, image1);
-    let image2: Blob = card2Image.value.files;
+    let image2: Blob = card2Image.value.files[0];
     let uuid2: string = uuidv4();
     postMemoryImage(uuid2, image2);
     editObject.value.card1.content = uuid1;
