@@ -328,17 +328,18 @@ async function importFile(event: any) {
   }
 }
 
-function handleImage(index: number, event: Event) {
+function onFileChange(event: Event) {
   const input = event.target as HTMLInputElement;
-  if(input.files) {
-    if (index == 1) {
-      card1Image.value = input.files.item(0);
-      console.log("image 1" + card1Image.value);
-    } else {
-      card2Image.value = input.files.item(0);
-    }
+  if(input.files && input.files[0]) {
+    const file = input.files[0];
+    console.log("File: " + file);
+  } else {
+    console.log("no file");
   }
+
 }
+
+
 </script>
 <template>
   <b-modal
@@ -430,9 +431,9 @@ function handleImage(index: number, event: Event) {
         <input
           type="file"
           class="form-control"
-          :id="'file-input' + 1"
+          name="file1"
           accept="image/*"
-          @change="handleImage(1, $event)"
+          @change="onFileChange"
         />
       </div>
       <br />
@@ -461,9 +462,9 @@ function handleImage(index: number, event: Event) {
         <input
           type="file"
           class="form-control"
-          :id="'file-input' + 2"
+          name="file2"
           accept="image/*"
-          @change="handleImage(2, $event)"
+          @change="onFileChange"
         />
       </div>
     </b-form-group>
