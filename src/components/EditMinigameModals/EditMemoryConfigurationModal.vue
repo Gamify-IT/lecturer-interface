@@ -330,16 +330,13 @@ async function importFile(event: any) {
 
 function onFileChange(event: Event) {
   const input = event.target as HTMLInputElement;
-  if(input.files && input.files[0]) {
+  if (input.files && input.files[0]) {
     const file = input.files[0];
     console.log("File: " + file);
   } else {
     console.log("no file");
   }
-
 }
-
-
 </script>
 <template>
   <b-modal
