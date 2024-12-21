@@ -328,11 +328,14 @@ async function importFile(event: any) {
   }
 }
 
-function onFileChange(event: Event) {
+function onFileChange(event: Event, index: Number) {
   const input = event.target as HTMLInputElement;
   if (input.files && input.files[0]) {
-    const file = input.files[0];
-    console.log("File: " + file);
+    if(index == 1) {
+      card1Image.value = input.files[0];
+    } else {
+      card2Image.value = input.files[0];
+    }
   } else {
     console.log("no file");
   }
@@ -430,7 +433,7 @@ function onFileChange(event: Event) {
           class="form-control"
           name="file1"
           accept="image/*"
-          @change="onFileChange"
+          @change="onFileChange($event, 1)"
         />
       </div>
       <br />
@@ -461,7 +464,7 @@ function onFileChange(event: Event) {
           class="form-control"
           name="file2"
           accept="image/*"
-          @change="onFileChange"
+          @change="onFileChange($event,2)"
         />
       </div>
     </b-form-group>
