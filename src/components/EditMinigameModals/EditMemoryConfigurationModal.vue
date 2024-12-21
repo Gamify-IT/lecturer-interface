@@ -328,7 +328,7 @@ async function importFile(event: any) {
   }
 }
 
-function onFileChange(event: Event, index: Number) {
+function onFileChange(event: Event, index: number) {
   const input = event.target as HTMLInputElement;
   if (input.files && input.files[0]) {
     if (index == 1) {
