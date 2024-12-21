@@ -3,14 +3,24 @@ import { saveAs } from "file-saver";
 import { arrayOf, object, oneOf, string } from "checkeasy";
 import { importConfiguration } from "@/ts/import-configuration";
 import { defineEmits, defineProps, Ref, ref, watch } from "vue";
-import { getMemoryConfig, postMemoryConfig, putMemoryConfig } from "@/ts/rest-clients/memory-rest-client";
+import {
+  getMemoryConfig,
+  postMemoryConfig,
+  putMemoryConfig,
+} from "@/ts/rest-clients/memory-rest-client";
 import { postMemoryImage } from "@/ts/rest-clients/image-rest-client";
 import { useToast } from "vue-toastification";
 import { putMinigame } from "@/ts/rest-clients/minigame-rest-client";
 import { useRoute } from "vue-router";
 import { ITask } from "@/ts/models/overworld-models";
 import ImportExportConfiguration from "@/components/ImportExportConfiguration.vue";
-import { IMemoryCardPair, MemoryCard, MemoryCardPair, MemoryCardType, MemoryConfiguration } from "@/ts/models/memory-models";
+import {
+  IMemoryCardPair,
+  MemoryCard,
+  MemoryCardPair,
+  MemoryCardType,
+  MemoryConfiguration,
+} from "@/ts/models/memory-models";
 import { v4 as uuidv4 } from "uuid";
 
 const props = defineProps<{
@@ -320,15 +330,15 @@ async function importFile(event: any) {
 
 function handleImage(index: number, event: Event) {
   const input = event.target as HTMLInputElement;
-  if(input.files && input.files[0]) {
-    if(index == 1) {
-      card1Image.value = input.files[0];
+  if(input.files) {
+    if (index == 1) {
+      card1Image.value = input.files.item(0);
+      console.log("image 1" + card1Image.value);
     } else {
-      card2Image.value = input.files[0];
+      card2Image.value = input.files.item(0);
     }
   }
 }
-
 </script>
 <template>
   <b-modal
@@ -420,9 +430,8 @@ function handleImage(index: number, event: Event) {
         <input
           type="file"
           class="form-control"
-          id="card1file"
+          :id="'file-input' + 1"
           accept="image/*"
-          ref="card1Image"
           @change="handleImage(1, $event)"
         />
       </div>
@@ -452,9 +461,8 @@ function handleImage(index: number, event: Event) {
         <input
           type="file"
           class="form-control"
-          id="card2file"
+          :id="'file-input' + 2"
           accept="image/*"
-          ref="card2Image"
           @change="handleImage(2, $event)"
         />
       </div>

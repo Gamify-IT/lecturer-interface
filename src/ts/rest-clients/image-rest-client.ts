@@ -3,7 +3,7 @@ import config from "@/config";
 
 export async function postMemoryImage(
   uuid: string,
-  image: Blob
+  image: File
 ): Promise<AxiosResponse> {
   const formData = new FormData();
   formData.append("uuid", uuid);
@@ -12,7 +12,8 @@ export async function postMemoryImage(
   return axios.post(`${config.memoryApiUrl}/configurations/images`, formData, {
     headers: {
       "Content-Type": "multipart/formdata",
-    }});
+    },
+  });
 }
 
 export async function postFinitequizImage(
