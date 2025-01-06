@@ -11,7 +11,7 @@ export async function postMemoryImage(
 
   return axios.post(`${config.memoryApiUrl}/configurations/images`, formData, {
     headers: {
-      "Content-Type": "multipart/formdata",
+      "Content-Type": "multipart/formdata", "boundary": "something",
     },
   });
 }
