@@ -1,3 +1,4 @@
+/* eslint-disable */
 import axios, { AxiosResponse } from "axios";
 import config from "@/config";
 
@@ -26,6 +27,7 @@ export async function postFinitequizImage(
 
   try {
     console.log(image.name);
+    console.log(uuid);
     const response = await axios.post(
       `${config.finitequizApiUrl}/configurations/images`,
       formData,

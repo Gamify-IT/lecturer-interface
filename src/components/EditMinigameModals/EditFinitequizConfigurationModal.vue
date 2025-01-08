@@ -207,7 +207,7 @@ function removeQuestion(text: string) {
 }
 
 async function handleQuestionOk() {
-  const questionUUID = uuidv4();
+  const questionUUID = String(uuidv4());
   if (wrongAnswer.value != "") {
     wrongAnswers.value.push(wrongAnswer.value);
   }
@@ -242,7 +242,7 @@ async function handleQuestionOk() {
     }
 
     showQuestionModal.value = false;
-    showModal.value = true; // Originalmodal öffnen
+    showModal.value = true;
   } else {
     toast.error("Question already exists.");
   }
