@@ -435,6 +435,30 @@ function redirectToStatisticView(task: ITask) {
     });
   }
 }
+
+function openMinigame(task: ITask) {
+  const iframe = document.createElement("iframe");
+  iframe.src =
+    location.origin +
+    "/minigames/" +
+    task.game.toLowerCase() +
+    "/" +
+    task.configurationId;
+  iframe.style.position = "fixed";
+  iframe.style.top = "0";
+  iframe.style.left = "0";
+  iframe.style.width = "100%";
+  iframe.style.height = "100%";
+  iframe.style.zIndex = "9999";
+  iframe.style.border = "none";
+  document.body.appendChild(iframe);
+
+  window.addEventListener("message", (event) => {
+    if (event.data === "CLOSE ME") {
+      iframe.remove();
+    }
+  });
+}
 </script>
 
 <template>
@@ -458,7 +482,7 @@ function redirectToStatisticView(task: ITask) {
 
       <b-card v-for="task in minigames" :key="task.id" class="mt-1">
         <b-row>
-          <b-col sm="2">{{ task.index }}</b-col>
+          <b-col sm="1">{{ task.index }}</b-col>
           <b-col sm="5">
             <EditableStringAttribute
               prefix="Description"
@@ -481,7 +505,7 @@ function redirectToStatisticView(task: ITask) {
               @keydown.left.prevent
             ></b-form-select>
           </b-col>
-          <b-col sm="1">
+          <b-col sm="3" class="d-flex gap-4 align-items-center">
             <b-button
               variant="info"
               size="small"
@@ -491,8 +515,6 @@ function redirectToStatisticView(task: ITask) {
               <em class="bi bi-pencil-square"></em>
               Edit
             </b-button>
-          </b-col>
-          <b-col sm="1">
             <b-button
               variant="warning"
               size="small"
@@ -500,6 +522,14 @@ function redirectToStatisticView(task: ITask) {
               :id="`redirectToStatistics` + task.index"
             >
               <em class="bi bi-graph-up"></em>
+            </b-button>
+            <b-button
+              variant="success"
+              size="small"
+              @click="openMinigame(task)"
+              :id="`redirectToStatistics` + task.index"
+            >
+              <em class="bi bi-play"></em>
             </b-button>
           </b-col>
         </b-row>
