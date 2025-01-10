@@ -66,6 +66,8 @@ const showImageModal = ref(false);
 const imageButtons = ref<Array<string>>([]);
 const selectedImages = ref<Array<File | null>>([]);
 const fileNames = ref<Array<string>>([]);
+const correctAnswerImages = ref<Array<File | null>>([]);
+const correctAnswerFileNames = ref<Array<string>>([]);
 
 watch(
   () => props.minigame,
@@ -335,11 +337,31 @@ function addImage(index: number) {
 function handleImageChange(index: number, event: Event) {
   const input = event.target as HTMLInputElement;
   if (input.files && input.files[0]) {
+    if (input.files && input.files[0]) {
+      const file = input.files[0];
+      selectedImages.value[index] = file; // Store selected file
+      fileNames.value[index] = file.name; // Store file name if needed
+      console.log("Selected image:", file);
+      console.log(selectedImages);
+    }
+  }
+}
+function addSingleImage(
+  event: Event,
+  isCorrectAnswer = false,
+  isWrongAnswer = false
+) {
+  const input = event.target as HTMLInputElement;
+  if (input.files && input.files[0]) {
     const file = input.files[0];
-    selectedImages.value[index] = file; // Store selected file
-    fileNames.value[index] = file.name; // Store file name if needed
+    if (isCorrectAnswer) {
+      correctAnswerImages.value = [file];
+      correctAnswerFileNames.value = [file.name];
+    } else if (isWrongAnswer) {
+      selectedImages.value = [file];
+      fileNames.value = [file.name];
+    }
     console.log("Selected image:", file);
-    console.log(selectedImages);
   }
 }
 </script>
@@ -420,6 +442,23 @@ function handleImageChange(index: number, event: Event) {
     <b-form-group label="Correct Answer" label-for="correct-answer">
       <b-form-input id="correct-answer" v-model="rightAnswer" required />
     </b-form-group>
+    <b-button
+      variant="secondary"
+      id="add-single-image-button"
+      @click="($refs.correctAnswerInput as HTMLInputElement).click()"
+    >
+      Add Image to Correct Answer
+    </b-button>
+    <input
+      type="file"
+      ref="correctAnswerInput"
+      accept="image/*"
+      style="display: none"
+      @change="addSingleImage($event, true)"
+    />
+    <div v-if="correctAnswerFileNames[0]">
+      <small>{{ correctAnswerFileNames[0] }}</small>
+    </div>
     <b-form-group label="Wrong Answers">
       <div v-for="answer in wrongAnswers" :key="answer">
         {{ answer }}
@@ -431,11 +470,29 @@ function handleImageChange(index: number, event: Event) {
           v-model="wrongAnswer"
         ></b-form-input>
         <b-button
+          variant="secondary"
+          id="add-wrong-answer-image-button"
+          @click="($refs.wrongAnswerInput as HTMLInputElement).click()"
+          style="margin-right: 10px"
+        >
+          Add Image for Wrong Answer
+        </b-button>
+        <input
+          type="file"
+          ref="wrongAnswerInput"
+          accept="image/*"
+          style="display: none"
+          @change="addSingleImage($event)"
+        />
+        <b-button
           @click="addWrongAnswer"
           variant="success"
           id="button-wrong-answer"
-          >Add</b-button
+          >Add Wrong Answer</b-button
         >
+        <div v-if="fileNames[0]">
+          <small>{{ fileNames[0] }}</small>
+        </div>
       </div>
     </b-form-group>
   </b-modal>
