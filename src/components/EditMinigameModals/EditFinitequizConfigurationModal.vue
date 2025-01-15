@@ -210,6 +210,7 @@ function removeQuestion(text: string) {
 
 async function handleQuestionOk() {
   const questionUUID = String(uuidv4());
+  const correctAnswerUUID = String(uuidv4());
   if (wrongAnswer.value != "") {
     wrongAnswers.value.push(wrongAnswer.value);
   }
@@ -224,10 +225,24 @@ async function handleQuestionOk() {
   if (!contains) {
     configuration.value.questions.push({
       text: question.value,
-      rightAnswer: rightAnswer.value,
+      rightAnswer: [correctAnswerUUID, rightAnswer.value],
       wrongAnswers: wrongAnswers.value,
       uuid: questionUUID,
     });
+    if (correctAnswerImages.value.length > 0) {
+      const validCorrectAnswerImages = correctAnswerImages.value.filter(
+        (imageFile) => imageFile !== null
+      );
+
+      if (validCorrectAnswerImages.length > 0) {
+        for (let image of validCorrectAnswerImages) {
+          if (image) {
+            console.log(`Uploading correct answer image: ${image.name}`);
+            await postFinitequizImage(correctAnswerUUID, image);
+          }
+        }
+      }
+    }
     if (selectedImages.value.length > 0) {
       const validImages = selectedImages.value.filter(
         (imageFile) => imageFile !== null

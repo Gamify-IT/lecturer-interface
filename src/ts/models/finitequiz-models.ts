@@ -6,7 +6,7 @@ export interface IFinitequizConfiguration {
 export interface IFinitequizQuestion {
   id?: string;
   text: string;
-  rightAnswer: string;
+  rightAnswer: string[];
   wrongAnswers: string[];
   uuid: string;
 }
