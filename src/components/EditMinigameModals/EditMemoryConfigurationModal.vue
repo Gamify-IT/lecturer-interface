@@ -221,7 +221,10 @@ function handlePairOk() {
     editObject.value.card1.type = card1Type.value;
     editObject.value.card2.content = card2Content.value;
     editObject.value.card2.type = card2Type.value;
-  } else if (card1Type.value == MemoryCardType.IMAGE && card2Type.value !== MemoryCardType.IMAGE) {
+  } else if (
+    card1Type.value == MemoryCardType.IMAGE &&
+    card2Type.value !== MemoryCardType.IMAGE
+  ) {
     let image = card1Image.value;
     let uuid: string = uuidv4();
     postMemoryImage(uuid, image);
@@ -229,7 +232,10 @@ function handlePairOk() {
     editObject.value.card1.type = card1Type.value;
     editObject.value.card2.content = card2Content.value;
     editObject.value.card2.type = card2Type.value;
-  } else if (card1Type.value !== MemoryCardType.IMAGE && card2Type.value == MemoryCardType.IMAGE) {
+  } else if (
+    card1Type.value !== MemoryCardType.IMAGE &&
+    card2Type.value == MemoryCardType.IMAGE
+  ) {
     let image = card2Image.value;
     let uuid: string = uuidv4();
     postMemoryImage(uuid, image);
@@ -237,8 +243,10 @@ function handlePairOk() {
     editObject.value.card1.type = card1Type.value;
     editObject.value.card2.content = uuid;
     editObject.value.card2.type = card2Type.value;
-  } else if (card1Type.value == MemoryCardType.IMAGE &&
-    card2Type.value == MemoryCardType.IMAGE) {
+  } else if (
+    card1Type.value == MemoryCardType.IMAGE &&
+    card2Type.value == MemoryCardType.IMAGE
+  ) {
     let image1 = card1Image.value;
     let uuid1: string = uuidv4();
     editObject.value.card1.content = uuid1;
