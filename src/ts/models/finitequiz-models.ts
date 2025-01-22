@@ -3,11 +3,16 @@ export interface IFinitequizConfiguration {
   questions: IFinitequizQuestion[];
 }
 
+export interface IWrongAnswer {
+  uuid: string;
+  text: string;
+}
+
 export interface IFinitequizQuestion {
   id?: string;
   text: string;
   rightAnswer: string[];
-  wrongAnswers: string[];
+  wrongAnswers: IWrongAnswer[];
   uuid: string;
 }
 

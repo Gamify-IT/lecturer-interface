@@ -9,6 +9,7 @@ import { ITask } from "@/ts/models/overworld-models";
 import {
   FinitequizConfiguration,
   IFinitequizQuestion,
+  IWrongAnswer,
 } from "@/ts/models/finitequiz-models";
 import { useToast } from "vue-toastification";
 import { putMinigame } from "@/ts/rest-clients/minigame-rest-client";
@@ -58,7 +59,7 @@ const question = ref();
 const rightAnswer = ref();
 const showQuestionModal = ref();
 const oldMinigame = ref();
-const wrongAnswers = ref(Array<string>());
+const wrongAnswers = ref<IWrongAnswer[]>([]);
 const wrongAnswer = ref();
 
 const selectedImageCount = ref<number | null>(null);
@@ -68,6 +69,7 @@ const selectedImages = ref<Array<File | null>>([]);
 const fileNames = ref<Array<string>>([]);
 const correctAnswerImages = ref<Array<File | null>>([]);
 const correctAnswerFileNames = ref<Array<string>>([]);
+const wrongAnswerImages = ref<Array<File | null>>([]);
 
 watch(
   () => props.minigame,
@@ -279,8 +281,14 @@ function resetQuestionModal() {
 }
 
 function addWrongAnswer() {
-  wrongAnswers.value.push(wrongAnswer.value);
-  wrongAnswer.value = "";
+  if (wrongAnswer.value.trim() !== "") {
+    const newWrongAnswer: IWrongAnswer = {
+      uuid: uuidv4(),
+      text: wrongAnswer.value,
+    };
+    wrongAnswers.value.push(newWrongAnswer);
+    wrongAnswer.value = "";
+  }
 }
 function downloadConfiguration() {
   const { ["id"]: unused, ...clonedConfiguration } = configuration.value;
@@ -361,22 +369,37 @@ function handleImageChange(index: number, event: Event) {
     }
   }
 }
-function addSingleImage(
-  event: Event,
-  isCorrectAnswer = false,
-  isWrongAnswer = false
-) {
+function addSingleImage(event: Event, isCorrectAnswer = false) {
   const input = event.target as HTMLInputElement;
   if (input.files && input.files[0]) {
     const file = input.files[0];
     if (isCorrectAnswer) {
       correctAnswerImages.value = [file];
       correctAnswerFileNames.value = [file.name];
-    } else if (isWrongAnswer) {
-      selectedImages.value = [file];
-      fileNames.value = [file.name];
     }
     console.log("Selected image:", file);
+  }
+}
+function addImageToWrongAnswer(index: number) {
+  const input = document.getElementById(
+    `file-input-wrong-${index}`
+  ) as HTMLInputElement;
+  if (input) {
+    input.click();
+  }
+}
+
+async function handleWrongAnswerImageChange(index: number, event: Event) {
+  const input = event.target as HTMLInputElement;
+  if (input.files && input.files[0]) {
+    const file = input.files[0];
+    wrongAnswerImages.value[index] = file;
+
+    const wrongAnswerUUID = wrongAnswers.value[index].uuid;
+
+    console.log("Selected image for wrong answer:", file);
+    await postFinitequizImage(wrongAnswerUUID, file);
+    console.log("Sent image for wrong answer with UUID:", wrongAnswerUUID);
   }
 }
 </script>
@@ -414,8 +437,18 @@ function addSingleImage(
       <b-form-group>
         <b-table :fields="fields" :items="configuration.questions">
           <template #cell(wrongAnswers)="data">
-            <div v-for="answer in data.value" :key="answer">
-              <span>{{ answer }}</span>
+            <div v-for="(answer, index) in data.value" :key="answer.uuid">
+              <span>{{ answer.text }}</span>
+              <input
+                type="file"
+                :id="'file-input-wrong-' + index"
+                accept="image/*"
+                style="display: none"
+                @change="handleWrongAnswerImageChange(index, $event)"
+              />
+              <div v-if="wrongAnswerImages[index]">
+                <small>{{ wrongAnswerImages[index]?.name }}</small>
+              </div>
             </div>
           </template>
           <template #cell(remove)="row">
@@ -435,6 +468,7 @@ function addSingleImage(
       @importFile="importFile"
     />
   </b-modal>
+
   <b-modal
     id="add-question-finitequiz"
     title="Add Question to Finitequiz configuration"
@@ -474,9 +508,30 @@ function addSingleImage(
     <div v-if="correctAnswerFileNames[0]">
       <small>{{ correctAnswerFileNames[0] }}</small>
     </div>
+
     <b-form-group label="Wrong Answers">
-      <div v-for="answer in wrongAnswers" :key="answer">
-        {{ answer }}
+      <div
+        v-for="(answer, index) in wrongAnswers"
+        :key="answer.uuid"
+        class="d-flex justify-content-between align-items-center"
+      >
+        <span>{{ answer.text }}</span>
+        <b-button
+          variant="outline-secondary"
+          @click="addImageToWrongAnswer(index)"
+        >
+          Add Image to Wrong Answer
+        </b-button>
+        <input
+          type="file"
+          :id="'file-input-wrong-' + index"
+          accept="image/*"
+          style="display: none"
+          @change="handleWrongAnswerImageChange(index, $event)"
+        />
+        <div v-if="wrongAnswerImages[index]">
+          <small>{{ wrongAnswerImages[index]?.name }}</small>
+        </div>
       </div>
       <div>
         <b-form-input
@@ -485,32 +540,16 @@ function addSingleImage(
           v-model="wrongAnswer"
         ></b-form-input>
         <b-button
-          variant="secondary"
-          id="add-wrong-answer-image-button"
-          @click="($refs.wrongAnswerInput as HTMLInputElement).click()"
-          style="margin-right: 10px"
-        >
-          Add Image for Wrong Answer
-        </b-button>
-        <input
-          type="file"
-          ref="wrongAnswerInput"
-          accept="image/*"
-          style="display: none"
-          @change="addSingleImage($event)"
-        />
-        <b-button
           @click="addWrongAnswer"
           variant="success"
           id="button-wrong-answer"
-          >Add Wrong Answer</b-button
         >
-        <div v-if="fileNames[0]">
-          <small>{{ fileNames[0] }}</small>
-        </div>
+          Add Wrong Answer
+        </b-button>
       </div>
     </b-form-group>
   </b-modal>
+
   <b-modal
     id="add-images-modal"
     title="Add Images"
