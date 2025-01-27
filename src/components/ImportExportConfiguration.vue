@@ -6,10 +6,9 @@ const emit = defineEmits<{
 </script>
 
 <template>
-  <label class="uploadLabel"
-    >Import configuration
+  <label class="uploadLabel" id="uploadButton">
+    Import configuration
     <em class="bi bi-upload" />
-
     <input
       type="file"
       class="uploadButton"
@@ -17,9 +16,10 @@ const emit = defineEmits<{
       @change="(event) => emit('importFile', event)"
     />
   </label>
-  <b-button @click="emit('export')"
-    >Export configuration <em class="bi bi-download"
-  /></b-button>
+  <b-button @click="emit('export')" id="downloadButton"
+    >Export configuration
+    <em class="bi bi-download" />
+  </b-button>
 </template>
 <style scoped>
 .uploadLabel {
@@ -31,5 +31,17 @@ const emit = defineEmits<{
 }
 .uploadButton {
   display: none;
+}
+#downloadButton {
+  margin-right: 8px;
+  margin-bottom: 5px;
+  display: inline-block;
+  padding: 7px 15px;
+  cursor: pointer;
+  border-radius: 5px;
+}
+#uploadButton {
+  margin-right: 8px;
+  margin-top: 5px;
 }
 </style>

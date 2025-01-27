@@ -231,7 +231,11 @@ async function importFile(event: any) {
       >
     </template>
     <b-form-group>
-      <b-table :fields="fields" :items="configuration.questions">
+      <b-table
+        :fields="fields"
+        :items="configuration.questions"
+        class="questionTable"
+      >
         <template #cell(remove)="data">
           <b-button
             size="sm"
@@ -266,7 +270,9 @@ async function importFile(event: any) {
         v-model="currentEditingQuestion.answer"
         placeholder="Enter the answer"
       />
-      <b-button @click="addQuestion" variant="success">Add question</b-button>
+      <b-button @click="addQuestion" variant="success" id="add-question-button"
+        >Add question</b-button
+      >
     </b-form-group>
     <ImportExportConfiguration
       @export="downloadConfiguration"
@@ -274,3 +280,8 @@ async function importFile(event: any) {
     />
   </b-modal>
 </template>
+<style scoped>
+.questionTable {
+  word-wrap: anywhere;
+}
+</style>
