@@ -212,25 +212,28 @@ function removeQuestion(text: string) {
 
 async function handleQuestionOk() {
   const questionUUID = String(uuidv4());
-  const correctAnswerUUID = String(uuidv4());
+  // eslint-disable-next-line
+  const correctAnswerUUID = uuidv4();
+
+  // eslint-disable-next-line
+  const correctAnswerText: string = rightAnswer.value.trim() === "" ? "no input" : rightAnswer.value;
+
   if (wrongAnswer.value != "") {
     wrongAnswers.value.push(wrongAnswer.value);
   }
 
-  let contains = false;
-  configuration.value.questions.forEach((pQuestion) => {
-    if (pQuestion.text == question.value) {
-      contains = true;
-    }
-  });
+  let contains = configuration.value.questions.some(
+    (pQuestion) => pQuestion.text.trim() === question.value.trim()
+  );
 
   if (!contains) {
     configuration.value.questions.push({
       text: question.value,
-      rightAnswer: [correctAnswerUUID, rightAnswer.value],
+      rightAnswer: [correctAnswerUUID, correctAnswerText],
       wrongAnswers: wrongAnswers.value,
       uuid: questionUUID,
     });
+    console.log("rightAnswer array:", [correctAnswerUUID, correctAnswerText]);
     if (correctAnswerImages.value.length > 0) {
       const validCorrectAnswerImages = correctAnswerImages.value.filter(
         (imageFile) => imageFile !== null
@@ -278,18 +281,22 @@ function resetQuestionModal() {
   wrongAnswer.value = "";
   selectedImages.value = [];
   fileNames.value = [];
+  correctAnswerImages.value = [];
+  correctAnswerFileNames.value = [];
+  wrongAnswerImages.value = [];
 }
 
 function addWrongAnswer() {
-  if (wrongAnswer.value.trim() !== "") {
-    const newWrongAnswer: IWrongAnswer = {
-      uuid: uuidv4(),
-      text: wrongAnswer.value,
-    };
-    wrongAnswers.value.push(newWrongAnswer);
-    wrongAnswer.value = "";
-  }
+  // eslint-disable-next-line
+  const wrongAnswerText: string = wrongAnswer.value.trim() === "" ? "no input" : wrongAnswer.value.trim();
+  const newWrongAnswer: IWrongAnswer = {
+    uuid: uuidv4(),
+    text: wrongAnswerText,
+  };
+  wrongAnswers.value.push(newWrongAnswer);
+  wrongAnswer.value = ""; 
 }
+
 function downloadConfiguration() {
   const { ["id"]: unused, ...clonedConfiguration } = configuration.value;
   const clonedQuestions = Array<IFinitequizQuestion>();
