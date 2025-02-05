@@ -377,6 +377,14 @@ services:
     expose:
       - "80" 
 
+  towerdefense:
+    container_name: towerdefense
+    image: ghcr.io/gamify-it/towerdefense:main
+    pull_policy: always
+    restart: always
+    expose:
+      - "80"
+
   # reverse-proxy
   reverse-proxy:
     container_name: reverse-proxy

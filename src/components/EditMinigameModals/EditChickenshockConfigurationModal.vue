@@ -310,7 +310,11 @@ async function importFile(event: any) {
         </b-form-group>
       </b-form-group>
       <b-form-group>
-        <b-table :fields="fields" :items="configuration.questions">
+        <b-table
+          :fields="fields"
+          :items="configuration.questions"
+          class="questionTable"
+        >
           <template #cell(wrongAnswers)="data">
             <div v-for="answer in data.value" :key="answer">
               <span>{{ answer }}</span>
@@ -343,21 +347,21 @@ async function importFile(event: any) {
     @cancel="handleQuestionAbort"
   >
     <b-form-group label="Question" label-for="question-input">
-      <b-form-input id="question-input" v-model="question" required />
+      <b-form-textarea id="question-input" v-model="question" required />
     </b-form-group>
     <b-form-group label="Correct Answer" label-for="correct-answer">
-      <b-form-input id="correct-answer" v-model="rightAnswer" required />
+      <b-form-textarea id="correct-answer" v-model="rightAnswer" required />
     </b-form-group>
     <b-form-group label="Wrong Answers">
-      <div v-for="answer in wrongAnswers" :key="answer">
+      <div v-for="answer in wrongAnswers" :key="answer" class="questionTable">
         {{ answer }}
       </div>
       <div>
-        <b-form-input
+        <b-form-textarea
           @keydown.enter="addWrongAnswer"
           id="wrong-answer"
           v-model="wrongAnswer"
-        ></b-form-input>
+        ></b-form-textarea>
         <b-button
           @click="addWrongAnswer"
           variant="success"
@@ -372,5 +376,8 @@ async function importFile(event: any) {
 <style scoped>
 #time-input {
   width: 6vw;
+}
+.questionTable {
+  word-wrap: anywhere;
 }
 </style>

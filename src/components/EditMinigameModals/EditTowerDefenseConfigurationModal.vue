@@ -265,7 +265,7 @@ async function importFile(event: any) {
 </script>
 <template>
   <b-modal
-    title="Edit Tower Defense configuration"
+    title="Edit Towerdefense configuration"
     id="edit-modal"
     v-model="showModal"
     @hidden="hiddenModal"
@@ -289,12 +289,33 @@ async function importFile(event: any) {
         </b-button>
       </b-form-group>
       <b-form-group>
-        <b-table :fields="fields" :items="configuration.questions">
+        <b-table
+          :fields="fields"
+          :items="configuration.questions"
+          class="questionTable"
+        >
+          <template #cell(text)="data">
+            <div class="questionTable">
+              <span>{{ data.value }}</span>
+            </div>
+          </template>
+
+          <template #cell(rightAnswer)="data">
+            <div class="questionTable">
+              <span>{{ data.value }}</span>
+            </div>
+          </template>
+
           <template #cell(wrongAnswers)="data">
-            <div v-for="answer in data.value" :key="answer">
+            <div
+              v-for="answer in data.value"
+              :key="answer"
+              class="questionTable"
+            >
               <span>{{ answer }}</span>
             </div>
           </template>
+
           <template #cell(remove)="row">
             <b-button
               size="sm"
@@ -314,7 +335,7 @@ async function importFile(event: any) {
   </b-modal>
   <b-modal
     id="add-question-towerdefense"
-    title="Add Question to Tower Defense configuration"
+    title="Add Question to Towerdefense configuration"
     v-model="showQuestionModal"
     @hidden="resetQuestionModal"
     @show="resetQuestionModal"
@@ -322,21 +343,21 @@ async function importFile(event: any) {
     @cancel="handleQuestionAbort"
   >
     <b-form-group label="Question" label-for="question-input">
-      <b-form-input id="question-input" v-model="question" required />
+      <b-form-textarea id="question-input" v-model="question" required />
     </b-form-group>
     <b-form-group label="Correct Answer" label-for="correct-answer">
-      <b-form-input id="correct-answer" v-model="correctAnswer" required />
+      <b-form-textarea id="correct-answer" v-model="correctAnswer" required />
     </b-form-group>
     <b-form-group label="Wrong Answers">
-      <div v-for="answer in wrongAnswers" :key="answer">
+      <div v-for="answer in wrongAnswers" :key="answer" class="questionTable">
         {{ answer }}
       </div>
       <div>
-        <b-form-input
+        <b-form-textarea
           @keydown.enter="addWrongAnswer"
           id="wrong-answer"
           v-model="wrongAnswer"
-        ></b-form-input>
+        ></b-form-textarea>
         <b-button
           @click="addWrongAnswer"
           variant="success"
@@ -347,3 +368,8 @@ async function importFile(event: any) {
     </b-form-group>
   </b-modal>
 </template>
+<style scoped>
+.questionTable {
+  word-wrap: anywhere;
+}
+</style>
