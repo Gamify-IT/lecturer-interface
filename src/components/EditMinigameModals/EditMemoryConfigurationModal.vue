@@ -227,7 +227,10 @@ function handlePairOk() {
   ) {
     let image = card1Image.value;
     let uuid: string = uuidv4();
-    postMemoryImage(uuid, image);
+    postMemoryImage(uuid, image).catch((error) => {
+      resetPairModal();
+      toast.error("There was an error saving the image of card 2!");
+    });
     editObject.value.card1.content = uuid;
     editObject.value.card1.type = card1Type.value;
     editObject.value.card2.content = card2Content.value;
@@ -238,7 +241,10 @@ function handlePairOk() {
   ) {
     let image = card2Image.value;
     let uuid: string = uuidv4();
-    postMemoryImage(uuid, image);
+    postMemoryImage(uuid, image).catch((error) => {
+      resetPairModal();
+      toast.error("There was an error saving the image of card 2!");
+    });
     editObject.value.card1.content = card1Content.value;
     editObject.value.card1.type = card1Type.value;
     editObject.value.card2.content = uuid;
@@ -249,15 +255,27 @@ function handlePairOk() {
   ) {
     let image1 = card1Image.value;
     let uuid1: string = uuidv4();
-    editObject.value.card1.content = uuid1;
-    editObject.value.card1.type = card1Type.value;
-    postMemoryImage(uuid1, image1);
+    postMemoryImage(uuid1, image1)
+      .then(() => {
+        editObject.value.card1.content = uuid1;
+        editObject.value.card1.type = card1Type.value;
+      })
+      .catch((error) => {
+        resetPairModal();
+        toast.error("There was an error saving the image of card 1!");
+      });
 
     let image2 = card2Image.value;
     let uuid2: string = uuidv4();
-    editObject.value.card2.content = uuid2;
-    editObject.value.card2.type = card2Type.value;
-    postMemoryImage(uuid2, image2);
+    postMemoryImage(uuid2, image2)
+      .then(() => {
+        editObject.value.card2.content = uuid2;
+        editObject.value.card2.type = card2Type.value;
+      })
+      .catch((error) => {
+        resetPairModal();
+        toast.error("There was an error saving the image of card 2!");
+      });
   }
   console.log("New pairs: " + cardPairs.value);
   showModal.value = true;
@@ -270,6 +288,8 @@ function handlePairAbort() {
 function resetPairModal() {
   console.log("Resetting pair modal (@hidden)");
   editObject.value = null;
+  card1Image.value = null;
+  card2Image.value = null;
 }
 
 function setupPairModal() {
@@ -278,8 +298,10 @@ function setupPairModal() {
   inEditModal.value = true;
   card1Content.value = editObject.value.card1.content;
   card1Type.value = editObject.value.card1.type;
+  card1Image.value = null;
   card2Content.value = editObject.value.card2.content;
   card2Type.value = editObject.value.card2.type;
+  card2Image.value = null;
 }
 
 function onEditClick(edit: any) {
@@ -445,6 +467,9 @@ function onFileChange(event: Event, index: number) {
           accept="image/*"
           @change="onFileChange($event, 1)"
         />
+        <span style="color: #e70a0a; font-size: smaller">
+          Max file size: 1 MB
+        </span>
       </div>
       <br />
     </b-form-group>
@@ -476,6 +501,9 @@ function onFileChange(event: Event, index: number) {
           accept="image/*"
           @change="onFileChange($event, 2)"
         />
+        <span style="color: #e70a0a; font-size: smaller">
+          Max file size: 1 MB
+        </span>
       </div>
     </b-form-group>
   </b-modal>

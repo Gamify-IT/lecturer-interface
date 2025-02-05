@@ -216,7 +216,8 @@ async function handleQuestionOk() {
   const correctAnswerUUID = uuidv4();
 
   // eslint-disable-next-line
-  const correctAnswerText: string = rightAnswer.value.trim() === "" ? "no input" : rightAnswer.value;
+  const correctAnswerText: string =
+    rightAnswer.value.trim() === "" ? "no input" : rightAnswer.value;
 
   if (wrongAnswer.value != "") {
     wrongAnswers.value.push(wrongAnswer.value);
@@ -288,13 +289,14 @@ function resetQuestionModal() {
 
 function addWrongAnswer() {
   // eslint-disable-next-line
-  const wrongAnswerText: string = wrongAnswer.value.trim() === "" ? "no input" : wrongAnswer.value.trim();
+  const wrongAnswerText: string =
+    wrongAnswer.value.trim() === "" ? "no input" : wrongAnswer.value.trim();
   const newWrongAnswer: IWrongAnswer = {
     uuid: uuidv4(),
     text: wrongAnswerText,
   };
   wrongAnswers.value.push(newWrongAnswer);
-  wrongAnswer.value = ""; 
+  wrongAnswer.value = "";
 }
 
 function downloadConfiguration() {
