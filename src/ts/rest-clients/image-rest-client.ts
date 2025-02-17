@@ -20,11 +20,13 @@ export async function postMemoryImage(uuid: string, image: File): Promise<AxiosR
 
 export async function postFinitequizImage(
   uuid: string,
-  image: File
+  image: File,
+  description: string
 ): Promise<AxiosResponse> {
   const formData = new FormData();
   formData.append("uuid", uuid);
   formData.append("image", image);
+  formData.append("description", description);
 
   try {
     console.log(image.name);
@@ -39,6 +41,8 @@ export async function postFinitequizImage(
       }
     );
     console.log("Image upload successful", response);
+    console.log("With description:", description);
+
     return response;
   } catch (error) {
     console.error("Error uploading image", error);

@@ -70,6 +70,11 @@ const fileNames = ref<Array<string>>([]);
 const correctAnswerImages = ref<Array<File | null>>([]);
 const correctAnswerFileNames = ref<Array<string>>([]);
 const wrongAnswerImages = ref<Array<File | null>>([]);
+let noInputCounter = 0;
+const imageDescription = "";
+const imageUUIDsWithDescriptions = ref<
+  Array<{ uuid: string; description: string }>
+>([]);
 
 watch(
   () => props.minigame,
@@ -212,18 +217,16 @@ function removeQuestion(text: string) {
 
 async function handleQuestionOk() {
   const questionUUID = String(uuidv4());
-  // eslint-disable-next-line
   const correctAnswerUUID = uuidv4();
 
-  // eslint-disable-next-line
   const correctAnswerText: string =
     rightAnswer.value.trim() === "" ? "no input" : rightAnswer.value;
 
   if (wrongAnswer.value != "") {
     wrongAnswers.value.push(wrongAnswer.value);
   }
-
-  let contains = configuration.value.questions.some(
+  let contains = false;
+  configuration.value.questions.some(
     (pQuestion) => pQuestion.text.trim() === question.value.trim()
   );
 
@@ -234,7 +237,7 @@ async function handleQuestionOk() {
       wrongAnswers: wrongAnswers.value,
       uuid: questionUUID,
     });
-    console.log("rightAnswer array:", [correctAnswerUUID, correctAnswerText]);
+
     if (correctAnswerImages.value.length > 0) {
       const validCorrectAnswerImages = correctAnswerImages.value.filter(
         (imageFile) => imageFile !== null
@@ -244,31 +247,31 @@ async function handleQuestionOk() {
         for (let image of validCorrectAnswerImages) {
           if (image) {
             console.log(`Uploading correct answer image: ${image.name}`);
-            await postFinitequizImage(correctAnswerUUID, image);
+            await postFinitequizImage(correctAnswerUUID, image, " ");
           }
         }
       }
     }
-    if (selectedImages.value.length > 0) {
-      const validImages = selectedImages.value.filter(
-        (imageFile) => imageFile !== null
-      );
-
-      if (validImages.length > 0) {
-        for (let image of validImages) {
-          if (image) {
-            console.log(image.name);
-            await postFinitequizImage(questionUUID, image);
-          }
-        }
-      }
-    }
-
-    showQuestionModal.value = false;
-    showModal.value = true;
-  } else {
-    toast.error("Question already exists.");
   }
+
+  // Bilder der Frage hochladen
+  if (selectedImages.value.length > 0) {
+    const validImages = selectedImages.value.filter(
+      (imageFile) => imageFile !== null
+    );
+
+    if (validImages.length > 0) {
+      for (let image of validImages) {
+        if (image) {
+          console.log(image.name);
+          await postFinitequizImage(questionUUID, image, " ");
+        }
+      }
+    }
+  }
+  imageUUIDsWithDescriptions.value = [];
+  showQuestionModal.value = false;
+  showModal.value = true;
 }
 
 function handleQuestionAbort() {
@@ -288,12 +291,12 @@ function resetQuestionModal() {
 }
 
 function addWrongAnswer() {
-  // eslint-disable-next-line
-  const wrongAnswerText: string =
-    wrongAnswer.value.trim() === "" ? "no input" : wrongAnswer.value.trim();
   const newWrongAnswer: IWrongAnswer = {
     uuid: uuidv4(),
-    text: wrongAnswerText,
+    text:
+      wrongAnswer.value.trim() === ""
+        ? `no input ${noInputCounter++}`
+        : wrongAnswer.value.trim(),
   };
   wrongAnswers.value.push(newWrongAnswer);
   wrongAnswer.value = "";
@@ -369,15 +372,24 @@ function addImage(index: number) {
 function handleImageChange(index: number, event: Event) {
   const input = event.target as HTMLInputElement;
   if (input.files && input.files[0]) {
-    if (input.files && input.files[0]) {
-      const file = input.files[0];
-      selectedImages.value[index] = file; // Store selected file
-      fileNames.value[index] = file.name; // Store file name if needed
-      console.log("Selected image:", file);
-      console.log(selectedImages);
+    const file = input.files[0];
+    selectedImages.value[index] = file;
+    fileNames.value[index] = file.name;
+    console.log("Selected image:", file);
+    console.log(selectedImages);
+
+    const description = imageDescription.trim();
+    if (description) {
+      const imageUUID = String(uuidv4());
+      addImageDescription(imageUUID, description);
     }
   }
 }
+
+function addImageDescription(imageUUID: string, description: string) {
+  imageUUIDsWithDescriptions.value.push({ uuid: imageUUID, description });
+}
+
 function addSingleImage(event: Event, isCorrectAnswer = false) {
   const input = event.target as HTMLInputElement;
   if (input.files && input.files[0]) {
@@ -407,7 +419,7 @@ async function handleWrongAnswerImageChange(index: number, event: Event) {
     const wrongAnswerUUID = wrongAnswers.value[index].uuid;
 
     console.log("Selected image for wrong answer:", file);
-    await postFinitequizImage(wrongAnswerUUID, file);
+    await postFinitequizImage(wrongAnswerUUID, file, "");
     console.log("Sent image for wrong answer with UUID:", wrongAnswerUUID);
   }
 }
@@ -599,6 +611,15 @@ async function handleWrongAnswerImageChange(index: number, event: Event) {
           <div v-if="fileNames[index]">
             <small>{{ fileNames[index] }}</small>
           </div>
+          <b-form-group
+            label="Image Description"
+            v-if="selectedImages.length > 0"
+          >
+            <b-form-input
+              v-model="imageDescription"
+              placeholder="Optional image description"
+            ></b-form-input>
+          </b-form-group>
         </b-col>
       </b-row>
     </b-container>
