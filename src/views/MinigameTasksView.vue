@@ -20,6 +20,7 @@ import MapImageModal from "@/components/MapImageModal.vue";
 import EditBugfinderConifgurationModal from "@/components/EditMinigameModals/EditBugfinderConfigurationModal.vue";
 import router from "@/router";
 import { getCourse } from "@/ts/rest-clients/course-rest-client";
+import EditUmlGameConfigurationModal from "@/components/EditMinigameModals/EditUmlGameConfigurationModal.vue";
 
 const availableMinigames = Object.values(Minigame);
 
@@ -47,6 +48,7 @@ const showBugfinderModal = ref(false);
 const showMemoryModal = ref(false);
 const showRegexGameModal = ref(false);
 const showTowerDefenseModal = ref(false);
+const showUMLGameModal = ref(false);
 const courseName = ref<string>("");
 
 watch(
@@ -330,7 +332,7 @@ function changedMinigame(task: ITask) {
   ).then((response) => {
     task = response.data;
     toast.success(
-      `Minigame in ${courseName.value} was updated to ${task.game}! )`
+      `Minigame in ${courseName.value} was updated to ${task.game}!`
     );
     console.log(
       "Changed minigame to " + task.game + " in course " + courseName.value
@@ -368,6 +370,9 @@ function editMinigameConfiguration(task: ITask) {
       break;
     case Minigame.TOWERDEFENSE:
       showTowerDefenseModal.value = true;
+      break;
+    case Minigame.UMLGAME:
+      showUMLGameModal.value = true;
       break;
     default:
       console.log(
@@ -411,6 +416,7 @@ function closedEditModal() {
   showMemoryModal.value = false;
   showRegexGameModal.value = false;
   showTowerDefenseModal.value = false;
+  showUMLGameModal.value = false;
 }
 
 function redirectToStatisticView(task: ITask) {
@@ -564,6 +570,12 @@ function redirectToStatisticView(task: ITask) {
   />
   <EditTowerDefenseConfigurationModal
     :showModal="showTowerDefenseModal"
+    :minigame="editedMinigame"
+    @updateMinigameConfiguration="updateMinigameConfiguration"
+    @closedModal="closedEditModal"
+  />
+  <EditUmlGameConfigurationModal
+    :showModal="showUMLGameModal"
     :minigame="editedMinigame"
     @updateMinigameConfiguration="updateMinigameConfiguration"
     @closedModal="closedEditModal"

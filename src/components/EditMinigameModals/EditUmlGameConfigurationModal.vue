@@ -283,7 +283,7 @@ async function importFile(event: any) {
         <b-button
           variant="success"
           id="add-question-button"
-          v-b-modal.add-question-towerdefense
+          v-b-modal.add-question-uml-game
         >
           Add question
         </b-button>
