@@ -452,7 +452,6 @@ function openMinigame(task: ITask) {
   iframe.style.zIndex = "9999";
   iframe.style.border = "none";
   document.body.appendChild(iframe);
-
   window.addEventListener("message", (event) => {
     if (event.data === "CLOSE ME") {
       iframe.remove();
