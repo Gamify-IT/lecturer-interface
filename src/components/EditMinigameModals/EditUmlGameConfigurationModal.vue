@@ -16,6 +16,7 @@ import { putMinigame } from "@/ts/rest-clients/minigame-rest-client";
 import { useRoute } from "vue-router";
 import { ITask } from "@/ts/models/overworld-models";
 import ImportExportConfiguration from "@/components/ImportExportConfiguration.vue";
+import { BFormRow, BTable } from "bootstrap-vue-3";
 
 const props = defineProps<{
   minigame: ITask;
@@ -280,51 +281,21 @@ async function importFile(event: any) {
       v-if="minigame !== undefined"
     >
       <b-form-group>
-        <b-button
-          variant="success"
-          id="add-question-button"
-          v-b-modal.add-question-uml-game
-        >
-          Add question
-        </b-button>
-      </b-form-group>
-      <b-form-group>
-        <b-table
-          :fields="fields"
-          :items="configuration.questions"
-          class="questionTable"
-        >
-          <template #cell(text)="data">
-            <div class="questionTable">
-              <span>{{ data.value }}</span>
-            </div>
+        <b-table :fields="['name', 'select', 'edit']" :items="['1', '2', '3', '4', '5', '6', '7', '8']">
+          <template #cell(name)="data">
+            Task {{ data.item }}:
           </template>
 
-          <template #cell(rightAnswer)="data">
-            <div class="questionTable">
-              <span>{{ data.value }}</span>
-            </div>
+          <template #cell(select)="">
+            <b-form-select :options="['Completion', 'Error hunt', 'Code -> UML', 'UML -> Code']" required/>
           </template>
 
-          <template #cell(wrongAnswers)="data">
-            <div
-              v-for="answer in data.value"
-              :key="answer"
-              class="questionTable"
-            >
-              <span>{{ answer }}</span>
-            </div>
-          </template>
-
-          <template #cell(remove)="row">
-            <b-button
-              size="sm"
-              variant="danger"
-              @click="removeQuestion(row.item.text)"
-            >
-              <em class="bi bi-trash"></em>
+          <template #cell(edit)="">
+            <b-button variant="outline-primary" @click="console.log('open edit modal' + num)">
+              Edit Task
             </b-button>
           </template>
+
         </b-table>
       </b-form-group>
     </form>
@@ -333,6 +304,7 @@ async function importFile(event: any) {
       @importFile="importFile"
     />
   </b-modal>
+
   <b-modal
     id="add-question-uml-game"
     title="Add Question to UML-Game configuration"

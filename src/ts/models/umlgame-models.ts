@@ -1,10 +1,10 @@
 // TODO: implement, currently placeholders
-export interface IUmlGameConfiguration {
+export interface IUmlgameConfiguration {
   id?: string;
   graph: {};
 }
 
-export class UmlGameConfiguration implements IUmlGameConfiguration {
+export class UmlgameConfiguration implements IUmlgameConfiguration {
   id?: string;
   graph: {};
   public constructor(graph: {}) {
