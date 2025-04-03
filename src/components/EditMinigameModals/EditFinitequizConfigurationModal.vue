@@ -17,6 +17,7 @@ import { useRoute } from "vue-router";
 import {
   getFinitequizConfig,
   postFinitequizConfig,
+  putFinitequizConfig,
 } from "@/ts/rest-clients/finitequiz-rest-client";
 import ImportExportConfiguration from "@/components/ImportExportConfiguration.vue";
 import { v4 as uuidv4 } from "uuid";
@@ -71,10 +72,9 @@ const correctAnswerImages = ref<Array<File | null>>([]);
 const correctAnswerFileNames = ref<Array<string>>([]);
 const wrongAnswerImages = ref<Array<File | null>>([]);
 let noInputCounter = 0;
-const imageDescription = "";
-const imageUUIDsWithDescriptions = ref<
-  Array<{ uuid: string; description: string }>
->([]);
+const imageDescription = ref("");
+const imageUUIDsWithDescriptions = ref<Array<{ description: string }>>([]);
+const imageDescriptions = ref<string[]>([]);
 
 watch(
   () => props.minigame,
@@ -112,6 +112,7 @@ watch(selectedImageCount, (newCount) => {
       { length: newCount },
       (_, i) => `Image ${i + 1}`
     );
+    imageDescriptions.value = Array(newCount).fill("");
   }
 });
 
@@ -147,7 +148,12 @@ function resetModal() {
 }
 
 function handleOk() {
-  postFinitequizConfig(configuration.value)
+  console.log("@ok");
+  const updateConfigurationRequest = configuration.value.id
+    ? putFinitequizConfig(configuration.value.id, configuration.value)
+    : postFinitequizConfig(configuration.value);
+
+  updateConfigurationRequest
     .then((response) => {
       minigame.value.configurationId = response.data.id;
       console.log("Submit Modal");
@@ -167,7 +173,7 @@ function handleOk() {
     .catch((error) => {
       const statusCode = error.response.status;
       const errorMessages = error.response.data.errors;
-      if (statusCode == 400) {
+      if (statusCode === 400) {
         for (let errorMessage of errorMessages) {
           toast.error("Error while saving configuration: " + errorMessage);
         }
@@ -216,6 +222,10 @@ function removeQuestion(text: string) {
 }
 
 async function handleQuestionOk() {
+  imageUUIDsWithDescriptions.value = imageDescriptions.value.map((desc) => ({
+    description: desc.trim(),
+  }));
+
   const questionUUID = String(uuidv4());
   const correctAnswerUUID = uuidv4();
 
@@ -254,21 +264,26 @@ async function handleQuestionOk() {
     }
   }
 
-  // Bilder der Frage hochladen
   if (selectedImages.value.length > 0) {
     const validImages = selectedImages.value.filter(
       (imageFile) => imageFile !== null
     );
 
     if (validImages.length > 0) {
-      for (let image of validImages) {
+      for (let index = 0; index < validImages.length; index++) {
+        const image = validImages[index];
         if (image) {
-          console.log(image.name);
-          await postFinitequizImage(questionUUID, image, " ");
+          const description =
+            imageUUIDsWithDescriptions.value[index]?.description || "";
+          console.log(
+            `Uploading image: ${image.name} with description: "${description}"`
+          );
+          await postFinitequizImage(questionUUID, image, description);
         }
       }
     }
   }
+
   imageUUIDsWithDescriptions.value = [];
   showQuestionModal.value = false;
   showModal.value = true;
@@ -373,21 +388,21 @@ function handleImageChange(index: number, event: Event) {
   const input = event.target as HTMLInputElement;
   if (input.files && input.files[0]) {
     const file = input.files[0];
+
     selectedImages.value[index] = file;
     fileNames.value[index] = file.name;
-    console.log("Selected image:", file);
-    console.log(selectedImages);
+    console.log("Selected image at index", index, ":", file);
 
-    const description = imageDescription.trim();
+    const description = imageDescriptions.value[index].trim();
+
     if (description) {
-      const imageUUID = String(uuidv4());
-      addImageDescription(imageUUID, description);
+      if (imageUUIDsWithDescriptions.value[index]) {
+        imageUUIDsWithDescriptions.value[index].description = description;
+      } else {
+        imageUUIDsWithDescriptions.value.push({ description });
+      }
     }
   }
-}
-
-function addImageDescription(imageUUID: string, description: string) {
-  imageUUIDsWithDescriptions.value.push({ uuid: imageUUID, description });
 }
 
 function addSingleImage(event: Event, isCorrectAnswer = false) {
@@ -616,7 +631,7 @@ async function handleWrongAnswerImageChange(index: number, event: Event) {
             v-if="selectedImages.length > 0"
           >
             <b-form-input
-              v-model="imageDescription"
+              v-model="imageDescriptions[index]"
               placeholder="Optional image description"
             ></b-form-input>
           </b-form-group>
