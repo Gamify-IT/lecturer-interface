@@ -1,13 +1,29 @@
 // TODO: implement, currently placeholders
 export interface IUmlgameConfiguration {
-  id?: string;
-  graph: {};
+  taskList: UmlTask[];
 }
 
 export class UmlgameConfiguration implements IUmlgameConfiguration {
-  id?: string;
-  graph: {};
-  public constructor(graph: {}) {
-    this.graph = graph;
+  taskList: UmlTask[];
+  public constructor(taskList: UmlTask[]) {
+    this.taskList = taskList;
   }
+}
+
+export class UmlTask {
+  id: string;
+  graph: unknown;
+  text: string;
+  taskType: TaskType;
+
+  public constructor(id: string, graph: unknown, text: string, taskType: TaskType) {
+    this.id = id;
+    this.graph = graph;
+    this.text = text;
+    this.taskType = taskType;
+  }
+}
+
+export enum TaskType {
+  COMPLETION, ERRORHUNT, CODETOUML, UMLTOCODE
 }

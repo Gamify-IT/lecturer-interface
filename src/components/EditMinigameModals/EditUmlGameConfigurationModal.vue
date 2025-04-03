@@ -1,22 +1,13 @@
 <script setup lang="ts">
-import { saveAs } from "file-saver";
-import { arrayOf, object, string, optional, int, nullable } from "checkeasy";
-import { importConfiguration } from "@/ts/import-configuration";
 import { defineEmits, defineProps, ref, watch } from "vue";
-import {
-  TowerDefenseConfiguration,
-  ITowerDefenseQuestion,
-} from "@/ts/models/towerdefense-models";
-import {
-  getTowerDefenseConfig,
-  postTowerDefenseConfig,
-} from "@/ts/rest-clients/towerdefense-rest-client";
+import { TaskType, UmlgameConfiguration, UmlTask } from "@/ts/models/umlgame-models";
 import { useToast } from "vue-toastification";
-import { putMinigame } from "@/ts/rest-clients/minigame-rest-client";
 import { useRoute } from "vue-router";
 import { ITask } from "@/ts/models/overworld-models";
 import ImportExportConfiguration from "@/components/ImportExportConfiguration.vue";
-import { BFormRow, BTable } from "bootstrap-vue-3";
+import { BFormSelect, BFormTextarea, BTable } from "bootstrap-vue-3";
+import { putMinigame } from "@/ts/rest-clients/minigame-rest-client";
+import { putUmlgameConfig } from "@/ts/rest-clients/umlgame-rest-client";
 
 const props = defineProps<{
   minigame: ITask;
@@ -25,20 +16,16 @@ const props = defineProps<{
 
 const fields = [
   {
-    key: "text",
-    label: "Question",
+    key: "task",
+    label: "Task",
   },
   {
-    key: "correctAnswer",
-    label: "Correct Answer",
+    key: "selection",
+    label: "Tasktype",
   },
   {
-    key: "wrongAnswers",
-    label: "Wrong Answers",
-  },
-  {
-    key: "remove",
-    label: "Remove",
+    key: "edit",
+    label: "Edit",
   },
 ];
 
@@ -50,13 +37,17 @@ const toast = useToast();
 const minigame = ref(props.minigame);
 const form = ref();
 const showModal = ref(props.showModal);
-let configuration = ref();
-const question = ref();
-const correctAnswer = ref();
-const showQuestionModal = ref();
+let configuration = ref(new UmlgameConfiguration([]));
+const showCompletionTaskModal = ref(false);
+const showErrorhuntTaskModal = ref(false);
 const oldMinigame = ref();
-const wrongAnswers = ref(Array<string>());
-const wrongAnswer = ref();
+// TODO: adapt to available modes
+const taskText = ref();
+const selected = null;
+// Here are the parameters you need to adapt when expanding the game
+const selectionOptions = [{value: TaskType.COMPLETION, text:'Completion'}, {value: TaskType.ERRORHUNT, text:'Error hunt'},
+  {value: TaskType.CODETOUML, text:'Code -> UML'}, {value: TaskType.UMLTOCODE, text:'UML -> Code'}];
+const numberOfQuestions = 42;
 
 watch(
   () => props.minigame,
@@ -98,6 +89,7 @@ function checkFormValidity(): boolean {
 }
 
 function resetModal() {
+  //TODO
   if (minigame.value.configurationId != undefined) {
     /*getTowerDefenseConfig(minigame.value.configurationId)
       .then((response) => {
@@ -112,15 +104,24 @@ function resetModal() {
       });*/
     oldMinigame.value = minigame.value;
   } else {
-    configuration.value.id = undefined;
-    configuration.value.questions = [];
     oldMinigame.value = minigame.value;
   }
   console.log("Reset Modal");
 }
+const openedIndex = ref();
+function onEditClick(type: TaskType, index: number) {
+  // TODO: editObject.value = edit;
+  openedIndex.value = index;
+  switch (type) {
+    case TaskType.COMPLETION: showCompletionTaskModal.value = true; break;
+    case TaskType.ERRORHUNT: showErrorhuntTaskModal.value = true; break;
+  }
+}
 
 function handleOk() {
-  /*postTowerDefenseConfig(configuration.value)
+  //TODO
+  console.log("putting")
+  putUmlgameConfig(configuration.value)
     .then((response) => {
       minigame.value.configurationId = response.data.id;
       console.log("Submit Modal");
@@ -147,7 +148,7 @@ function handleOk() {
       } else {
         toast.error("There was an error saving the configuration!");
       }
-    });*/
+    });
 }
 
 function handleSubmit() {
@@ -159,7 +160,7 @@ function handleSubmit() {
 }
 
 function hiddenModal() {
-  if (!showQuestionModal.value) {
+  if (!showCompletionTaskModal.value) {
     oldMinigame.value = null;
     console.log("Test");
   }
@@ -177,55 +178,30 @@ function loadModal() {
   }
 }
 
-function removeQuestion(text: string) {
-  /*let filteredQuestions: ITowerDefenseQuestion[] = [];
-  configuration.value.questions.forEach((innerQuestion) => {
-    if (innerQuestion.text != text) {
-      filteredQuestions.push(innerQuestion);
-    }
-  });
-  console.log(filteredQuestions);
-  configuration.value.questions = filteredQuestions;*/
-}
-
-function handleQuestionOk() {
-  //removes the need to press add
-  if (wrongAnswer.value != "") {
-    wrongAnswers.value.push(wrongAnswer.value);
-  }
-  let contains = false;
-  configuration.value.questions.forEach((pQuestion) => {
-    if (pQuestion.text == question.value) {
-      contains = true;
-    }
-  });
-  if (!contains) {
-    configuration.value.questions.push({
-      text: question.value,
-      correctAnswer: correctAnswer.value,
-      wrongAnswers: wrongAnswers.value,
-    });
-  } else {
-    toast.error("Question already exists.");
-  }
+function handleCompletionTaskOk() {
+  //TODO id
+  configuration.value.taskList.push(new UmlTask(openedIndex.value, null, taskText.value, TaskType.COMPLETION))
+  toast.info(taskText.value);
   showModal.value = true;
 }
 
-function handleQuestionAbort() {
+function handleErrorhuntTaskOk() {
+  //TODO
+  configuration.value.taskList.push(new UmlTask(openedIndex.value, null, taskText.value, TaskType.COMPLETION))
+  toast.warning(taskText.value);
   showModal.value = true;
 }
 
-function resetQuestionModal() {
-  question.value = "";
-  correctAnswer.value = "";
-  wrongAnswers.value = [];
-  wrongAnswer.value = "";
+function handleTaskModalAbort() {
+  showModal.value = true;
 }
 
-function addWrongAnswer() {
-  wrongAnswers.value.push(wrongAnswer.value);
-  wrongAnswer.value = "";
+function resetTaskModal() {
+  // TODO
+  //configuration.value.taskList = [];
+  taskText.value = "";
 }
+
 
 function downloadConfiguration() {
   /*const { ["id"]: unused, ...clonedConfiguration } = configuration.value;
@@ -281,17 +257,17 @@ async function importFile(event: any) {
       v-if="minigame !== undefined"
     >
       <b-form-group>
-        <b-table :fields="['name', 'select', 'edit']" :items="['1', '2', '3', '4', '5', '6', '7', '8']">
-          <template #cell(name)="data">
+        <b-table :fields="fields"  :items="['1', '2', '3', '4', '5', '6', '7', '8']">
+          <template #cell(task)="data" >
             Task {{ data.item }}:
           </template>
 
-          <template #cell(select)="">
-            <b-form-select :options="['Completion', 'Error hunt', 'Code -> UML', 'UML -> Code']" required/>
+          <template #cell(selection)="">
+            <b-form-select v-model="selected" :options="selectionOptions" text="Select an option"  required/>
           </template>
 
-          <template #cell(edit)="">
-            <b-button variant="outline-primary" @click="console.log('open edit modal' + num)">
+          <template #cell(edit)="data">
+            <b-button variant="outline-primary" :key="data.index" @click="onEditClick(selected, data.item)">
               Edit Task
             </b-button>
           </template>
@@ -306,39 +282,37 @@ async function importFile(event: any) {
   </b-modal>
 
   <b-modal
-    id="add-question-uml-game"
-    title="Add Question to UML-Game configuration"
-    v-model="showQuestionModal"
-    @hidden="resetQuestionModal"
-    @show="resetQuestionModal"
-    @ok="handleQuestionOk"
-    @cancel="handleQuestionAbort"
+    id="uml-completion-add"
+    title="Configure the completion task"
+    v-model="showCompletionTaskModal"
+    @hidden="resetTaskModal"
+    @show="resetTaskModal"
+    @ok="handleCompletionTaskOk"
+    @cancel="handleTaskModalAbort"
   >
-    <b-form-group label="Question" label-for="question-input">
-      <b-form-textarea id="question-input" v-model="question" required />
-    </b-form-group>
-    <b-form-group label="Correct Answer" label-for="correct-answer">
-      <b-form-textarea id="correct-answer" v-model="correctAnswer" required />
-    </b-form-group>
-    <b-form-group label="Wrong Answers">
-      <div v-for="answer in wrongAnswers" :key="answer" class="questionTable">
-        {{ answer }}
-      </div>
-      <div>
-        <b-form-textarea
-          @keydown.enter="addWrongAnswer"
-          id="wrong-answer"
-          v-model="wrongAnswer"
-        ></b-form-textarea>
-        <b-button
-          @click="addWrongAnswer"
-          variant="success"
-          id="button-wrong-answer"
-          >Add</b-button
-        >
-      </div>
+    <b-form-group>
+      Hier könnte ihre Werbung stehen! <br><br>
+      <b-form-textarea v-model="taskText" placeholder="Enter UML-diagram description" rows="4"/>
     </b-form-group>
   </b-modal>
+
+  <b-modal
+    id="uml-errorhunt-add"
+    title="Configure the error-hunt task"
+    v-model="showErrorhuntTaskModal"
+    @hidden="resetTaskModal"
+    @show="resetTaskModal"
+    @ok="handleErrorhuntTaskOk"
+    @cancel="handleTaskModalAbort"
+  >
+    <b-form-group>
+      Hier könnte auch ihre Werbung stehen! <br>
+      Nur 9,99€ pro Stunde.
+      <br><br>
+      <b-form-textarea v-model="taskText" placeholder="Enter UML-diagram description" rows="4"/>
+    </b-form-group>
+  </b-modal>
+
 </template>
 <style scoped>
 .questionTable {

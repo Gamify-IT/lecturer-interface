@@ -4,9 +4,9 @@ import config from "@/config";
 
 import { IUmlgameConfiguration } from "@/ts/models/umlgame-models";
 
-export async function postUmlgameConfig(umlGameConfig: IUmlgameConfiguration
+export async function putUmlgameConfig(umlGameConfig: IUmlgameConfiguration
 ): Promise<AxiosResponse> {
-  return axios.post(
+  return axios.put(
     `${config.umlgameApiUrl}/configurations`,
     umlGameConfig
   );
