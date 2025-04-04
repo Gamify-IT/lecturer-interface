@@ -242,10 +242,10 @@ async function handleQuestionOk() {
 
   if (!contains) {
     configuration.value.questions.push({
+      uuid: questionUUID,
       text: question.value,
       rightAnswer: [correctAnswerUUID, correctAnswerText],
       wrongAnswers: wrongAnswers.value,
-      uuid: questionUUID,
     });
 
     if (correctAnswerImages.value.length > 0) {
@@ -389,12 +389,18 @@ function handleImageChange(index: number, event: Event) {
   if (input.files && input.files[0]) {
     const file = input.files[0];
 
+    if (file.size > 1048576) {
+      toast.error(
+        `The image "${file.name}" is too large! Please select an image under 1MB.`
+      );
+      return;
+    }
+
     selectedImages.value[index] = file;
     fileNames.value[index] = file.name;
     console.log("Selected image at index", index, ":", file);
 
     const description = imageDescriptions.value[index].trim();
-
     if (description) {
       if (imageUUIDsWithDescriptions.value[index]) {
         imageUUIDsWithDescriptions.value[index].description = description;
@@ -409,6 +415,14 @@ function addSingleImage(event: Event, isCorrectAnswer = false) {
   const input = event.target as HTMLInputElement;
   if (input.files && input.files[0]) {
     const file = input.files[0];
+
+    if (file.size > 1048576) {
+      toast.error(
+        `The image "${file.name}" is too large! Please select an image under 1MB.`
+      );
+      return;
+    }
+
     if (isCorrectAnswer) {
       correctAnswerImages.value = [file];
       correctAnswerFileNames.value = [file.name];
@@ -416,6 +430,7 @@ function addSingleImage(event: Event, isCorrectAnswer = false) {
     console.log("Selected image:", file);
   }
 }
+
 function addImageToWrongAnswer(index: number) {
   const input = document.getElementById(
     `file-input-wrong-${index}`
@@ -429,8 +444,15 @@ async function handleWrongAnswerImageChange(index: number, event: Event) {
   const input = event.target as HTMLInputElement;
   if (input.files && input.files[0]) {
     const file = input.files[0];
-    wrongAnswerImages.value[index] = file;
 
+    if (file.size > 1048576) {
+      toast.error(
+        `The image "${file.name}" is too large! Please select an image under 1MB.`
+      );
+      return;
+    }
+
+    wrongAnswerImages.value[index] = file;
     const wrongAnswerUUID = wrongAnswers.value[index].uuid;
 
     console.log("Selected image for wrong answer:", file);
