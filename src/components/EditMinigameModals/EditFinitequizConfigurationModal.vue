@@ -242,10 +242,10 @@ async function handleQuestionOk() {
 
   if (!contains) {
     configuration.value.questions.push({
-      uuid: questionUUID,
       text: question.value,
       rightAnswer: [correctAnswerUUID, correctAnswerText],
       wrongAnswers: wrongAnswers.value,
+      uuid: questionUUID,
     });
 
     if (correctAnswerImages.value.length > 0) {
