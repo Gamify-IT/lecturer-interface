@@ -8,6 +8,7 @@ import ImportExportConfiguration from "@/components/ImportExportConfiguration.vu
 import { BFormSelect, BFormTextarea, BTable } from "bootstrap-vue-3";
 import { putMinigame } from "@/ts/rest-clients/minigame-rest-client";
 import { putUmlgameConfig } from "@/ts/rest-clients/umlgame-rest-client";
+import UmlGraphEditorModal from "@/components/EditMinigameModals/SubModals/UmlGraphEditorModal"
 
 const props = defineProps<{
   minigame: ITask;
@@ -281,37 +282,27 @@ async function importFile(event: any) {
     />
   </b-modal>
 
-  <b-modal
+  <UmlGraphEditorModal
     id="uml-completion-add"
-    title="Configure the completion task"
-    v-model="showCompletionTaskModal"
+    modalTitle="Configure the completion task"
+    :showModal="showCompletionTaskModal"
+
     @hidden="resetTaskModal"
     @show="resetTaskModal"
     @ok="handleCompletionTaskOk"
     @cancel="handleTaskModalAbort"
-  >
-    <b-form-group>
-      Hier könnte ihre Werbung stehen! <br><br>
-      <b-form-textarea v-model="taskText" placeholder="Enter UML-diagram description" rows="4"/>
-    </b-form-group>
-  </b-modal>
+  />
 
-  <b-modal
+  <UmlGraphEditorModal
     id="uml-errorhunt-add"
-    title="Configure the error-hunt task"
-    v-model="showErrorhuntTaskModal"
+    modalTitle="Configure the error-hunt task"
+    :showModal="showErrorhuntTaskModal"
+
     @hidden="resetTaskModal"
     @show="resetTaskModal"
     @ok="handleErrorhuntTaskOk"
     @cancel="handleTaskModalAbort"
-  >
-    <b-form-group>
-      Hier könnte auch ihre Werbung stehen! <br>
-      Nur 9,99€ pro Stunde.
-      <br><br>
-      <b-form-textarea v-model="taskText" placeholder="Enter UML-diagram description" rows="4"/>
-    </b-form-group>
-  </b-modal>
+   />
 
 </template>
 <style scoped>
