@@ -22,6 +22,7 @@ import {
 import ImportExportConfiguration from "@/components/ImportExportConfiguration.vue";
 import { v4 as uuidv4 } from "uuid";
 import { postFinitequizImage } from "@/ts/rest-clients/image-rest-client";
+import { computed } from "vue";
 
 const props = defineProps<{
   minigame: ITask;
@@ -75,6 +76,7 @@ let noInputCounter = 0;
 const imageDescription = ref("");
 const imageUUIDsWithDescriptions = ref<Array<{ description: string }>>([]);
 const imageDescriptions = ref<string[]>([]);
+const questionLength = computed(() => question.value.length);
 
 watch(
   () => props.minigame,
@@ -222,6 +224,21 @@ function removeQuestion(text: string) {
 }
 
 async function handleQuestionOk() {
+  if (question.value.trim().length > 300) {
+    toast.error("The question must not exceed 300 characters.");
+    return;
+  }
+
+  if (rightAnswer.value.trim().length > 100) {
+    toast.error("The correct answer must not exceed 100 characters.");
+    return;
+  }
+
+  if (wrongAnswers.value.some((answer) => answer.text.length > 100)) {
+    toast.error("One of the wrong answers exceeds 100 characters.");
+    return;
+  }
+
   imageUUIDsWithDescriptions.value = imageDescriptions.value.map((desc) => ({
     description: desc.trim(),
   }));
@@ -235,6 +252,7 @@ async function handleQuestionOk() {
   if (wrongAnswer.value != "") {
     wrongAnswers.value.push(wrongAnswer.value);
   }
+
   let contains = false;
   configuration.value.questions.some(
     (pQuestion) => pQuestion.text.trim() === question.value.trim()
@@ -256,7 +274,6 @@ async function handleQuestionOk() {
       if (validCorrectAnswerImages.length > 0) {
         for (let image of validCorrectAnswerImages) {
           if (image) {
-            console.log(`Uploading correct answer image: ${image.name}`);
             await postFinitequizImage(correctAnswerUUID, image, " ");
           }
         }
@@ -275,9 +292,6 @@ async function handleQuestionOk() {
         if (image) {
           const description =
             imageUUIDsWithDescriptions.value[index]?.description || "";
-          console.log(
-            `Uploading image: ${image.name} with description: "${description}"`
-          );
           await postFinitequizImage(questionUUID, image, description);
         }
       }
@@ -306,6 +320,11 @@ function resetQuestionModal() {
 }
 
 function addWrongAnswer() {
+  if (wrongAnswer.value.trim().length > 100) {
+    toast.error("The wrong answer exceeds the 100 character limit.");
+    return;
+  }
+
   const newWrongAnswer: IWrongAnswer = {
     uuid: uuidv4(),
     text:
@@ -313,6 +332,7 @@ function addWrongAnswer() {
         ? `no input ${noInputCounter++}`
         : wrongAnswer.value.trim(),
   };
+
   wrongAnswers.value.push(newWrongAnswer);
   wrongAnswer.value = "";
 }
@@ -536,8 +556,15 @@ async function handleWrongAnswerImageChange(index: number, event: Event) {
     @ok="handleQuestionOk"
     @cancel="handleQuestionAbort"
   >
+    <b-form-text class="red-italic-text">
+      Note: Image size must not exceed 1MB.
+    </b-form-text>
     <b-form-group label="Question" label-for="question-input">
       <b-form-input id="question-input" v-model="question" required />
+      <small class="text-muted"> {{ question.length }}/300 characters </small>
+      <small v-if="question.length > 300" class="text-danger">
+        You have exceeded the 300 character limit for the question!
+      </small>
     </b-form-group>
     <b-button
       variant="secondary"
@@ -548,6 +575,12 @@ async function handleWrongAnswerImageChange(index: number, event: Event) {
     </b-button>
     <b-form-group label="Correct Answer" label-for="correct-answer">
       <b-form-input id="correct-answer" v-model="rightAnswer" required />
+      <small class="text-muted">
+        {{ rightAnswer.length }}/100 characters
+      </small>
+      <small v-if="rightAnswer.length > 100" class="text-danger">
+        You have exceeded the 300 character limit for the right answer!
+      </small>
     </b-form-group>
     <b-button
       variant="secondary"
@@ -591,19 +624,28 @@ async function handleWrongAnswerImageChange(index: number, event: Event) {
           <small>{{ wrongAnswerImages[index]?.name }}</small>
         </div>
       </div>
-      <div>
+      <div class="d-flex flex-column gap-2">
         <b-form-input
           @keydown.enter="addWrongAnswer"
           id="wrong-answer"
           v-model="wrongAnswer"
         ></b-form-input>
-        <b-button
-          @click="addWrongAnswer"
-          variant="success"
-          id="button-wrong-answer"
+        <small class="text-muted"
+          >{{ wrongAnswer.length }}/100 characters</small
         >
-          Add Wrong Answer
-        </b-button>
+        <small v-if="wrongAnswer.length > 100" class="text-danger">
+          You have exceeded the 100 character limit for this wrong answer!
+        </small>
+        <div class="d-flex justify-content-start mt-2">
+          <b-button
+            @click="addWrongAnswer"
+            variant="success"
+            size="sm"
+            id="button-wrong-answer"
+          >
+            Add Wrong Answer
+          </b-button>
+        </div>
       </div>
     </b-form-group>
   </b-modal>
@@ -632,9 +674,11 @@ async function handleWrongAnswerImageChange(index: number, event: Event) {
           v-for="(buttonLabel, index) in imageButtons"
           :key="'button-' + index"
           cols="6"
-          class="mb-2"
+          class="mb-3"
         >
           <b-button variant="primary" @click="addImage(index)">
+            variant="primary" @click="addImage(index)" style="font-size: 0.9rem;
+            padding: 5px 10px;"
             {{ buttonLabel }}
           </b-button>
 
@@ -662,3 +706,12 @@ async function handleWrongAnswerImageChange(index: number, event: Event) {
     </b-container>
   </b-modal>
 </template>
+
+<style scoped>
+.red-italic-text {
+  color: red !important;
+  font-size: 12px;
+  margin-top: 10px;
+  font-style: italic;
+}
+</style>
