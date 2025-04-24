@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { defineEmits, defineProps, ref, watch, useAttrs } from "vue";
-import { TaskType, UmlgameConfiguration, UmlTask } from "@/ts/models/umlgame-models";
+import { defineEmits, defineProps, ref, watch, Ref } from "vue";
+import { TaskType, UmlgameConfiguration, UmlTask, GraphData } from "@/ts/models/umlgame-models";
 import { useToast } from "vue-toastification";
 import { useRoute } from "vue-router";
 import { ITask } from "@/ts/models/overworld-models";
@@ -45,6 +45,7 @@ const oldMinigame = ref();
 // TODO: adapt to available modes
 const taskText = ref();
 const selected = null;
+const editorData = ref() as Ref<GraphData>;
 // Here are the parameters you need to adapt when expanding the game
 const selectionOptions = [{value: TaskType.COMPLETION, text:'Completion'}, {value: TaskType.ERRORHUNT, text:'Error hunt'},
   {value: TaskType.CODETOUML, text:'Code -> UML'}, {value: TaskType.UMLTOCODE, text:'UML -> Code'}];
@@ -181,8 +182,8 @@ function loadModal() {
 
 function handleCompletionTaskOk() {
   //TODO id
-  configuration.value.taskList.push(new UmlTask(openedIndex.value, null, taskText.value, TaskType.COMPLETION))
-  toast.info(taskText.value);
+  configuration.value.taskList.push(new UmlTask(openedIndex.value, editorData.value.graphAsJson, editorData.value.graphDescription, TaskType.COMPLETION))
+  toast.info(editorData.value.graphDescription);
   showCompletionTaskModal.value = false;
   console.log(configuration.value.taskList);
   showModal.value = true;
@@ -289,6 +290,7 @@ async function importFile(event: any) {
     modalTitle="Configure the completion task"
     @okModal="handleCompletionTaskOk"
     @cancelModal="handleTaskModalAbort"
+    :graphData="editorData"
   />
 
   <UmlEditorModal

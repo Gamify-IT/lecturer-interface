@@ -76,34 +76,34 @@
 
     <!-- uml end -->
     <b-form-group>
-      <b-form-textarea v-model="diagramDescription" placeholder="Enter UML-diagram description" rows="4"/>
+      <b-form-textarea v-model="text" placeholder="Enter UML-diagram description" rows="4"/>
     </b-form-group>
   </b-modal>
 </template>
 <script setup lang="ts">
   import { useToast } from "vue-toastification";
   import { dia, shapes, util } from '@joint/core';
-  import { onMounted, ref, defineProps, nextTick, defineEmits, watch } from "vue";
+  import { onMounted, ref, defineProps, nextTick, defineEmits, watch, Ref } from "vue";
   import { BFormInput, BFormTextarea } from "bootstrap-vue-3";
   import { CustRect, InterfaceRect, AbstractRect, EnumRect } from "@/ts/models/links";
+  import { GraphData } from "@/ts/models/umlgame-models";
   const props = defineProps<{
     modalTitle: string;
     showModal: boolean;
-    diagramDescription: string;
-    diagramJSON: string;
+    graphData: GraphData;
   }>();
 
   const emit = defineEmits<{
-    (e: "okModal", {json: string, text: string}): void;
+    (e: "okModal", data: GraphData): void;
     (e: "cancelModal"): void;
   }>();
 
   const toast = useToast();
-  const taskText = ref();
+  const graphData = ref();
+  const text = ref();
+  const json = ref();
   const showModal = ref(props.showModal);
   const modalTitle = ref(props.modalTitle);
-  const diagramDescription = ref(props.diagramDescription);
-  const diagramJSON = ref(props.diagramJSON);
 
   const classColors = {
     class: 'white',
@@ -142,26 +142,19 @@
   );
 
   watch(
-    () => props.diagramDescription,
-    (description) => {
-      diagramDescription.value = description;
-    },
-    { deep: true }
-  );
-
-  watch(
-    () => props.diagramJSON,
-    (json) => {
-      diagramJSON.value = json;
+    () => props.graphData,
+    (data) => {
+      graphData.value = data;
     },
     { deep: true }
   );
 
   function hideModalOk() {
-    diagramJSON.value = graph.toJSON();
-
+    json.value = graph.toJSON();
+    graphData.value.graphAsJson = json.value; // error graphData.value is undef
+    graphData.value.graphDescription = text.value;
     console.log("Editor ok");
-    emit("okModal", {json:diagramJSON.value, text:diagramDescription.value});
+    emit("okModal", graphData.value);
   }
 
   function hideModalCancel() {
