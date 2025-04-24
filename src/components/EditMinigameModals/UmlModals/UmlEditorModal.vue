@@ -3,10 +3,11 @@
   :title="props.modalTitle"
   size="xl"
   v-model="showModal"
-  @hidden="hiddenModal"
+  @cancel="hideModalCancel"
+  @ok="hideModalOk"
+  @hidden="resetModal"
   >
     <!-- uml -->
-
     <div class="uml-wrapper" style="position: relative">
       <div class="uml-container">
         <div ref="paletteContainer" class="palette">
@@ -75,7 +76,7 @@
 
     <!-- uml end -->
     <b-form-group>
-      <b-form-textarea v-model="taskText" placeholder="Enter UML-diagram description" rows="4"/>
+      <b-form-textarea v-model="diagramDescription" placeholder="Enter UML-diagram description" rows="4"/>
     </b-form-group>
   </b-modal>
 </template>
@@ -88,16 +89,21 @@
   const props = defineProps<{
     modalTitle: string;
     showModal: boolean;
+    diagramDescription: string;
+    diagramJSON: string;
   }>();
 
   const emit = defineEmits<{
-    (e: "closedModal"): void;
+    (e: "okModal", {json: string, text: string}): void;
+    (e: "cancelModal"): void;
   }>();
 
   const toast = useToast();
   const taskText = ref();
   const showModal = ref(props.showModal);
   const modalTitle = ref(props.modalTitle);
+  const diagramDescription = ref(props.diagramDescription);
+  const diagramJSON = ref(props.diagramJSON);
 
   const classColors = {
     class: 'white',
@@ -135,9 +141,37 @@
     { deep: true }
   );
 
-  function hiddenModal() {
-    console.log("Editor hidden");
-    emit("closedModal");
+  watch(
+    () => props.diagramDescription,
+    (description) => {
+      diagramDescription.value = description;
+    },
+    { deep: true }
+  );
+
+  watch(
+    () => props.diagramJSON,
+    (json) => {
+      diagramJSON.value = json;
+    },
+    { deep: true }
+  );
+
+  function hideModalOk() {
+    diagramJSON.value = graph.toJSON();
+
+    console.log("Editor ok");
+    emit("okModal", {json:diagramJSON.value, text:diagramDescription.value});
+  }
+
+  function hideModalCancel() {
+    // TODO
+    console.log("Editor cancel");
+    emit("cancelModal");
+  }
+
+  function resetModal() {
+    // TODO
   }
 
   // uml

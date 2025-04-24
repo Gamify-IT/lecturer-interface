@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import { defineEmits, defineProps, ref, watch } from "vue";
+import { defineEmits, defineProps, ref, watch, useAttrs } from "vue";
 import { TaskType, UmlgameConfiguration, UmlTask } from "@/ts/models/umlgame-models";
 import { useToast } from "vue-toastification";
 import { useRoute } from "vue-router";
 import { ITask } from "@/ts/models/overworld-models";
 import ImportExportConfiguration from "@/components/ImportExportConfiguration.vue";
-import { BFormSelect, BFormTextarea, BTable } from "bootstrap-vue-3";
+import { BFormSelect, BTable } from "bootstrap-vue-3";
 import { putMinigame } from "@/ts/rest-clients/minigame-rest-client";
 import { putUmlgameConfig } from "@/ts/rest-clients/umlgame-rest-client";
 import UmlEditorModal from "@/components/EditMinigameModals/UmlModals/UmlEditorModal.vue";
@@ -183,6 +183,8 @@ function handleCompletionTaskOk() {
   //TODO id
   configuration.value.taskList.push(new UmlTask(openedIndex.value, null, taskText.value, TaskType.COMPLETION))
   toast.info(taskText.value);
+  showCompletionTaskModal.value = false;
+  console.log(configuration.value.taskList);
   showModal.value = true;
 }
 
@@ -203,7 +205,6 @@ function resetTaskModal() {
   taskText.value = "";
 }
 
-
 function downloadConfiguration() {
   /*const { ["id"]: unused, ...clonedConfiguration } = configuration.value;
   const clonedQuestions = Array<ITowerDefenseQuestion>();
@@ -217,6 +218,7 @@ function downloadConfiguration() {
   });
   saveAs(blob, "towerdefense-configuration.json");*/
 }
+
 async function importFile(event: any) {
   /*const file = event.target.files[0];
   const validator = object({
@@ -285,13 +287,14 @@ async function importFile(event: any) {
   <UmlEditorModal
     :showModal="showCompletionTaskModal"
     modalTitle="Configure the completion task"
-    @closedModal="showCompletionTaskModal = false"
+    @okModal="handleCompletionTaskOk"
+    @cancelModal="handleTaskModalAbort"
   />
 
   <UmlEditorModal
     :showModal="showErrorhuntTaskModal"
     modalTitle="Configure the error-hunt task"
-    @closedModal="showErrorhuntTaskModal = false"
+    @okModal="showErrorhuntTaskModal = false"
   />
 
 </template>
