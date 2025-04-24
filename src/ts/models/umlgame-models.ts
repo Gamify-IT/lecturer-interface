@@ -27,3 +27,13 @@ export class UmlTask {
 export enum TaskType {
   COMPLETION, ERRORHUNT, CODETOUML, UMLTOCODE
 }
+
+export class GraphData {
+  graphAsJson: string;
+  graphDescription: string;
+
+  public constructor(json: string, text: string) {
+    this.graphAsJson = json;
+    this.graphDescription = text;
+  }
+}
