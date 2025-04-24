@@ -150,9 +150,13 @@
   );
 
   function hideModalOk() {
+    console.log(graph.toJSON());
+    console.log(text.value);
+    // until here correct content
     json.value = graph.toJSON();
     graphData.value.graphAsJson = json.value; // error graphData.value is undef
     graphData.value.graphDescription = text.value;
+
     console.log("Editor ok");
     emit("okModal", graphData.value);
   }
