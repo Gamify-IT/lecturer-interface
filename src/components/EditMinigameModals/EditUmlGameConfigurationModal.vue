@@ -180,10 +180,11 @@ function loadModal() {
   }
 }
 
-function handleCompletionTaskOk() {
+function handleCompletionTaskOk(data: GraphData) {
   //TODO id
-  configuration.value.taskList.push(new UmlTask(openedIndex.value, editorData.value.graphAsJson, editorData.value.graphDescription, TaskType.COMPLETION))
-  toast.info(editorData.value.graphDescription);
+  //console.log(editorData) // TODO no data
+  configuration.value.taskList.push(new UmlTask(openedIndex.value, data.graphAsJson, data.graphDescription, TaskType.COMPLETION))
+  //toast.info(.value.graphDescription);
   showCompletionTaskModal.value = false;
   console.log(configuration.value.taskList);
   showModal.value = true;

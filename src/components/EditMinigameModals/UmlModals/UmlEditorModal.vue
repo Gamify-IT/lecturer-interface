@@ -5,7 +5,7 @@
   v-model="showModal"
   @cancel="hideModalCancel"
   @ok="hideModalOk"
-  @hidden="resetModal"
+  @show="resetModal"
   >
     <!-- uml -->
     <div class="uml-wrapper" style="position: relative">
@@ -150,13 +150,9 @@
   );
 
   function hideModalOk() {
-    console.log(graph.toJSON());
-    console.log(text.value);
-    // until here correct content
-    json.value = graph.toJSON();
-    graphData.value.graphAsJson = json.value; // error graphData.value is undef
-    graphData.value.graphDescription = text.value;
-
+    let data = new GraphData(graph.toJSON(), text.value);
+    console.log(data);
+    graphData.value = data;
     console.log("Editor ok");
     emit("okModal", graphData.value);
   }
@@ -169,6 +165,9 @@
 
   function resetModal() {
     // TODO
+    console.log("Reset editor")
+    text.value = graphData.value.graphDescription;
+    json.value = graphData.value.graphAsJson;
   }
 
   // uml
