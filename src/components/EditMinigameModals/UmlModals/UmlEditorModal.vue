@@ -99,7 +99,7 @@
   }>();
 
   const toast = useToast();
-  const graphData = ref();
+  const graphData = ref(new GraphData("", ""));
   const text = ref();
   const json = ref();
   const showModal = ref(props.showModal);
@@ -165,9 +165,10 @@
 
   function resetModal() {
     // TODO
-    console.log("Reset editor")
-    text.value = graphData.value.graphDescription;
-    json.value = graphData.value.graphAsJson;
+    console.log("Reset editor");
+    let data = graphData.value;
+    text.value = data.graphDescription;
+    json.value = data.graphAsJson;
   }
 
   // uml

@@ -1,13 +1,13 @@
 <script setup lang="ts">
-import { defineEmits, defineProps, ref, watch, Ref } from "vue";
-import { TaskType, UmlgameConfiguration, UmlTask, GraphData } from "@/ts/models/umlgame-models";
+import { defineEmits, defineProps, ref, Ref, watch } from "vue";
+import { GraphData, TaskType, UmlgameConfiguration, UmlTask } from "@/ts/models/umlgame-models";
 import { useToast } from "vue-toastification";
 import { useRoute } from "vue-router";
 import { ITask } from "@/ts/models/overworld-models";
 import ImportExportConfiguration from "@/components/ImportExportConfiguration.vue";
 import { BFormSelect, BTable } from "bootstrap-vue-3";
 import { putMinigame } from "@/ts/rest-clients/minigame-rest-client";
-import { putUmlgameConfig } from "@/ts/rest-clients/umlgame-rest-client";
+import { getUmlgameConfig, postUmlgameConfig, putUmlgameConfig } from "@/ts/rest-clients/umlgame-rest-client";
 import UmlEditorModal from "@/components/EditMinigameModals/UmlModals/UmlEditorModal.vue";
 
 const props = defineProps<{
@@ -38,18 +38,25 @@ const toast = useToast();
 const minigame = ref(props.minigame);
 const form = ref();
 const showModal = ref(props.showModal);
+
 let configuration = ref(new UmlgameConfiguration([]));
 const showCompletionTaskModal = ref(false);
 const showErrorhuntTaskModal = ref(false);
-const oldMinigame = ref();
+const isEditorOpen = ref(false);
+
+const taskList = ref([]) as Ref<UmlTask[]>;
+initializeTasks();
+
 // TODO: adapt to available modes
 const taskText = ref();
 const selected = null;
 const editorData = ref() as Ref<GraphData>;
+const editObject = ref();
+
 // Here are the parameters you need to adapt when expanding the game
 const selectionOptions = [{value: TaskType.COMPLETION, text:'Completion'}, {value: TaskType.ERRORHUNT, text:'Error hunt'},
   {value: TaskType.CODETOUML, text:'Code -> UML'}, {value: TaskType.UMLTOCODE, text:'UML -> Code'}];
-const numberOfQuestions = 42;
+const numberOfQuestions = 10;
 
 watch(
   () => props.minigame,
@@ -86,50 +93,81 @@ const emit = defineEmits<{
   (e: "closedModal"): void;
 }>();
 
+// FERTIG
 function checkFormValidity(): boolean {
   return form.value.checkValidity();
 }
 
-function resetModal() {
-  //TODO
+// FERTIG
+function loadConfig() {
+  console.log("loadConfig()")
   if (minigame.value.configurationId != undefined) {
-    /*getTowerDefenseConfig(minigame.value.configurationId)
+    getUmlgameConfig(minigame.value.configurationId)
       .then((response) => {
+        taskList.value = response.data.taskList;
         configuration.value = response.data;
       })
       .catch((error) => {
         console.log(error);
         if (error.response.status == 404) {
-          minigame.value.configurationId = undefined;
-          configuration.value.questions = [];
+          resetConfig();
         }
-      });*/
-    oldMinigame.value = minigame.value;
+      });
   } else {
-    oldMinigame.value = minigame.value;
+    resetConfig()
   }
   console.log("Reset Modal");
 }
-const openedIndex = ref();
-function onEditClick(type: TaskType, index: number) {
-  // TODO: editObject.value = edit;
-  openedIndex.value = index;
-  switch (type) {
-    case TaskType.COMPLETION: showCompletionTaskModal.value = true; break;
-    case TaskType.ERRORHUNT: showErrorhuntTaskModal.value = true; break;
+
+// FERTIG
+function resetConfig() {
+  console.log("resetConfig()")
+  configuration.value.id = ""; // undefined
+  configuration.value.taskList = [];
+  initializeTasks();
+}
+
+function initializeTasks() {
+  console.log("initializeTasks()")
+  taskList.value = [];
+  for(let index = 0; index < numberOfQuestions; index++) {
+    taskList.value.push(new UmlTask((index + 1).toString(), "", "", TaskType.COMPLETION))
   }
 }
 
+const openedIndex = ref();
+function onEditClick(type: TaskType, edit: any) {
+  console.log("onEditClick")
+  editObject.value = edit;
+  editorData.value = new GraphData(editObject.value.graphAsJson, editObject.value.graphDescription);
+  openedIndex.value = edit.id;
+  switch (type) {
+    case TaskType.COMPLETION: {
+      showCompletionTaskModal.value = true;
+      break;
+    }
+    case TaskType.ERRORHUNT: {
+      showErrorhuntTaskModal.value = true;
+      break;
+    }
+  }
+}
+
+// FERTIG
 function handleOk() {
-  //TODO
-  console.log("putting")
-  putUmlgameConfig(configuration.value)
+  console.log("@ok")
+  const updateConfigurationRequest = configuration.value.id
+    ? putUmlgameConfig(
+      configuration.value.id,
+      new UmlgameConfiguration(taskList.value)
+    )
+    : postUmlgameConfig(new UmlgameConfiguration(taskList.value));
+  updateConfigurationRequest
     .then((response) => {
       minigame.value.configurationId = response.data.id;
       console.log("Submit Modal");
       console.log("id:" + response.data.id);
       console.log("minigameId" + minigame.value.configurationId);
-      oldMinigame.value = minigame.value;
       handleSubmit();
     })
     .then(() => {
@@ -150,63 +188,63 @@ function handleOk() {
       } else {
         toast.error("There was an error saving the configuration!");
       }
-    });
+    })
+    .finally(() => resetConfig());
 }
 
+// FERTIG
 function handleSubmit() {
   // Exit when the form isn't valid
+  console.log("handleSubmit")
   if (!checkFormValidity()) {
     return;
   }
   emit("updateMinigameConfiguration", minigame.value);
 }
 
+// FERTIG
 function hiddenModal() {
-  if (!showCompletionTaskModal.value) {
-    oldMinigame.value = null;
-    console.log("Test");
-  }
   console.log("Modal hidden");
   emit("closedModal");
 }
 
+// FERTIG
 function loadModal() {
-  if (oldMinigame.value != null) {
-    if (oldMinigame.value.id != minigame.value.id) {
-      resetModal();
-    }
-  } else {
-    resetModal();
+  if (!isEditorOpen.value) {
+    loadConfig();
   }
+  isEditorOpen.value = false;
+  console.log("Modal shown");
 }
 
+// TODO analog zu handlePairOk from memory
 function handleCompletionTaskOk(data: GraphData) {
-  //TODO id
-  //console.log(editorData) // TODO no data
   configuration.value.taskList.push(new UmlTask(openedIndex.value, data.graphAsJson, data.graphDescription, TaskType.COMPLETION))
-  //toast.info(.value.graphDescription);
   showCompletionTaskModal.value = false;
   console.log(configuration.value.taskList);
   showModal.value = true;
 }
 
-function handleErrorhuntTaskOk() {
-  //TODO
-  configuration.value.taskList.push(new UmlTask(openedIndex.value, null, taskText.value, TaskType.COMPLETION))
-  toast.warning(taskText.value);
+// FERTIG
+function handleEditorModalAbort() {
   showModal.value = true;
 }
 
-function handleTaskModalAbort() {
-  showModal.value = true;
+// FERTIG
+function resetEditorModal() {
+  console.log("Resetting editor modal (@hidden)");
+  editObject.value = null;
 }
 
-function resetTaskModal() {
-  // TODO
-  //configuration.value.taskList = [];
-  taskText.value = "";
+// FERTIG
+function setupEditorModal() {
+  console.log("setting up editor");
+  showModal.value = false;
+  isEditorOpen.value = true;
+  editorData.value = new GraphData(editObject.value.graphAsJson, editObject.value.graphDescription);
 }
 
+// DNF
 function downloadConfiguration() {
   /*const { ["id"]: unused, ...clonedConfiguration } = configuration.value;
   const clonedQuestions = Array<ITowerDefenseQuestion>();
@@ -221,6 +259,7 @@ function downloadConfiguration() {
   saveAs(blob, "towerdefense-configuration.json");*/
 }
 
+// DNF
 async function importFile(event: any) {
   /*const file = event.target.files[0];
   const validator = object({
@@ -244,6 +283,10 @@ async function importFile(event: any) {
     console.log("Import was not successful");
   }*/
 }
+
+function testSend() {
+  postUmlgameConfig(new UmlgameConfiguration([new UmlTask("1", "", "test", "COMPLETION")]));
+}
 </script>
 <template>
   <b-modal
@@ -252,19 +295,19 @@ async function importFile(event: any) {
     v-model="showModal"
     @hidden="hiddenModal"
     @ok="handleOk"
-    @cancel="resetModal"
     @show="loadModal"
-    @abort="resetModal"
+    @cancel="resetConfig"
   >
     <form
       ref="form"
       @submit.stop.prevent="handleSubmit"
       v-if="minigame !== undefined"
     >
+      <b-button @click="testSend"> TEST </b-button>
       <b-form-group>
-        <b-table :fields="fields"  :items="['1', '2', '3', '4', '5', '6', '7', '8']">
+        <b-table :fields="fields"  :items="taskList">
           <template #cell(task)="data" >
-            Task {{ data.item }}:
+            Task {{ data.item.id }}:
           </template>
 
           <template #cell(selection)="">
@@ -290,16 +333,11 @@ async function importFile(event: any) {
     :showModal="showCompletionTaskModal"
     modalTitle="Configure the completion task"
     @okModal="handleCompletionTaskOk"
-    @cancelModal="handleTaskModalAbort"
+    @cancelModal="handleEditorModalAbort"
     :graphData="editorData"
+    @hidden="resetEditorModal"
+    @show="setupEditorModal"
   />
-
-  <UmlEditorModal
-    :showModal="showErrorhuntTaskModal"
-    modalTitle="Configure the error-hunt task"
-    @okModal="showErrorhuntTaskModal = false"
-  />
-
 </template>
 <style scoped>
 .questionTable {
