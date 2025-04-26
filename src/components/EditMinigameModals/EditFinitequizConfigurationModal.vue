@@ -617,7 +617,7 @@ async function handleWrongAnswerImageChange(index: number, event: Event) {
             :maxlength="300"
           />
           <small class="text-muted d-block mt-1">
-            {{ wrongAnswer?.length || 0 }}/300 characters
+            {{ wrongAnswer?.length || 0 }}/300 characters remaining
           </small>
           <b-button
             class="mt-2"
