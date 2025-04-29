@@ -2,10 +2,10 @@ import axios, { AxiosResponse } from "axios";
 
 import config from "@/config";
 
-import { RegexGameConfiguration } from "@/ts/models/regexgame-models";
+import { IRegexGameConfiguration } from "@/ts/models/regexgame-models";
 
 export async function postRegexGameConfig(
-  regexgameConfig: RegexGameConfiguration
+  regexgameConfig: IRegexGameConfiguration
 ): Promise<AxiosResponse> {
   return axios.post(
     `${config.regexgameApiUrl}/configurations`,

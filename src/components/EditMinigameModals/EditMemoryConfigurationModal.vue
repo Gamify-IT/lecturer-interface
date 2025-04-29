@@ -1,6 +1,14 @@
 <script setup lang="ts">
 import { saveAs } from "file-saver";
-import { arrayOf, object, oneOf, string } from "checkeasy";
+import {
+  arrayOf,
+  object,
+  oneOf,
+  string,
+  optional,
+  int,
+  nullable,
+} from "checkeasy";
 import { importConfiguration } from "@/ts/import-configuration";
 import { defineEmits, defineProps, Ref, ref, watch } from "vue";
 import {
@@ -346,6 +354,7 @@ async function importFile(event: any) {
         }),
       })
     ),
+    volumeLevel: optional(nullable(int())),
   });
   try {
     const result: MemoryConfiguration = await importConfiguration(

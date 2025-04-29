@@ -474,7 +474,7 @@ async function handleWrongAnswerImageChange(index: number, event: Event) {
   >
     <template v-slot:title>
       Edit Finitequiz configuration
-      <b-col style="font-size: 12px">
+      <b-col style="font-size: 12px" class="questionTable">
         Compatible versions: {{ compatibleVersions }}</b-col
       >
     </template>
@@ -494,6 +494,18 @@ async function handleWrongAnswerImageChange(index: number, event: Event) {
       </b-form-group>
       <b-form-group>
         <b-table :fields="fields" :items="configuration.questions">
+          <template #cell(text)="data">
+            <div class="questionTable">
+              <span>{{ data.value }}</span>
+            </div>
+          </template>
+
+          <template #cell(rightAnswer)="data">
+            <div class="questionTable">
+              <span>{{ data.value }}</span>
+            </div>
+          </template>
+
           <template #cell(wrongAnswers)="data">
             <div v-for="(answer, index) in data.value" :key="answer.uuid">
               <span>{{ answer.text }}</span>
@@ -509,6 +521,7 @@ async function handleWrongAnswerImageChange(index: number, event: Event) {
               </div>
             </div>
           </template>
+
           <template #cell(remove)="row">
             <b-button
               size="sm"
@@ -686,3 +699,8 @@ async function handleWrongAnswerImageChange(index: number, event: Event) {
     </b-container>
   </b-modal>
 </template>
+<style scoped>
+.questionTable {
+  word-wrap: anywhere;
+}
+</style>

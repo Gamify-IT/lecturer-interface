@@ -1,8 +1,10 @@
 <script setup lang="ts">
 // compatible crosswordpuzzle versions: v0.0.6
+import { BFormTextarea } from "bootstrap-vue-3";
+
 const compatibleVersions = ["v0.0.6"];
 import { saveAs } from "file-saver";
-import { arrayOf, object, optional, string } from "checkeasy";
+import { arrayOf, object, optional, string, int, nullable } from "checkeasy";
 import { importConfiguration } from "@/ts/import-configuration";
 import { defineEmits, defineProps, ref, watch } from "vue";
 import { ITask } from "@/ts/models/overworld-models";
@@ -198,6 +200,7 @@ async function importFile(event: any) {
         answer: string(),
       })
     ),
+    volumeLevel: optional(nullable(int())),
   });
   try {
     const result: CrosswordpuzzleConfiguration = await importConfiguration(
@@ -229,7 +232,11 @@ async function importFile(event: any) {
       >
     </template>
     <b-form-group>
-      <b-table :fields="fields" :items="configuration.questions">
+      <b-table
+        :fields="fields"
+        :items="configuration.questions"
+        class="questionTable"
+      >
         <template #cell(remove)="data">
           <b-button
             size="sm"
@@ -247,24 +254,26 @@ async function importFile(event: any) {
     <h6>Add Question</h6>
     <b-form-group>
       <label for="current-question">Question:</label>
-      <b-form-input
+      <b-form-textarea
         id="current-question"
         label="Question"
         v-model="currentEditingQuestion.questionText"
         :state="!containsQuestion(currentEditingQuestion.questionText)"
         aria-describedby="current-question-feedback"
         placeholder="Enter a question"
-      ></b-form-input>
+      />
       <b-form-invalid-feedback id="current-question-feedback">
         The Question already exists.
       </b-form-invalid-feedback>
       <label for="current-question-answer">Answer:</label>
-      <b-form-input
+      <b-form-textarea
         id="current-question-answer"
         v-model="currentEditingQuestion.answer"
         placeholder="Enter the answer"
-      ></b-form-input>
-      <b-button @click="addQuestion" variant="success">Add question</b-button>
+      />
+      <b-button @click="addQuestion" variant="success" id="add-question-button"
+        >Add question</b-button
+      >
     </b-form-group>
     <ImportExportConfiguration
       @export="downloadConfiguration"
@@ -272,3 +281,8 @@ async function importFile(event: any) {
     />
   </b-modal>
 </template>
+<style scoped>
+.questionTable {
+  word-wrap: anywhere;
+}
+</style>

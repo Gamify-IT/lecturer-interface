@@ -2,7 +2,7 @@
 // compatible towercrush versions: v0.0.1
 const compatibleVersions = ["v0.0.1"];
 import { saveAs } from "file-saver";
-import { arrayOf, object, string } from "checkeasy";
+import { arrayOf, object, string, optional, int, nullable } from "checkeasy";
 import { importConfiguration } from "@/ts/import-configuration";
 import { defineEmits, defineProps, ref, watch } from "vue";
 import { ITask } from "@/ts/models/overworld-models";
@@ -250,6 +250,7 @@ async function importFile(event: any) {
         wrongAnswers: arrayOf(string()),
       })
     ),
+    volumeLevel: optional(nullable(int())),
   });
   try {
     const result: TowercrushConfiguration = await importConfiguration(
@@ -276,7 +277,7 @@ async function importFile(event: any) {
   >
     <template v-slot:title>
       Edit Towercrush configuration
-      <b-col style="font-size: 12px">
+      <b-col style="font-size: 12px" class="questionTable">
         Compatible versions: {{ compatibleVersions }}</b-col
       >
     </template>
@@ -295,12 +296,33 @@ async function importFile(event: any) {
         </b-button>
       </b-form-group>
       <b-form-group>
-        <b-table :fields="fields" :items="configuration.questions">
+        <b-table
+          :fields="fields"
+          :items="configuration.questions"
+          class="questionTable"
+        >
+          <template #cell(text)="data">
+            <div class="questionTable">
+              <span>{{ data.value }}</span>
+            </div>
+          </template>
+
+          <template #cell(rightAnswer)="data">
+            <div class="questionTable">
+              <span>{{ data.value }}</span>
+            </div>
+          </template>
+
           <template #cell(wrongAnswers)="data">
-            <div v-for="answer in data.value" :key="answer">
+            <div
+              v-for="answer in data.value"
+              :key="answer"
+              class="questionTable"
+            >
               <span>{{ answer }}</span>
             </div>
           </template>
+
           <template #cell(remove)="row">
             <b-button
               size="sm"
@@ -327,22 +349,27 @@ async function importFile(event: any) {
     @ok="handleQuestionOk"
     @cancel="handleQuestionAbort"
   >
-    <b-form-group label="Question" label-for="question-input">
-      <b-form-input id="question-input" v-model="question" required />
+    <b-form-group
+      label="Question"
+      label-for="question-input"
+      class="questionTable"
+    >
+      <b-form-textarea id="question-input" v-model="question" required />
     </b-form-group>
     <b-form-group label="Correct answer" label-for="correct-answer">
-      <b-form-input id="correct-answer" v-model="rightAnswer" required />
+      <b-form-textarea id="correct-answer" v-model="rightAnswer" required />
     </b-form-group>
     <b-form-group label="Wrong answers">
-      <div v-for="answer in wrongAnswers" :key="answer">
+      <div v-for="answer in wrongAnswers" :key="answer" class="questionTable">
         {{ answer }}
       </div>
       <div>
-        <b-form-input
+        <b-form-textarea
           @keydown.enter="addWrongAnswer"
           id="wrong-answer"
           v-model="wrongAnswer"
-        ></b-form-input>
+        ></b-form-textarea>
+        <br />
         <b-button
           @click="addWrongAnswer"
           variant="success"
@@ -353,3 +380,16 @@ async function importFile(event: any) {
     </b-form-group>
   </b-modal>
 </template>
+<style>
+#button-wrong-answer {
+  margin-top: 5px;
+}
+#add-question-button {
+  margin-top: 5px;
+}
+</style>
+<style scoped>
+.questionTable {
+  word-wrap: anywhere;
+}
+</style>
