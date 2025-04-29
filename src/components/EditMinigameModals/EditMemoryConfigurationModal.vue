@@ -10,12 +10,13 @@ import {
   nullable,
 } from "checkeasy";
 import { importConfiguration } from "@/ts/import-configuration";
-import { Ref, defineEmits, defineProps, ref, watch } from "vue";
+import { defineEmits, defineProps, Ref, ref, watch } from "vue";
 import {
   getMemoryConfig,
   postMemoryConfig,
   putMemoryConfig,
 } from "@/ts/rest-clients/memory-rest-client";
+import { postMemoryImage } from "@/ts/rest-clients/image-rest-client";
 import { useToast } from "vue-toastification";
 import { putMinigame } from "@/ts/rest-clients/minigame-rest-client";
 import { useRoute } from "vue-router";
@@ -28,6 +29,7 @@ import {
   MemoryCardType,
   MemoryConfiguration,
 } from "@/ts/models/memory-models";
+import { v4 as uuidv4 } from "uuid";
 
 const props = defineProps<{
   minigame: ITask;
@@ -72,6 +74,8 @@ const card1Content = ref();
 const card2Type = ref();
 const card2Content = ref();
 const editObject = ref();
+const card1Image = ref();
+const card2Image = ref();
 
 const memoryCardTypeValues = Object.values(MemoryCardType);
 
@@ -216,11 +220,71 @@ function loadModal() {
 }
 
 function handlePairOk() {
-  console.log("Saving pair changes (@ok)");
-  editObject.value.card1.content = card1Content.value;
-  editObject.value.card1.type = card1Type.value;
-  editObject.value.card2.content = card2Content.value;
-  editObject.value.card2.type = card2Type.value;
+  if (
+    card1Type.value !== MemoryCardType.IMAGE &&
+    card2Type.value !== MemoryCardType.IMAGE
+  ) {
+    console.log("Saving pair changes (@ok)");
+    editObject.value.card1.content = card1Content.value;
+    editObject.value.card1.type = card1Type.value;
+    editObject.value.card2.content = card2Content.value;
+    editObject.value.card2.type = card2Type.value;
+  } else if (
+    card1Type.value == MemoryCardType.IMAGE &&
+    card2Type.value !== MemoryCardType.IMAGE
+  ) {
+    let image = card1Image.value;
+    let uuid: string = uuidv4();
+    postMemoryImage(uuid, image).catch((error) => {
+      resetPairModal();
+      toast.error("There was an error saving the image of card 2!");
+    });
+    editObject.value.card1.content = uuid;
+    editObject.value.card1.type = card1Type.value;
+    editObject.value.card2.content = card2Content.value;
+    editObject.value.card2.type = card2Type.value;
+  } else if (
+    card1Type.value !== MemoryCardType.IMAGE &&
+    card2Type.value == MemoryCardType.IMAGE
+  ) {
+    let image = card2Image.value;
+    let uuid: string = uuidv4();
+    postMemoryImage(uuid, image).catch((error) => {
+      resetPairModal();
+      toast.error("There was an error saving the image of card 2!");
+    });
+    editObject.value.card1.content = card1Content.value;
+    editObject.value.card1.type = card1Type.value;
+    editObject.value.card2.content = uuid;
+    editObject.value.card2.type = card2Type.value;
+  } else if (
+    card1Type.value == MemoryCardType.IMAGE &&
+    card2Type.value == MemoryCardType.IMAGE
+  ) {
+    let image1 = card1Image.value;
+    let uuid1: string = uuidv4();
+    postMemoryImage(uuid1, image1)
+      .then(() => {
+        editObject.value.card1.content = uuid1;
+        editObject.value.card1.type = card1Type.value;
+      })
+      .catch((error) => {
+        resetPairModal();
+        toast.error("There was an error saving the image of card 1!");
+      });
+
+    let image2 = card2Image.value;
+    let uuid2: string = uuidv4();
+    postMemoryImage(uuid2, image2)
+      .then(() => {
+        editObject.value.card2.content = uuid2;
+        editObject.value.card2.type = card2Type.value;
+      })
+      .catch((error) => {
+        resetPairModal();
+        toast.error("There was an error saving the image of card 2!");
+      });
+  }
   console.log("New pairs: " + cardPairs.value);
   showModal.value = true;
 }
@@ -232,6 +296,8 @@ function handlePairAbort() {
 function resetPairModal() {
   console.log("Resetting pair modal (@hidden)");
   editObject.value = null;
+  card1Image.value = null;
+  card2Image.value = null;
 }
 
 function setupPairModal() {
@@ -240,8 +306,10 @@ function setupPairModal() {
   inEditModal.value = true;
   card1Content.value = editObject.value.card1.content;
   card1Type.value = editObject.value.card1.type;
+  card1Image.value = null;
   card2Content.value = editObject.value.card2.content;
   card2Type.value = editObject.value.card2.type;
+  card2Image.value = null;
 }
 
 function onEditClick(edit: any) {
@@ -298,6 +366,19 @@ async function importFile(event: any) {
     cardPairs.value = result.pairs;
   } catch (e) {
     console.log("Import was not successful.");
+  }
+}
+
+function onFileChange(event: Event, index: number) {
+  const input = event.target as HTMLInputElement;
+  if (input.files && input.files[0]) {
+    if (index == 1) {
+      card1Image.value = input.files[0];
+    } else {
+      card2Image.value = input.files[0];
+    }
+  } else {
+    console.log("no file");
   }
 }
 </script>
@@ -386,10 +467,20 @@ async function importFile(event: any) {
         rows="5"
         required
       />
-      <div v-if="card1Type === 'Image'">
-        <label class="form-label" for="customFile">Input your image</label>
-        <input type="file" class="form-control" id="customFile" />
+      <div v-if="card1Type === MemoryCardType.IMAGE">
+        <br />
+        <input
+          type="file"
+          class="form-control"
+          name="file1"
+          accept="image/*"
+          @change="onFileChange($event, 1)"
+        />
+        <span style="color: #e70a0a; font-size: smaller">
+          Max file size: 1 MB
+        </span>
       </div>
+      <br />
     </b-form-group>
 
     <b-form-group label="Card 2" label-for="card-2">
@@ -410,9 +501,18 @@ async function importFile(event: any) {
         rows="5"
         required
       />
-      <div v-if="card2Type === 'Image'">
-        <label class="form-label" for="customFile">Input your image</label>
-        <input type="file" class="form-control" id="customFile" />
+      <div v-if="card2Type === MemoryCardType.IMAGE">
+        <br />
+        <input
+          type="file"
+          class="form-control"
+          name="file2"
+          accept="image/*"
+          @change="onFileChange($event, 2)"
+        />
+        <span style="color: #e70a0a; font-size: smaller">
+          Max file size: 1 MB
+        </span>
       </div>
     </b-form-group>
   </b-modal>
