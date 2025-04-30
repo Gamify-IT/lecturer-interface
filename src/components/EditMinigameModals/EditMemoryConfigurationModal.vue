@@ -159,7 +159,7 @@ function handleOk() {
   // based if configuration id is present or not send post or put request
   const updateConfigurationRequest = configuration.value.id
     ? putMemoryConfig(
-      configuration.value.id,
+        configuration.value.id,
         new MemoryConfiguration(cardPairs.value)
       )
     : postMemoryConfig(new MemoryConfiguration(cardPairs.value));

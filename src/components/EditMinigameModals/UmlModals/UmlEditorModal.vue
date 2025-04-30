@@ -1,47 +1,82 @@
 <template>
   <b-modal
-  :title="props.modalTitle"
-  size="xl"
-  v-model="showModal"
-  @cancel="hideModalCancel"
-  @ok="hideModalOk"
-  @show="resetModal"
+    :title="props.modalTitle"
+    size="xl"
+    v-model="showModal"
+    @cancel="hideModalCancel"
+    @ok="hideModalOk"
+    @show="resetModal"
   >
     <!-- uml -->
     <div class="uml-wrapper" style="position: relative">
       <div class="uml-container">
         <div ref="paletteContainer" class="palette">
-
           <div class="palette-group">
             <div class="palette-title">Objects</div>
-            <div class="palette-item" data-type="class" draggable="true" :style="{ backgroundColor: classColors.class }">
+            <div
+              class="palette-item"
+              data-type="class"
+              draggable="true"
+              :style="{ backgroundColor: classColors.class }"
+            >
               Class
             </div>
-            <div class="palette-item" data-type="interface" draggable="true"
-                 :style="{ backgroundColor: classColors.interface }">
+            <div
+              class="palette-item"
+              data-type="interface"
+              draggable="true"
+              :style="{ backgroundColor: classColors.interface }"
+            >
               Interface
             </div>
-            <div class="palette-item" data-type="abstract" draggable="true"
-                 :style="{ backgroundColor: classColors.abstract }">
+            <div
+              class="palette-item"
+              data-type="abstract"
+              draggable="true"
+              :style="{ backgroundColor: classColors.abstract }"
+            >
               Abstract
             </div>
-            <div class="palette-item" data-type="enum" draggable="true" :style="{ backgroundColor: classColors.enum }">
+            <div
+              class="palette-item"
+              data-type="enum"
+              draggable="true"
+              :style="{ backgroundColor: classColors.enum }"
+            >
               Enum
             </div>
 
-            <div class="palette-item" data-type="circle" draggable="true"
-                 :style="{ backgroundColor: classColors.circle }">
+            <div
+              class="palette-item"
+              data-type="circle"
+              draggable="true"
+              :style="{ backgroundColor: classColors.circle }"
+            >
               Circle
             </div>
           </div>
 
           <div class="palette-group">
             <div class="palette-title">Relations</div>
-            <div class="palette-item" data-type="dependency" draggable="true">⇢ </div>
-            <div class="palette-item" data-type="association" draggable="true">→</div>
-            <div class="palette-item" data-type="aggregation" draggable="true">◇</div>
-            <div class="palette-item" data-type="composition" draggable="true">◆</div>
-            <div class="palette-item" data-type="generalization" draggable="true">△</div>
+            <div class="palette-item" data-type="dependency" draggable="true">
+              ⇢
+            </div>
+            <div class="palette-item" data-type="association" draggable="true">
+              →
+            </div>
+            <div class="palette-item" data-type="aggregation" draggable="true">
+              ◇
+            </div>
+            <div class="palette-item" data-type="composition" draggable="true">
+              ◆
+            </div>
+            <div
+              class="palette-item"
+              data-type="generalization"
+              draggable="true"
+            >
+              △
+            </div>
           </div>
         </div>
         <div ref="paperContainer" class="paper-container"></div>
@@ -76,441 +111,516 @@
 
     <!-- uml end -->
     <b-form-group>
-      <b-form-textarea v-model="text" placeholder="Enter UML-diagram description" rows="4"/>
+      <b-form-textarea
+        v-model="text"
+        placeholder="Enter UML-diagram description"
+        rows="4"
+      />
     </b-form-group>
   </b-modal>
 </template>
 <script setup lang="ts">
-  import { useToast } from "vue-toastification";
-  import { dia, shapes, util } from '@joint/core';
-  import { onMounted, ref, defineProps, nextTick, defineEmits, watch, Ref } from "vue";
-  import { BFormInput, BFormTextarea } from "bootstrap-vue-3";
-  import { CustRect, InterfaceRect, AbstractRect, EnumRect } from "@/ts/models/links";
-  import { GraphData } from "@/ts/models/umlgame-models";
-  const props = defineProps<{
-    modalTitle: string;
-    showModal: boolean;
-    graphData: GraphData;
-  }>();
+import { useToast } from "vue-toastification";
+import { dia, shapes, util } from "@joint/core";
+import {
+  onMounted,
+  ref,
+  defineProps,
+  nextTick,
+  defineEmits,
+  watch,
+  Ref,
+} from "vue";
+import { BFormInput, BFormTextarea } from "bootstrap-vue-3";
+import {
+  CustRect,
+  InterfaceRect,
+  AbstractRect,
+  EnumRect,
+} from "@/ts/models/links";
+import { GraphData } from "@/ts/models/umlgame-models";
+const props = defineProps<{
+  modalTitle: string;
+  showModal: boolean;
+  graphData: GraphData;
+}>();
 
-  const emit = defineEmits<{
-    (e: "okModal", data: GraphData): void;
-    (e: "cancelModal"): void;
-  }>();
+const emit = defineEmits<{
+  (e: "okModal", data: GraphData): void;
+  (e: "cancelModal"): void;
+}>();
 
-  const toast = useToast();
-  const graphData = ref(new GraphData("", ""));
-  const text = ref();
-  const json = ref();
-  const showModal = ref(props.showModal);
-  const modalTitle = ref(props.modalTitle);
+const toast = useToast();
+const graphData = ref(new GraphData("", ""));
+const text = ref();
+const json = ref();
+const showModal = ref(props.showModal);
+const modalTitle = ref(props.modalTitle);
 
-  const classColors = {
-    class: 'white',
-    interface: '#cce5ff',
-    abstract: '#ffe6cc',
-    circle: 'lightgray',
-    enum: '#d3f3d3',
-  };
-  const namespace = shapes;
-  const graph = new dia.Graph({}, { cellNamespace: namespace });
-  const paperContainer = ref<HTMLElement | null>(null);
-  const paletteContainer = ref<HTMLElement | null>(null);
-  const selectedElement = ref<dia.Element | null>(null);
-  const selectedLink = ref<dia.Link | null>(null);
-  const labelText = ref('');
-  const stuff = ref('');
-  const stuff2 = ref('');
-  const deleteButtonPos = ref<{ x: number; y: number } | null>(null);
-  let currentLinkType = ref<'dependency' | 'association' | 'aggregation' | 'composition' | 'generalization' | null>(null);
-  type LinkType = "dependency" | "association" | "aggregation" | "composition" | "generalization";
+const classColors = {
+  class: "white",
+  interface: "#cce5ff",
+  abstract: "#ffe6cc",
+  circle: "lightgray",
+  enum: "#d3f3d3",
+};
+const namespace = shapes;
+const graph = new dia.Graph({}, { cellNamespace: namespace });
+const paperContainer = ref<HTMLElement | null>(null);
+const paletteContainer = ref<HTMLElement | null>(null);
+const selectedElement = ref<dia.Element | null>(null);
+const selectedLink = ref<dia.Link | null>(null);
+const labelText = ref("");
+const stuff = ref("");
+const stuff2 = ref("");
+const deleteButtonPos = ref<{ x: number; y: number } | null>(null);
+let currentLinkType = ref<
+  | "dependency"
+  | "association"
+  | "aggregation"
+  | "composition"
+  | "generalization"
+  | null
+>(null);
+type LinkType =
+  | "dependency"
+  | "association"
+  | "aggregation"
+  | "composition"
+  | "generalization";
 
-  watch(
-    () => props.showModal,
-    (newBoolean) => {
-      showModal.value = newBoolean;
-    },
-    { deep: true }
-  );
+watch(
+  () => props.showModal,
+  (newBoolean) => {
+    showModal.value = newBoolean;
+  },
+  { deep: true }
+);
 
-  watch(
-    () => props.modalTitle,
-    (newModalTitle) => {
-      modalTitle.value = newModalTitle;
-    },
-    { deep: true }
-  );
+watch(
+  () => props.modalTitle,
+  (newModalTitle) => {
+    modalTitle.value = newModalTitle;
+  },
+  { deep: true }
+);
 
-  watch(
-    () => props.graphData,
-    (data) => {
-      graphData.value = data;
-    },
-    { deep: true }
-  );
-
-  function hideModalOk() {
-    let data = new GraphData(graph.toJSON(), text.value);
-    console.log(data);
+watch(
+  () => props.graphData,
+  (data) => {
     graphData.value = data;
-    console.log("Editor ok");
-    emit("okModal", graphData.value);
+  },
+  { deep: true }
+);
+
+function hideModalOk() {
+  let data = new GraphData(graph.toJSON(), text.value);
+  console.log(data);
+  graphData.value = data;
+  console.log("Editor ok");
+  emit("okModal", graphData.value);
+}
+
+function hideModalCancel() {
+  // TODO
+  console.log("Editor cancel");
+  emit("cancelModal");
+}
+
+function resetModal() {
+  // TODO
+  console.log("Reset editor");
+  let data = graphData.value;
+  text.value = data.graphDescription;
+  json.value = data.graphAsJson;
+}
+
+// uml
+function resetElementStyle(element: dia.Element) {
+  const elementType = element.get("type");
+  let originalFill: string;
+  switch (elementType) {
+    case "InterfaceRect":
+      originalFill = "#cce5ff";
+      break;
+    case "AbstractRect":
+      originalFill = "#ffe6cc";
+      break;
+    case "EnumRect":
+      originalFill = "#d3f3d3";
+      break;
+    default:
+      originalFill = "white";
+      break;
   }
 
-  function hideModalCancel() {
-    // TODO
-    console.log("Editor cancel");
-    emit("cancelModal");
-  }
+  element.attr({
+    body: {
+      stroke: "black",
+      strokeWidth: 2,
+      fill: originalFill,
+    },
+  });
+}
 
-  function resetModal() {
-    // TODO
-    console.log("Reset editor");
-    let data = graphData.value;
-    text.value = data.graphDescription;
-    json.value = data.graphAsJson;
-  }
+function isLinkType(type: string): type is LinkType {
+  return [
+    "dependency",
+    "association",
+    "aggregation",
+    "composition",
+    "generalization",
+  ].includes(type);
+}
 
-  // uml
-  function resetElementStyle(element: dia.Element) {
-    const elementType = element.get('type');
-    let originalFill: string;
-    switch (elementType) {
-      case 'InterfaceRect':
-        originalFill = '#cce5ff';
-        break;
-      case 'AbstractRect':
-        originalFill = '#ffe6cc';
-        break;
-      case 'EnumRect':
-        originalFill = '#d3f3d3';
-        break;
-      default:
-        originalFill = 'white';
-        break;
-    }
+function handleLinkClick(linkView: dia.LinkView) {
+  selectedLink.value = linkView.model;
+  selectedElement.value = null;
+}
 
-    element.attr({
-      body: {
-        stroke: 'black',
-        strokeWidth: 2,
-        fill: originalFill
-      }
-    });
-  }
-
-  function isLinkType(type: string): type is LinkType {
-    return ["dependency", "association", "aggregation", "composition", "generalization"].includes(type);
-  }
-
-  function handleLinkClick(linkView: dia.LinkView) {
-    selectedLink.value = linkView.model;
-    selectedElement.value = null;
-  }
-
-  function deleteRelation() {
-    if (selectedLink.value) {
-      selectedLink.value.remove();
-      selectedLink.value = null;
-    }
-  }
-
-  function handleElementClick(elementView: dia.ElementView) {
-    const clickedElement = elementView.model;
-
-    if (selectedElement.value && selectedElement.value.id !== clickedElement.id) {
-      resetElementStyle(selectedElement.value as dia.Element);
-    }
-
-    selectedElement.value = clickedElement;
-
-    labelText.value = clickedElement.attr('label/text');
-    stuff.value = clickedElement.attr('secondaryLabel/text');
-    stuff2.value = clickedElement.attr('thirdLabel/text');
+function deleteRelation() {
+  if (selectedLink.value) {
+    selectedLink.value.remove();
     selectedLink.value = null;
+  }
+}
 
-    clickedElement.attr('body/stroke', '#f1c40f');
-    clickedElement.attr('body/fill', 'rgba(241, 196, 15, 0.3)');
+function handleElementClick(elementView: dia.ElementView) {
+  const clickedElement = elementView.model;
+
+  if (selectedElement.value && selectedElement.value.id !== clickedElement.id) {
+    resetElementStyle(selectedElement.value as dia.Element);
   }
 
-  function updateLabel() {
-    if (selectedElement.value) {
-      selectedElement.value.attr('label/text', labelText.value);
-    }
+  selectedElement.value = clickedElement;
+
+  labelText.value = clickedElement.attr("label/text");
+  stuff.value = clickedElement.attr("secondaryLabel/text");
+  stuff2.value = clickedElement.attr("thirdLabel/text");
+  selectedLink.value = null;
+
+  clickedElement.attr("body/stroke", "#f1c40f");
+  clickedElement.attr("body/fill", "rgba(241, 196, 15, 0.3)");
+}
+
+function updateLabel() {
+  if (selectedElement.value) {
+    selectedElement.value.attr("label/text", labelText.value);
   }
+}
 
-  function deleteSelectedElement() {
-    if (selectedElement.value) {
-      selectedElement.value.remove();
-      selectedElement.value = null;
-      deleteButtonPos.value = null;
-    }
+function deleteSelectedElement() {
+  if (selectedElement.value) {
+    selectedElement.value.remove();
+    selectedElement.value = null;
+    deleteButtonPos.value = null;
   }
+}
 
-  function adjustElementHeight() {
-    if (!selectedElement.value) return;
+function adjustElementHeight() {
+  if (!selectedElement.value) return;
 
-    const attrLines = stuff.value.split('\n').length;
-    const methodLines = stuff2.value.split('\n').length;
+  const attrLines = stuff.value.split("\n").length;
+  const methodLines = stuff2.value.split("\n").length;
 
-    const extraHeightPerLine = 15;
-    const totalHeight = 30 + attrLines * extraHeightPerLine + methodLines * extraHeightPerLine;
+  const extraHeightPerLine = 15;
+  const totalHeight =
+    30 + attrLines * extraHeightPerLine + methodLines * extraHeightPerLine;
 
-    selectedElement.value.resize(100, totalHeight);
+  selectedElement.value.resize(100, totalHeight);
 
-    selectedElement.value.attr('line1/y1', 25);
-    selectedElement.value.attr('line1/y2', 25);
-    selectedElement.value.attr('line2/y1', 25 + attrLines * extraHeightPerLine);
-    selectedElement.value.attr('line2/y2', 25 + attrLines * extraHeightPerLine);
-    selectedElement.value.attr('label/y', 12);
-    selectedElement.value.attr('secondaryLabel/y', 25 + attrLines * extraHeightPerLine / 2);
-    selectedElement.value.attr('thirdLabel/y', 25 + attrLines * extraHeightPerLine + methodLines * extraHeightPerLine / 2);
+  selectedElement.value.attr("line1/y1", 25);
+  selectedElement.value.attr("line1/y2", 25);
+  selectedElement.value.attr("line2/y1", 25 + attrLines * extraHeightPerLine);
+  selectedElement.value.attr("line2/y2", 25 + attrLines * extraHeightPerLine);
+  selectedElement.value.attr("label/y", 12);
+  selectedElement.value.attr(
+    "secondaryLabel/y",
+    25 + (attrLines * extraHeightPerLine) / 2
+  );
+  selectedElement.value.attr(
+    "thirdLabel/y",
+    25 + attrLines * extraHeightPerLine + (methodLines * extraHeightPerLine) / 2
+  );
+}
+
+function updateAttributes() {
+  if (selectedElement.value) {
+    selectedElement.value.attr("secondaryLabel/text", stuff.value);
+    adjustElementHeight();
   }
+}
 
-  function updateAttributes() {
-    if (selectedElement.value) {
-      selectedElement.value.attr('secondaryLabel/text', stuff.value);
-      adjustElementHeight();
-    }
+function updateMethods() {
+  if (selectedElement.value) {
+    selectedElement.value.attr("thirdLabel/text", stuff2.value);
+    adjustElementHeight();
   }
+}
 
-  function updateMethods() {
-    if (selectedElement.value) {
-      selectedElement.value.attr('thirdLabel/text', stuff2.value);
-      adjustElementHeight();
-    }
-  }
+function deleteAllRelations() {
+  if (!selectedElement.value) return;
+  const links = graph.getConnectedLinks(
+    selectedElement.value as unknown as dia.Cell
+  );
+  links.forEach((link) => {
+    link.remove();
+  });
+}
 
-  function deleteAllRelations() {
-    if (!selectedElement.value) return;
-    const links = graph.getConnectedLinks(selectedElement.value as unknown as dia.Cell);
-    links.forEach(link => {
-      link.remove();
-    });
-  }
+let linkSourceElement: dia.Element | null = null;
+let link: dia.Link | null = null;
+let isDependencyMode = ref(false);
+let hoveredElement: dia.Element | null = null;
+let paper: dia.Paper;
 
-  let linkSourceElement: dia.Element | null = null;
-  let link: dia.Link | null = null;
-  let isDependencyMode = ref(false);
-  let hoveredElement: dia.Element | null = null;
-  let paper: dia.Paper;
+onMounted(() => {
+  nextTick(() => {
+    if (paperContainer.value) {
+      paper = new dia.Paper({
+        el: paperContainer.value,
+        model: graph,
+        width: 700,
+        height: 600,
+        background: { color: "#F5F5F5" },
+        cellViewNamespace: namespace,
+      });
 
-  onMounted(() => {
-    nextTick(() => {
-      if (paperContainer.value) {
-        paper = new dia.Paper({
-          el: paperContainer.value,
-          model: graph,
-          width: 700,
-          height: 600,
-          background: { color: '#F5F5F5' },
-          cellViewNamespace: namespace
-        });
+      paper.on("element:pointerclick", (elementView) => {
+        handleElementClick(elementView);
+      });
 
-        paper.on('element:pointerclick', (elementView) => {
-          handleElementClick(elementView);
-        });
+      paper.on("element:mouseenter", (elementView) => {
+        if (!isDependencyMode.value) {
+          elementView.model.attr("body/stroke", "blue");
+        }
+      });
+      paper.on("element:mouseleave", (elementView) => {
+        if (!isDependencyMode.value) {
+          elementView.model.attr("body/stroke", "black");
+        }
+      });
 
-        paper.on('element:mouseenter', (elementView) => {
-          if (!isDependencyMode.value) {
-            elementView.model.attr('body/stroke', 'blue');
-          }
-        });
-        paper.on('element:mouseleave', (elementView) => {
-          if (!isDependencyMode.value) {
-            elementView.model.attr('body/stroke', 'black');
-          }
-        });
-
-        if (paletteContainer.value) {
-          paletteContainer.value.querySelectorAll('.palette-item').forEach((item) => {
-            item.addEventListener('dragstart', (event) => {
-              (event as DragEvent).dataTransfer?.setData('type', item.getAttribute('data-type') || '');
+      if (paletteContainer.value) {
+        paletteContainer.value
+          .querySelectorAll(".palette-item")
+          .forEach((item) => {
+            item.addEventListener("dragstart", (event) => {
+              (event as DragEvent).dataTransfer?.setData(
+                "type",
+                item.getAttribute("data-type") || ""
+              );
             });
           });
-        }
+      }
 
-        paper.on('link:pointerclick', (linkView) => {
-          handleLinkClick(linkView);
-        });
+      paper.on("link:pointerclick", (linkView) => {
+        handleLinkClick(linkView);
+      });
 
-        paperContainer.value.addEventListener('dragover', (event) => {
-          event.preventDefault();
-        });
+      paperContainer.value.addEventListener("dragover", (event) => {
+        event.preventDefault();
+      });
 
-        const updateLinkTarget = (event: MouseEvent) => {
-          if (isDependencyMode.value && link) {
-            const paperPoint = paper.pageToLocalPoint({ x: event.clientX, y: event.clientY });
-            link.target({ x: paperPoint.x, y: paperPoint.y });
+      const updateLinkTarget = (event: MouseEvent) => {
+        if (isDependencyMode.value && link) {
+          const paperPoint = paper.pageToLocalPoint({
+            x: event.clientX,
+            y: event.clientY,
+          });
+          link.target({ x: paperPoint.x, y: paperPoint.y });
 
-            const elementViews = paper.findViewsFromPoint(paperPoint);
-            const candidate = elementViews.find(view => view.model.isElement())?.model;
-            if (candidate) {
-              if (hoveredElement && hoveredElement.id !== candidate.id) {
-                hoveredElement.attr('body/stroke', 'black');
-              }
-              candidate.attr('body/stroke', 'blue');
-              hoveredElement = candidate;
-            } else {
-              if (hoveredElement) {
-                hoveredElement.attr('body/stroke', 'black');
-                hoveredElement = null;
-              }
+          const elementViews = paper.findViewsFromPoint(paperPoint);
+          const candidate = elementViews.find((view) =>
+            view.model.isElement()
+          )?.model;
+          if (candidate) {
+            if (hoveredElement && hoveredElement.id !== candidate.id) {
+              hoveredElement.attr("body/stroke", "black");
             }
-          }
-        };
-
-        const finalizeLink = (event: MouseEvent) => {
-          if (isDependencyMode.value && link) {
-            const paperPoint = paper.pageToLocalPoint({ x: event.clientX, y: event.clientY });
-            const elementViews = paper.findViewsFromPoint(paperPoint);
-            const targetElementView = elementViews.find(view => view.model.isElement());
-
-            if (targetElementView) {
-              link.target(targetElementView.model);
-              targetElementView.model.attr('body/stroke', 'blue');
-              setTimeout(() => {
-                targetElementView.model.attr('body/stroke', 'black');
-              }, 2000);
-            } else {
-              link.remove();
-            }
-
-            isDependencyMode.value = false;
-            currentLinkType.value = null;
-            linkSourceElement = null;
-            link = null;
-
+            candidate.attr("body/stroke", "blue");
+            hoveredElement = candidate;
+          } else {
             if (hoveredElement) {
-              hoveredElement.attr('body/stroke', 'black');
+              hoveredElement.attr("body/stroke", "black");
               hoveredElement = null;
             }
-            paperContainer.value?.removeEventListener('mousemove', updateLinkTarget);
-            paperContainer.value?.removeEventListener('mouseup', finalizeLink);
           }
-        };
+        }
+      };
 
-        paperContainer.value.addEventListener('drop', (event) => {
-          event.preventDefault();
-          const rawType = (event as DragEvent).dataTransfer?.getData('type') ?? '';
-          const position = paper.pageToLocalPoint({ x: event.clientX, y: event.clientY });
-          const elementViews = paper.findViewsFromPoint(position);
-          const targetElement = elementViews.find(view => view.model.isElement());
+      const finalizeLink = (event: MouseEvent) => {
+        if (isDependencyMode.value && link) {
+          const paperPoint = paper.pageToLocalPoint({
+            x: event.clientX,
+            y: event.clientY,
+          });
+          const elementViews = paper.findViewsFromPoint(paperPoint);
+          const targetElementView = elementViews.find((view) =>
+            view.model.isElement()
+          );
 
-          if (isLinkType(rawType)) {
-            if (targetElement) {
-              linkSourceElement = targetElement.model;
-              isDependencyMode.value = true;
-              currentLinkType.value = rawType;
-              link = new shapes.standard.Link({
-                source: { id: linkSourceElement.id },
-                target: { x: position.x, y: position.y }
-              });
-
-              switch (currentLinkType.value) {
-                case 'dependency':
-                  link.attr({
-                    line: {
-                      strokeWidth: 2,
-                      stroke: 'black',
-                      strokeDasharray: '5,5',
-                      targetMarker: {
-                        type: 'path',
-                        d: 'M 10 -5 0 0 10 5 z',
-                        fill: 'white',
-                        stroke: 'black'
-                      }
-                    }
-                  });
-                  break;
-                case 'association':
-                  link.attr({
-                    line: {
-                      strokeWidth: 2,
-                      stroke: 'black',
-                      targetMarker: undefined
-                    }
-                  });
-                  break;
-                case 'aggregation':
-                  link.attr({
-                    line: {
-                      strokeWidth: 2,
-                      stroke: 'black',
-                      targetMarker: {
-                        type: 'path',
-                        d: 'M 20 0 L 10 5 L 0 0 L 10 -5 Z',
-                        fill: 'white',
-                        stroke: 'black'
-                      }
-                    }
-                  });
-                  break;
-                case 'composition':
-                  link.attr({
-                    line: {
-                      strokeWidth: 2,
-                      stroke: 'black',
-                      targetMarker: {
-                        type: 'path',
-                        d: 'M 20 0 L 10 5 L 0 0 L 10 -5 Z',
-                        fill: 'black',
-                        stroke: 'black'
-                      }
-                    }
-                  });
-                  break;
-                case 'generalization':
-                  link.attr({
-                    line: {
-                      strokeWidth: 2,
-                      stroke: 'black',
-                      targetMarker: {
-                        type: 'path',
-                        d: 'M 10 -5 0 0 10 5 z',
-                        fill: 'white',
-                        stroke: 'black'
-                      }
-                    }
-                  });
-                  break;
-              }
-
-              graph.addCell(link);
-              console.log(`Relation '${rawType}' gestartet mit`, linkSourceElement);
-
-              paperContainer.value?.addEventListener('mousemove', updateLinkTarget);
-              paperContainer.value?.addEventListener('mouseup', finalizeLink);
-            } else {
-              console.log(`Relation '${rawType}' gezogen, aber kein Startobjekt getroffen.`);
-            }
+          if (targetElementView) {
+            link.target(targetElementView.model);
+            targetElementView.model.attr("body/stroke", "blue");
+            setTimeout(() => {
+              targetElementView.model.attr("body/stroke", "black");
+            }, 2000);
           } else {
-            let element;
-            if (rawType === 'class') {
-              element = new CustRect({ position });
-            } else if (rawType === 'interface') {
-              element = new InterfaceRect({ position });
-            } else if (rawType === 'abstract') {
-              element = new AbstractRect({ position });
-            } else if (rawType === 'circle') {
-              element = new shapes.standard.Circle({
-                position,
-                size: { width: 50, height: 50 },
-                attrs: { label: { text: 'Circle' } }
-              });
-            } else if (rawType === 'enum') {
-              element = new EnumRect({ position });
-            }
-
-            if (element) {
-              graph.addCell(element);
-            }
+            link.remove();
           }
-        });
-      }
-    });
-  });
 
+          isDependencyMode.value = false;
+          currentLinkType.value = null;
+          linkSourceElement = null;
+          link = null;
+
+          if (hoveredElement) {
+            hoveredElement.attr("body/stroke", "black");
+            hoveredElement = null;
+          }
+          paperContainer.value?.removeEventListener(
+            "mousemove",
+            updateLinkTarget
+          );
+          paperContainer.value?.removeEventListener("mouseup", finalizeLink);
+        }
+      };
+
+      paperContainer.value.addEventListener("drop", (event) => {
+        event.preventDefault();
+        const rawType =
+          (event as DragEvent).dataTransfer?.getData("type") ?? "";
+        const position = paper.pageToLocalPoint({
+          x: event.clientX,
+          y: event.clientY,
+        });
+        const elementViews = paper.findViewsFromPoint(position);
+        const targetElement = elementViews.find((view) =>
+          view.model.isElement()
+        );
+
+        if (isLinkType(rawType)) {
+          if (targetElement) {
+            linkSourceElement = targetElement.model;
+            isDependencyMode.value = true;
+            currentLinkType.value = rawType;
+            link = new shapes.standard.Link({
+              source: { id: linkSourceElement.id },
+              target: { x: position.x, y: position.y },
+            });
+
+            switch (currentLinkType.value) {
+              case "dependency":
+                link.attr({
+                  line: {
+                    strokeWidth: 2,
+                    stroke: "black",
+                    strokeDasharray: "5,5",
+                    targetMarker: {
+                      type: "path",
+                      d: "M 10 -5 0 0 10 5 z",
+                      fill: "white",
+                      stroke: "black",
+                    },
+                  },
+                });
+                break;
+              case "association":
+                link.attr({
+                  line: {
+                    strokeWidth: 2,
+                    stroke: "black",
+                    targetMarker: undefined,
+                  },
+                });
+                break;
+              case "aggregation":
+                link.attr({
+                  line: {
+                    strokeWidth: 2,
+                    stroke: "black",
+                    targetMarker: {
+                      type: "path",
+                      d: "M 20 0 L 10 5 L 0 0 L 10 -5 Z",
+                      fill: "white",
+                      stroke: "black",
+                    },
+                  },
+                });
+                break;
+              case "composition":
+                link.attr({
+                  line: {
+                    strokeWidth: 2,
+                    stroke: "black",
+                    targetMarker: {
+                      type: "path",
+                      d: "M 20 0 L 10 5 L 0 0 L 10 -5 Z",
+                      fill: "black",
+                      stroke: "black",
+                    },
+                  },
+                });
+                break;
+              case "generalization":
+                link.attr({
+                  line: {
+                    strokeWidth: 2,
+                    stroke: "black",
+                    targetMarker: {
+                      type: "path",
+                      d: "M 10 -5 0 0 10 5 z",
+                      fill: "white",
+                      stroke: "black",
+                    },
+                  },
+                });
+                break;
+            }
+
+            graph.addCell(link);
+            console.log(
+              `Relation '${rawType}' gestartet mit`,
+              linkSourceElement
+            );
+
+            paperContainer.value?.addEventListener(
+              "mousemove",
+              updateLinkTarget
+            );
+            paperContainer.value?.addEventListener("mouseup", finalizeLink);
+          } else {
+            console.log(
+              `Relation '${rawType}' gezogen, aber kein Startobjekt getroffen.`
+            );
+          }
+        } else {
+          let element;
+          if (rawType === "class") {
+            element = new CustRect({ position });
+          } else if (rawType === "interface") {
+            element = new InterfaceRect({ position });
+          } else if (rawType === "abstract") {
+            element = new AbstractRect({ position });
+          } else if (rawType === "circle") {
+            element = new shapes.standard.Circle({
+              position,
+              size: { width: 50, height: 50 },
+              attrs: { label: { text: "Circle" } },
+            });
+          } else if (rawType === "enum") {
+            element = new EnumRect({ position });
+          }
+
+          if (element) {
+            graph.addCell(element);
+          }
+        }
+      });
+    }
+  });
+});
 </script>
 <style scoped>
 .uml-container {
@@ -550,7 +660,6 @@
   color: #333;
   text-transform: uppercase;
 }
-
 
 .paper-container {
   width: 400px;

@@ -17,7 +17,12 @@ export class UmlTask {
   text: string;
   taskType: TaskType;
 
-  public constructor(id: string, graph: string, text: string, taskType: TaskType) {
+  public constructor(
+    id: string,
+    graph: string,
+    text: string,
+    taskType: TaskType
+  ) {
     this.id = id;
     this.graph = graph;
     this.text = text;
@@ -26,7 +31,10 @@ export class UmlTask {
 }
 
 export enum TaskType {
-  COMPLETION, ERRORHUNT, CODETOUML, UMLTOCODE
+  COMPLETION,
+  ERRORHUNT,
+  CODETOUML,
+  UMLTOCODE,
 }
 
 export class GraphData {

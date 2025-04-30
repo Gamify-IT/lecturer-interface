@@ -1,13 +1,22 @@
 <script setup lang="ts">
 import { defineEmits, defineProps, ref, Ref, watch } from "vue";
-import { GraphData, TaskType, UmlgameConfiguration, UmlTask } from "@/ts/models/umlgame-models";
+import {
+  GraphData,
+  TaskType,
+  UmlgameConfiguration,
+  UmlTask,
+} from "@/ts/models/umlgame-models";
 import { useToast } from "vue-toastification";
 import { useRoute } from "vue-router";
 import { ITask } from "@/ts/models/overworld-models";
 import ImportExportConfiguration from "@/components/ImportExportConfiguration.vue";
 import { BFormSelect, BTable } from "bootstrap-vue-3";
 import { putMinigame } from "@/ts/rest-clients/minigame-rest-client";
-import { getUmlgameConfig, postUmlgameConfig, putUmlgameConfig } from "@/ts/rest-clients/umlgame-rest-client";
+import {
+  getUmlgameConfig,
+  postUmlgameConfig,
+  putUmlgameConfig,
+} from "@/ts/rest-clients/umlgame-rest-client";
 import UmlEditorModal from "@/components/EditMinigameModals/UmlModals/UmlEditorModal.vue";
 
 const props = defineProps<{
@@ -54,8 +63,12 @@ const editorData = ref() as Ref<GraphData>;
 const editObject = ref();
 
 // Here are the parameters you need to adapt when expanding the game
-const selectionOptions = [{value: TaskType.COMPLETION, text:'Completion'}, {value: TaskType.ERRORHUNT, text:'Error hunt'},
-  {value: TaskType.CODETOUML, text:'Code -> UML'}, {value: TaskType.UMLTOCODE, text:'UML -> Code'}];
+const selectionOptions = [
+  { value: TaskType.COMPLETION, text: "Completion" },
+  { value: TaskType.ERRORHUNT, text: "Error hunt" },
+  { value: TaskType.CODETOUML, text: "Code -> UML" },
+  { value: TaskType.UMLTOCODE, text: "UML -> Code" },
+];
 const numberOfQuestions = 10;
 
 watch(
@@ -100,7 +113,7 @@ function checkFormValidity(): boolean {
 
 // FERTIG
 function loadConfig() {
-  console.log("loadConfig()")
+  console.log("loadConfig()");
   if (minigame.value.configurationId != undefined) {
     getUmlgameConfig(minigame.value.configurationId)
       .then((response) => {
@@ -114,32 +127,37 @@ function loadConfig() {
         }
       });
   } else {
-    resetConfig()
+    resetConfig();
   }
   console.log("Reset Modal");
 }
 
 // FERTIG
 function resetConfig() {
-  console.log("resetConfig()")
+  console.log("resetConfig()");
   configuration.value.id = ""; // undefined
   configuration.value.taskList = [];
   initializeTasks();
 }
 
 function initializeTasks() {
-  console.log("initializeTasks()")
+  console.log("initializeTasks()");
   taskList.value = [];
-  for(let index = 0; index < numberOfQuestions; index++) {
-    taskList.value.push(new UmlTask((index + 1).toString(), "", "", TaskType.COMPLETION))
+  for (let index = 0; index < numberOfQuestions; index++) {
+    taskList.value.push(
+      new UmlTask((index + 1).toString(), "", "", TaskType.COMPLETION)
+    );
   }
 }
 
 const openedIndex = ref();
 function onEditClick(type: TaskType, edit: any) {
-  console.log("onEditClick")
+  console.log("onEditClick");
   editObject.value = edit;
-  editorData.value = new GraphData(editObject.value.graphAsJson, editObject.value.graphDescription);
+  editorData.value = new GraphData(
+    editObject.value.graphAsJson,
+    editObject.value.graphDescription
+  );
   openedIndex.value = edit.id;
   switch (type) {
     case TaskType.COMPLETION: {
@@ -155,12 +173,12 @@ function onEditClick(type: TaskType, edit: any) {
 
 // FERTIG
 function handleOk() {
-  console.log("@ok")
+  console.log("@ok");
   const updateConfigurationRequest = configuration.value.id
     ? putUmlgameConfig(
-      configuration.value.id,
-      new UmlgameConfiguration(taskList.value)
-    )
+        configuration.value.id,
+        new UmlgameConfiguration(taskList.value)
+      )
     : postUmlgameConfig(new UmlgameConfiguration(taskList.value));
   updateConfigurationRequest
     .then((response) => {
@@ -195,7 +213,7 @@ function handleOk() {
 // FERTIG
 function handleSubmit() {
   // Exit when the form isn't valid
-  console.log("handleSubmit")
+  console.log("handleSubmit");
   if (!checkFormValidity()) {
     return;
   }
@@ -219,7 +237,14 @@ function loadModal() {
 
 // TODO analog zu handlePairOk from memory
 function handleCompletionTaskOk(data: GraphData) {
-  configuration.value.taskList.push(new UmlTask(openedIndex.value, data.graphAsJson, data.graphDescription, TaskType.COMPLETION))
+  configuration.value.taskList.push(
+    new UmlTask(
+      openedIndex.value,
+      data.graphAsJson,
+      data.graphDescription,
+      TaskType.COMPLETION
+    )
+  );
   showCompletionTaskModal.value = false;
   console.log(configuration.value.taskList);
   showModal.value = true;
@@ -241,7 +266,10 @@ function setupEditorModal() {
   console.log("setting up editor");
   showModal.value = false;
   isEditorOpen.value = true;
-  editorData.value = new GraphData(editObject.value.graphAsJson, editObject.value.graphDescription);
+  editorData.value = new GraphData(
+    editObject.value.graphAsJson,
+    editObject.value.graphDescription
+  );
 }
 
 // DNF
@@ -285,7 +313,9 @@ async function importFile(event: any) {
 }
 
 function testSend() {
-  postUmlgameConfig(new UmlgameConfiguration([new UmlTask("1", "", "test", "COMPLETION")]));
+  postUmlgameConfig(
+    new UmlgameConfiguration([new UmlTask("1", "", "test", "COMPLETION")])
+  );
 }
 </script>
 <template>
@@ -305,21 +335,27 @@ function testSend() {
     >
       <b-button @click="testSend"> TEST </b-button>
       <b-form-group>
-        <b-table :fields="fields"  :items="taskList">
-          <template #cell(task)="data" >
-            Task {{ data.item.id }}:
-          </template>
+        <b-table :fields="fields" :items="taskList">
+          <template #cell(task)="data"> Task {{ data.item.id }}: </template>
 
           <template #cell(selection)="">
-            <b-form-select v-model="selected" :options="selectionOptions" text="Select an option"  required/>
+            <b-form-select
+              v-model="selected"
+              :options="selectionOptions"
+              text="Select an option"
+              required
+            />
           </template>
 
           <template #cell(edit)="data">
-            <b-button variant="outline-primary" :key="data.index" @click="onEditClick(selected, data.item)">
+            <b-button
+              variant="outline-primary"
+              :key="data.index"
+              @click="onEditClick(selected, data.item)"
+            >
               Edit Task
             </b-button>
           </template>
-
         </b-table>
       </b-form-group>
     </form>
