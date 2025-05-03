@@ -1,5 +1,5 @@
-// TODO: implement, currently placeholders
 export interface IUmlgameConfiguration {
+  id?: string;
   taskList: UmlTask[];
 }
 
@@ -12,18 +12,19 @@ export class UmlgameConfiguration implements IUmlgameConfiguration {
 }
 
 export class UmlTask {
-  id: string;
+  id?: string;
+  taskNumber: string;
   graph: string;
   text: string;
   taskType: TaskType;
 
   public constructor(
-    id: string,
+    taskNumber: string,
     graph: string,
     text: string,
     taskType: TaskType
   ) {
-    this.id = id;
+    this.taskNumber = taskNumber;
     this.graph = graph;
     this.text = text;
     this.taskType = taskType;

@@ -18,6 +18,7 @@ import {
   putUmlgameConfig,
 } from "@/ts/rest-clients/umlgame-rest-client";
 import UmlEditorModal from "@/components/EditMinigameModals/UmlModals/UmlEditorModal.vue";
+import { getTowerDefenseConfig } from "@/ts/rest-clients/towerdefense-rest-client";
 
 const props = defineProps<{
   minigame: ITask;
@@ -47,8 +48,9 @@ const toast = useToast();
 const minigame = ref(props.minigame);
 const form = ref();
 const showModal = ref(props.showModal);
-
 let configuration = ref(new UmlgameConfiguration([]));
+const oldMinigame = ref();
+// v models for different task edit modals
 const showCompletionTaskModal = ref(false);
 const showErrorhuntTaskModal = ref(false);
 const isEditorOpen = ref(false);
@@ -57,8 +59,8 @@ const taskList = ref([]) as Ref<UmlTask[]>;
 initializeTasks();
 
 // TODO: adapt to available modes
-const taskText = ref();
 const selected = null;
+const openedIndex = ref();
 const editorData = ref() as Ref<GraphData>;
 const editObject = ref();
 
@@ -106,38 +108,94 @@ const emit = defineEmits<{
   (e: "closedModal"): void;
 }>();
 
-// FERTIG
+
 function checkFormValidity(): boolean {
   return form.value.checkValidity();
 }
 
-// FERTIG
-function loadConfig() {
-  console.log("loadConfig()");
+function resetModal() {
   if (minigame.value.configurationId != undefined) {
     getUmlgameConfig(minigame.value.configurationId)
       .then((response) => {
-        taskList.value = response.data.taskList;
         configuration.value = response.data;
       })
       .catch((error) => {
         console.log(error);
         if (error.response.status == 404) {
-          resetConfig();
+          minigame.value.configurationId = undefined;
+          configuration.value.taskList = [];
+          initializeTasks();
         }
       });
+    oldMinigame.value = minigame.value;
   } else {
-    resetConfig();
+    configuration.value.id = undefined;
+    configuration.value.taskList = [];
+    oldMinigame.value = minigame.value;
+    initializeTasks();
   }
   console.log("Reset Modal");
 }
 
-// FERTIG
-function resetConfig() {
-  console.log("resetConfig()");
-  configuration.value.id = ""; // undefined
-  configuration.value.taskList = [];
-  initializeTasks();
+function handleOk() {
+  console.log("@ok");
+  const updateConfigurationRequest = configuration.value.id ?
+    putUmlgameConfig(configuration.value.id, new UmlgameConfiguration(taskList.value)) :
+    postUmlgameConfig(new UmlgameConfiguration(taskList.value));
+  updateConfigurationRequest.then((response) => {
+      minigame.value.configurationId = response.data.id;
+      console.log("Submit Modal");
+      console.log("id:" + response.data.id);
+      console.log("minigameId" + minigame.value.configurationId);
+      oldMinigame.value = minigame.value;
+      handleSubmit();
+    }).then(() => {
+      putMinigame(
+        parseInt(courseId.value),
+        parseInt(worldIndex.value),
+        parseInt(dungeonIndex.value),
+        minigame.value
+      );}).catch((error) => {
+      const statusCode = error.response.status;
+      const errorMessages = error.response.data.errors;
+      if (statusCode == 400) {
+        for (let errorMessage of errorMessages) {
+          toast.error("Error while saving configuration: " + errorMessage);
+        }
+      } else {
+        toast.error("There was an error saving the configuration!");
+      }
+    }).finally(() => {
+    initializeTasks();
+    });
+}
+
+function handleSubmit() {
+  // Exit when the form isn't valid
+  console.log("handleSubmit");
+  if (!checkFormValidity()) {
+    return;
+  }
+  emit("updateMinigameConfiguration", minigame.value);
+}
+
+function hiddenModal() {
+  if (!isEditorOpen.value) {
+    oldMinigame.value = null;
+    console.log("Test");
+  }
+  console.log("Modal hidden");
+  emit("closedModal");
+}
+
+function loadModal() {
+  if (oldMinigame.value != null) {
+    if (oldMinigame.value.id != minigame.value.id) {
+      resetModal();
+    }
+  } else {
+    resetModal();
+  }
 }
 
 function initializeTasks() {
@@ -150,14 +208,10 @@ function initializeTasks() {
   }
 }
 
-const openedIndex = ref();
+
 function onEditClick(type: TaskType, edit: any) {
   console.log("onEditClick");
   editObject.value = edit;
-  editorData.value = new GraphData(
-    editObject.value.graphAsJson,
-    editObject.value.graphDescription
-  );
   openedIndex.value = edit.id;
   switch (type) {
     case TaskType.COMPLETION: {
@@ -171,71 +225,6 @@ function onEditClick(type: TaskType, edit: any) {
   }
 }
 
-// FERTIG
-function handleOk() {
-  console.log("@ok");
-  const updateConfigurationRequest = configuration.value.id
-    ? putUmlgameConfig(
-        configuration.value.id,
-        new UmlgameConfiguration(taskList.value)
-      )
-    : postUmlgameConfig(new UmlgameConfiguration(taskList.value));
-  updateConfigurationRequest
-    .then((response) => {
-      minigame.value.configurationId = response.data.id;
-      console.log("Submit Modal");
-      console.log("id:" + response.data.id);
-      console.log("minigameId" + minigame.value.configurationId);
-      handleSubmit();
-    })
-    .then(() => {
-      putMinigame(
-        parseInt(courseId.value),
-        parseInt(worldIndex.value),
-        parseInt(dungeonIndex.value),
-        minigame.value
-      );
-    })
-    .catch((error) => {
-      const statusCode = error.response.status;
-      const errorMessages = error.response.data.errors;
-      if (statusCode == 400) {
-        for (let errorMessage of errorMessages) {
-          toast.error("Error while saving configuration: " + errorMessage);
-        }
-      } else {
-        toast.error("There was an error saving the configuration!");
-      }
-    })
-    .finally(() => resetConfig());
-}
-
-// FERTIG
-function handleSubmit() {
-  // Exit when the form isn't valid
-  console.log("handleSubmit");
-  if (!checkFormValidity()) {
-    return;
-  }
-  emit("updateMinigameConfiguration", minigame.value);
-}
-
-// FERTIG
-function hiddenModal() {
-  console.log("Modal hidden");
-  emit("closedModal");
-}
-
-// FERTIG
-function loadModal() {
-  if (!isEditorOpen.value) {
-    loadConfig();
-  }
-  isEditorOpen.value = false;
-  console.log("Modal shown");
-}
-
-// TODO analog zu handlePairOk from memory
 function handleCompletionTaskOk(data: GraphData) {
   configuration.value.taskList.push(
     new UmlTask(
@@ -250,18 +239,15 @@ function handleCompletionTaskOk(data: GraphData) {
   showModal.value = true;
 }
 
-// FERTIG
 function handleEditorModalAbort() {
   showModal.value = true;
 }
 
-// FERTIG
 function resetEditorModal() {
   console.log("Resetting editor modal (@hidden)");
   editObject.value = null;
 }
 
-// FERTIG
 function setupEditorModal() {
   console.log("setting up editor");
   showModal.value = false;
@@ -272,51 +258,6 @@ function setupEditorModal() {
   );
 }
 
-// DNF
-function downloadConfiguration() {
-  /*const { ["id"]: unused, ...clonedConfiguration } = configuration.value;
-  const clonedQuestions = Array<ITowerDefenseQuestion>();
-  for (let innerQuestion of configuration.value.questions) {
-    const { ["id"]: unused, ...clonedQuestion } = innerQuestion;
-    clonedQuestions.push(clonedQuestion);
-  }
-  clonedConfiguration.questions = clonedQuestions;
-  const blob = new Blob([JSON.stringify(clonedConfiguration)], {
-    type: "text/json",
-  });
-  saveAs(blob, "towerdefense-configuration.json");*/
-}
-
-// DNF
-async function importFile(event: any) {
-  /*const file = event.target.files[0];
-  const validator = object({
-    questions: arrayOf(
-      object({
-        text: string(),
-        correctAnswer: string(),
-        wrongAnswers: arrayOf(string()),
-      })
-    ),
-    volumeLevel: optional(nullable(int())),
-  });
-  try {
-    const result: TowerDefenseConfiguration = await importConfiguration(
-      file,
-      validator,
-      toast
-    );
-    configuration.value = result;
-  } catch (e) {
-    console.log("Import was not successful");
-  }*/
-}
-
-function testSend() {
-  postUmlgameConfig(
-    new UmlgameConfiguration([new UmlTask("1", "", "test", "COMPLETION")])
-  );
-}
 </script>
 <template>
   <b-modal
@@ -325,15 +266,15 @@ function testSend() {
     v-model="showModal"
     @hidden="hiddenModal"
     @ok="handleOk"
+    @cancel="resetModal"
     @show="loadModal"
-    @cancel="resetConfig"
+    @abort="resetModal"
   >
     <form
       ref="form"
       @submit.stop.prevent="handleSubmit"
       v-if="minigame !== undefined"
     >
-      <b-button @click="testSend"> TEST </b-button>
       <b-form-group>
         <b-table :fields="fields" :items="taskList">
           <template #cell(task)="data"> Task {{ data.item.id }}: </template>
@@ -359,20 +300,16 @@ function testSend() {
         </b-table>
       </b-form-group>
     </form>
-    <ImportExportConfiguration
-      @export="downloadConfiguration"
-      @importFile="importFile"
-    />
   </b-modal>
 
   <UmlEditorModal
     :showModal="showCompletionTaskModal"
     modalTitle="Configure the completion task"
+    @hidden="resetEditorModal"
+    @show="setupEditorModal"
     @okModal="handleCompletionTaskOk"
     @cancelModal="handleEditorModalAbort"
     :graphData="editorData"
-    @hidden="resetEditorModal"
-    @show="setupEditorModal"
   />
 </template>
 <style scoped>
