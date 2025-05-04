@@ -13,45 +13,19 @@
         <div ref="paletteContainer" class="palette">
           <div class="palette-group">
             <div class="palette-title">Objects</div>
-            <div
-              class="palette-item"
-              data-type="class"
-              draggable="true"
-              :style="{ backgroundColor: classColors.class }"
-            >
+            <div class="palette-item" data-type="class" draggable="true" :style="{ backgroundColor: classColors.class }">
               Class
             </div>
-            <div
-              class="palette-item"
-              data-type="interface"
-              draggable="true"
-              :style="{ backgroundColor: classColors.interface }"
-            >
+            <div class="palette-item" data-type="interface" draggable="true" :style="{ backgroundColor: classColors.interface }">
               Interface
             </div>
-            <div
-              class="palette-item"
-              data-type="abstract"
-              draggable="true"
-              :style="{ backgroundColor: classColors.abstract }"
-            >
+            <div class="palette-item" data-type="abstract" draggable="true" :style="{ backgroundColor: classColors.abstract }">
               Abstract
             </div>
-            <div
-              class="palette-item"
-              data-type="enum"
-              draggable="true"
-              :style="{ backgroundColor: classColors.enum }"
-            >
+            <div class="palette-item" data-type="enum" draggable="true" :style="{ backgroundColor: classColors.enum }">
               Enum
             </div>
-
-            <div
-              class="palette-item"
-              data-type="circle"
-              draggable="true"
-              :style="{ backgroundColor: classColors.circle }"
-            >
+            <div class="palette-item" data-type="circle" draggable="true" :style="{ backgroundColor: classColors.circle }">
               Circle
             </div>
           </div>
@@ -70,16 +44,18 @@
             <div class="palette-item" data-type="composition" draggable="true">
               ◆
             </div>
-            <div
-              class="palette-item"
-              data-type="generalization"
-              draggable="true"
-            >
+            <div class="palette-item" data-type="generalization" draggable="true">
               △
+            </div>
+            <div class="submit-reset-buttons">
+              <button class="reset-button" @click="resetGraph">Reset</button>
             </div>
           </div>
         </div>
-        <div ref="paperContainer" class="paper-container"></div>
+        <div ref="paperContainer" class="paper-container">
+          <div ref="paperContainer" class="paper-inner"/>
+        </div>
+      </div>
         <div class="right" v-if="selectedElement">
           <b-button size="sm" variant="warning" @click="deleteAllRelations">
             Delete All Relations
@@ -105,9 +81,28 @@
           <b-button size="sm" variant="danger" @click="deleteRelation">
             Delete Relation
           </b-button>
+          <label>
+            Source Multiplicity:
+            <b-form-input v-model="linkSourceMultiplicity" @input="updateLinkLabels" />
+          </label>
+          <label>
+            Source Role:
+            <b-form-input v-model="linkSourceRole" @input="updateLinkLabels" />
+          </label>
+          <label>
+            Target Multiplicity:
+            <b-form-input v-model="linkTargetMultiplicity" @input="updateLinkLabels" />
+          </label>
+          <label>
+            Target Role:
+            <b-form-input v-model="linkTargetRole" @input="updateLinkLabels" />
+          </label>
+          <label>
+            Description:
+            <b-form-input v-model="linkArrowLabel" @input="updateLinkLabels" />
+          </label>
         </div>
       </div>
-    </div>
 
     <!-- uml end -->
     <b-form-group>
@@ -121,7 +116,7 @@
 </template>
 <script setup lang="ts">
 import { useToast } from "vue-toastification";
-import { dia, shapes, util } from "@joint/core";
+import { dia, shapes } from "@joint/core";
 import {
   onMounted,
   ref,
@@ -174,6 +169,12 @@ const labelText = ref("");
 const stuff = ref("");
 const stuff2 = ref("");
 const deleteButtonPos = ref<{ x: number; y: number } | null>(null);
+const linkSourceMultiplicity = ref('');
+const linkSourceRole = ref('');
+const linkTargetMultiplicity = ref('');
+const linkTargetRole = ref('');
+const linkArrowLabel = ref('');
+
 let currentLinkType = ref<
   | "dependency"
   | "association"
@@ -236,32 +237,7 @@ function resetModal() {
 }
 
 // uml
-function resetElementStyle(element: dia.Element) {
-  const elementType = element.get("type");
-  let originalFill: string;
-  switch (elementType) {
-    case "InterfaceRect":
-      originalFill = "#cce5ff";
-      break;
-    case "AbstractRect":
-      originalFill = "#ffe6cc";
-      break;
-    case "EnumRect":
-      originalFill = "#d3f3d3";
-      break;
-    default:
-      originalFill = "white";
-      break;
-  }
 
-  element.attr({
-    body: {
-      stroke: "black",
-      strokeWidth: 2,
-      fill: originalFill,
-    },
-  });
-}
 
 function isLinkType(type: string): type is LinkType {
   return [
@@ -276,6 +252,11 @@ function isLinkType(type: string): type is LinkType {
 function handleLinkClick(linkView: dia.LinkView) {
   selectedLink.value = linkView.model;
   selectedElement.value = null;
+  const labels = linkView.model.get('labels') || [];
+  linkSourceMultiplicity.value = labels[0]?.attrs?.text?.text || '';
+  linkSourceRole.value = labels[1]?.attrs?.text?.text || '';
+  linkTargetMultiplicity.value = labels[3]?.attrs?.text?.text || '';
+  linkTargetRole.value = labels[4]?.attrs?.text?.text || '';
 }
 
 function deleteRelation() {
@@ -287,20 +268,11 @@ function deleteRelation() {
 
 function handleElementClick(elementView: dia.ElementView) {
   const clickedElement = elementView.model;
-
-  if (selectedElement.value && selectedElement.value.id !== clickedElement.id) {
-    resetElementStyle(selectedElement.value as dia.Element);
-  }
-
   selectedElement.value = clickedElement;
-
   labelText.value = clickedElement.attr("label/text");
   stuff.value = clickedElement.attr("secondaryLabel/text");
   stuff2.value = clickedElement.attr("thirdLabel/text");
   selectedLink.value = null;
-
-  clickedElement.attr("body/stroke", "#f1c40f");
-  clickedElement.attr("body/fill", "rgba(241, 196, 15, 0.3)");
 }
 
 function updateLabel() {
@@ -358,6 +330,25 @@ function updateMethods() {
   }
 }
 
+function updateLinkLabels() {
+  if (!selectedLink.value) return;
+  selectedLink.value.label(0, {
+    attrs: { text: { text: linkSourceMultiplicity.value } }
+  });
+  selectedLink.value.label(1, {
+    attrs: { text: { text: linkSourceRole.value } }
+  });
+  selectedLink.value.label(2, {
+    attrs: { text: { text: linkTargetMultiplicity.value } }
+  });
+  selectedLink.value.label(3, {
+    attrs: { text: { text: linkTargetRole.value } }
+  });
+  selectedLink.value.label(4, {
+    attrs: { text: { text: linkArrowLabel.value } }
+  });
+}
+
 function deleteAllRelations() {
   if (!selectedElement.value) return;
   const links = graph.getConnectedLinks(
@@ -380,8 +371,8 @@ onMounted(() => {
       paper = new dia.Paper({
         el: paperContainer.value,
         model: graph,
-        width: 700,
-        height: 600,
+        width: 2000,
+        height: 700,
         background: { color: "#F5F5F5" },
         cellViewNamespace: namespace,
       });
@@ -461,7 +452,78 @@ onMounted(() => {
           );
 
           if (targetElementView) {
-            link.target(targetElementView.model);
+            const targetElement = targetElementView.model;
+            if (linkSourceElement && linkSourceElement.id === targetElement.id) {
+              const loopLink = new shapes.standard.Link({
+                source: { id: targetElement.id },
+                target: { id: targetElement.id },
+                router: { name: 'manhattan' },
+                connector: { name: 'rounded' },
+                attrs: {
+                  line: {
+                    stroke: 'black',
+                    strokeWidth: 2,
+                    fill: 'none',
+                  },
+                },
+                labels: [
+                  {
+                    position: 0.05,
+                    attrs: {
+                      text: {
+                        fontSize: 14,
+                        fill: 'black',
+                      },
+                    },
+                  },
+                  {
+                    position: 0.2,
+                    attrs: {
+                      text: {
+                        fontSize: 14,
+                        fill: 'black',
+                      },
+                    },
+                  },
+                  {
+                    position: 0.8,
+                    attrs: {
+                      text: {
+                        fontSize: 14,
+                        fill: 'black',
+                        dx: 20,
+                      },
+                    },
+                  },
+                  {
+                    position: 0.7,
+                    attrs: {
+                      text: {
+                        fontSize: 14,
+                        fill: 'black',
+                        dx: 20,
+                      },
+                    },
+                  },
+                ],
+              });
+              loopLink.attr({
+                line: {
+                  stroke: 'black',
+                  strokeWidth: 2,
+                  targetMarker: {
+                    type: 'path',
+                    d: 'M 10 -5 0 0 10 5 z',
+                    fill: 'white',
+                    stroke: 'black'
+                  }
+                }
+              });
+              graph.addCell(loopLink);
+              link.remove();
+            } else {
+              link.target(targetElement);
+            }
             targetElementView.model.attr("body/stroke", "blue");
             setTimeout(() => {
               targetElementView.model.attr("body/stroke", "black");
@@ -580,6 +642,77 @@ onMounted(() => {
             }
 
             graph.addCell(link);
+
+            link.appendLabel({
+              attrs: {
+                text: {
+                  fill: 'black',
+                  fontSize: 12
+                }
+              },
+              position: {
+                distance: 0.2,
+                offset: { x: 0, y: -15 },
+                args: { keepDirection: true, keepAngle: true }
+              }
+            });
+
+            link.appendLabel({
+              attrs: {
+                text: {
+                  fill: 'black',
+                  fontSize: 12
+                }
+              },
+              position: {
+                distance: 0.2,
+                offset: { x: 0, y: 10 },
+                args: { keepDirection: true, keepAngle: true }
+              }
+            });
+
+            link.appendLabel({
+              attrs: {
+                text: {
+                  fill: 'black',
+                  fontSize: 12
+                }
+              },
+              position: {
+                distance: 0.8,
+                offset: { x: 0, y: -15 },
+                args: { keepDirection: true, keepAngle: true }
+              }
+            });
+
+            link.appendLabel({
+              attrs: {
+                text: {
+                  fill: 'black',
+                  fontSize: 12
+                }
+              },
+              position: {
+                distance: 0.8,
+                offset: { x: 0, y: 10 },
+                args: { keepDirection: true, keepAngle: true }
+              }
+            });
+
+            link.appendLabel({
+              attrs: {
+                text: {
+                  fill: 'black',
+                  fontSize: 14,
+                },
+              },
+              position: {
+                distance: 0.5,
+                offset: { x: 0, y: 10 },
+                args: { keepDirection: true, keepAngle: true }
+              }
+            });
+
             console.log(
               `Relation '${rawType}' gestartet mit`,
               linkSourceElement
@@ -630,6 +763,8 @@ onMounted(() => {
 
 .uml-wrapper {
   position: relative;
+  display: flex;
+  gap: 20px;
 }
 
 .palette {
@@ -662,10 +797,16 @@ onMounted(() => {
 }
 
 .paper-container {
-  width: 400px;
-  height: 400px;
+  flex: 1;
+  width: 800px;
+  height: 730px;
   border: 2px solid rgb(226, 220, 201);
   background: #f5f5f5;
+  overflow: auto;
+}
+
+.paper-inner {
+  width: 10000px;
 }
 
 .delete-button {
@@ -677,12 +818,14 @@ onMounted(() => {
   cursor: pointer;
   font-size: 10px;
   margin-bottom: 10px;
+  width: 300px;
 }
 
 .right {
   display: flex;
   flex-direction: column;
   gap: 10px;
+  font-size: 11px;
 }
 
 .label {
@@ -705,5 +848,59 @@ onMounted(() => {
   stroke: #ff6600;
   stroke-width: 2;
   fill: rgba(255, 102, 0, 0.1);
+}
+
+.relation-links {
+  display: flex;
+  flex-direction: column;
+  padding-right: 20px;
+}
+
+.relation-links a {
+  text-decoration: none;
+  color: #333;
+  padding: 10px 0;
+  position: relative;
+}
+
+.relation-links a:last-child {
+  border-bottom: 2px solid #ccc;
+}
+
+.submit-reset-buttons {
+  display: flex;
+  flex-direction: column;
+  margin-top: 20px;
+}
+
+.submit-button {
+  padding: 10px 20px;
+  border-radius: 5px;
+  border: none;
+  font-size: 16px;
+  color: white;
+  cursor: pointer;
+  width: 100%;
+  background-color: #007bff;
+  margin-bottom: 10px;
+}
+
+.submit-button:hover {
+  background-color: #0056b3;
+}
+
+.reset-button {
+  padding: 10px 20px;
+  border-radius: 5px;
+  border: none;
+  font-size: 16px;
+  color: white;
+  cursor: pointer;
+  width: 100%;
+  background-color: #f0ad4e;
+}
+
+.reset-button:hover {
+  background-color: #ec971f;
 }
 </style>
