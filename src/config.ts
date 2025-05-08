@@ -10,4 +10,5 @@ export default {
   memoryApiUrl: "/minigames/memory/api/v1",
   regexgameApiUrl: "/minigames/regexgame/api/v1",
   towerdefenseApiUrl: "/minigames/towerdefense/api/v1",
+  umlgameApiUrl: "/minigames/umlgame/api/v1",
 };

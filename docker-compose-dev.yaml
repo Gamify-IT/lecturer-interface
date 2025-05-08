@@ -89,8 +89,8 @@ services:
     container_name: regexgame-db
     image: postgres:14-alpine
     restart: always
-    ports:
-      - "5432:5432"
+    expose:
+      - "5432"
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
@@ -107,6 +107,16 @@ services:
 
   towerdefense-db:
     container_name: towerdefense-db
+    image: postgres:14-alpine
+    restart: always
+    expose:
+      - "5432"
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+
+  umlgame-db:
+    container_name: umlgame-db
     image: postgres:14-alpine
     restart: always
     expose:
@@ -176,7 +186,7 @@ services:
       - OVERWORLD_URL=http://overworld-backend/api/v1
       - KEYCLOAK_ISSUER=http://localhost/keycloak/realms/Gamify-IT
       - KEYCLOAK_URL=http://keycloak/keycloak/realms/Gamify-IT
-
+  
   bugfinder-backend:
     container_name: bugfinder-backend
     image: ghcr.io/gamify-it/bugfinder-backend:main
@@ -193,7 +203,7 @@ services:
       - OVERWORLD_URL=http://overworld-backend/api/v1
       - KEYCLOAK_ISSUER=http://localhost/keycloak/realms/Gamify-IT
       - KEYCLOAK_URL=http://keycloak/keycloak/realms/Gamify-IT
-
+  
   finitequiz-backend:
     container_name: finitequiz-backend
     image: ghcr.io/gamify-it/finitequiz-backend:main
@@ -210,7 +220,7 @@ services:
       - OVERWORLD_URL=http://overworld-backend/api/v1
       - KEYCLOAK_ISSUER=http://localhost/keycloak/realms/Gamify-IT
       - KEYCLOAK_URL=http://keycloak/keycloak/realms/Gamify-IT
-
+  
   crosswordpuzzle-backend:
     container_name: crosswordpuzzle-backend
     image: ghcr.io/gamify-it/crosswordpuzzle-backend:main
@@ -227,7 +237,7 @@ services:
       - OVERWORLD_URL=http://overworld-backend/api/v1
       - KEYCLOAK_ISSUER=http://localhost/keycloak/realms/Gamify-IT
       - KEYCLOAK_URL=http://keycloak/keycloak/realms/Gamify-IT
-
+  
   memory-backend:
     container_name: memory-backend
     image: ghcr.io/gamify-it/memory-backend:main
@@ -244,7 +254,7 @@ services:
       - OVERWORLD_URL=http://overworld-backend/api/v1
       - KEYCLOAK_ISSUER=http://localhost/keycloak/realms/Gamify-IT
       - KEYCLOAK_URL=http://keycloak/keycloak/realms/Gamify-IT
-
+  
   regexgame-backend:
     container_name: regexgame-backend
     image: ghcr.io/gamify-it/regexgame-backend:main
@@ -278,7 +288,7 @@ services:
       - OVERWORLD_URL=http://overworld-backend/api/v1
       - KEYCLOAK_ISSUER=http://localhost/keycloak/realms/Gamify-IT
       - KEYCLOAK_URL=http://keycloak/keycloak/realms/Gamify-IT
-
+  
   towerdefense-backend:
     container_name: towerdefense-backend
     image: ghcr.io/gamify-it/towerdefense-backend:main
@@ -292,6 +302,22 @@ services:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
       - POSTGRES_URL=postgresql://towerdefense-db:5432/postgres
+      - OVERWORLD_URL=http://overworld-backend/api/v1
+      - KEYCLOAK_ISSUER=http://localhost/keycloak/realms/Gamify-IT
+      - KEYCLOAK_URL=http://keycloak/keycloak/realms/Gamify-IT
+  
+  umlgame-backend:
+    container_name: umlgame-backend
+    image: ghcr.io/gamify-it/umlgame-backend:main
+    restart: always
+    expose:
+      - "80"
+    depends_on:
+      - umlgame-db
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_URL=postgresql://umlgame-db:5432/postgres
       - OVERWORLD_URL=http://overworld-backend/api/v1
       - KEYCLOAK_ISSUER=http://localhost/keycloak/realms/Gamify-IT
       - KEYCLOAK_URL=http://keycloak/keycloak/realms/Gamify-IT
@@ -360,28 +386,28 @@ services:
     restart: always
     expose:
       - "80"
-    
+
   towercrush:
     container_name: towercrush
     image: ghcr.io/gamify-it/towercrush:main
     pull_policy: always
     restart: always
     expose:
-      - "80" 
-    
-  towerdefense:
-    container_name: towerdefense
-    image: ghcr.io/gamify-it/towerdefense:main
-    pull_policy: always
-    restart: always
-    expose:
-      - "80" 
+      - "80"
 
   towerdefense:
     container_name: towerdefense
     image: ghcr.io/gamify-it/towerdefense:main
     pull_policy: always
     restart: always
+    expose:
+      - "80"
+
+  umlgame:
+    container_name: umlgame
+    image: ghcr.io/gamify-it/umlgame:main
+    restart: always
+    pull_policy: always
     expose:
       - "80"
 
