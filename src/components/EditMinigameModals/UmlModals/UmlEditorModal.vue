@@ -371,8 +371,8 @@ onMounted(() => {
       paper = new dia.Paper({
         el: paperContainer.value,
         model: graph,
-        width: 2000,
-        height: 700,
+        width: 700,
+        height: 600,
         background: { color: "#F5F5F5" },
         cellViewNamespace: namespace,
       });
@@ -798,8 +798,8 @@ onMounted(() => {
 
 .paper-container {
   flex: 1;
-  width: 800px;
-  height: 730px;
+  width: 400px;
+  height: 400px;
   border: 2px solid rgb(226, 220, 201);
   background: #f5f5f5;
   overflow: auto;
