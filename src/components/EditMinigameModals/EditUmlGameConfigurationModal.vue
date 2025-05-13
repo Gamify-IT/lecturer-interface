@@ -58,7 +58,6 @@ const taskList = ref([]) as Ref<UmlTask[]>;
 initializeTasks();
 
 // TODO: adapt to available modes
-const selected = null;
 const openedIndex = ref();
 const editorData = ref() as Ref<GraphData>;
 const editObject = ref();
@@ -202,17 +201,25 @@ function initializeTasks() {
   console.log("initializeTasks()");
   taskList.value = [];
   for (let index = 0; index < numberOfQuestions; index++) {
-    taskList.value.push(
-      new UmlTask((index + 1).toString(), "", "", TaskType.COMPLETION)
-    );
+    if(index == 0) {
+      taskList.value.push(
+        new UmlTask((index + 1).toString(), "", "blabla", TaskType.COMPLETION)
+      );
+    } else {
+      taskList.value.push(
+        new UmlTask((index + 1).toString(), "", "", TaskType.COMPLETION)
+      );
+    }
   }
+  console.log(taskList)
 }
 
 
-function onEditClick(type: TaskType, edit: any) {
+function onEditClick(task: UmlTask) {
   console.log("onEditClick");
-  editObject.value = edit;
-  openedIndex.value = edit.id;
+  let type = task.taskType;
+  editObject.value = task;
+  openedIndex.value = task.id;
   switch (type) {
     case TaskType.COMPLETION: {
       showCompletionTaskModal.value = true;
@@ -277,11 +284,13 @@ function setupEditorModal() {
     >
       <b-form-group>
         <b-table :fields="fields" :items="taskList">
-          <template #cell(task)="data"> Task {{ data.item.id }}: </template>
+          <template #cell(task)="data">
+            Task {{ data.item.id }}:
+          </template>
 
-          <template #cell(selection)="">
+          <template #cell(selection)="data">
             <b-form-select
-              v-model="selected"
+              v-model="data.item.taskType"
               :options="selectionOptions"
               text="Select an option"
               required
@@ -292,7 +301,7 @@ function setupEditorModal() {
             <b-button
               variant="outline-primary"
               :key="data.index"
-              @click="onEditClick(selected, data.item)"
+              @click="onEditClick(data.item)"
             >
               Edit Task
             </b-button>

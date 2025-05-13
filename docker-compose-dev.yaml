@@ -149,7 +149,7 @@ services:
 
   overworld-backend:
     container_name: overworld-backend
-    image: ghcr.io/gamify-it/overworld-backend:main
+    image: ghcr.io/gamify-it/overworld-backend:umlgame-integration
     restart: always
     pull_policy: always
     expose:
@@ -308,7 +308,7 @@ services:
   
   umlgame-backend:
     container_name: umlgame-backend
-    image: ghcr.io/gamify-it/umlgame-backend:main
+    image: ghcr.io/gamify-it/umlgame-backend:development
     restart: always
     expose:
       - "80"
