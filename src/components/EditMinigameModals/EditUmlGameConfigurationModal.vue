@@ -18,7 +18,6 @@ import {
   putUmlgameConfig,
 } from "@/ts/rest-clients/umlgame-rest-client";
 import UmlEditorModal from "@/components/EditMinigameModals/UmlModals/UmlEditorModal.vue";
-import { getTowerDefenseConfig } from "@/ts/rest-clients/towerdefense-rest-client";
 
 const props = defineProps<{
   minigame: ITask;
@@ -115,7 +114,7 @@ function checkFormValidity(): boolean {
 
 function resetModal() {
   if (minigame.value.configurationId != undefined) {
-    getUmlgameConfig(minigame.value.configurationId)
+    /*getUmlgameConfig(minigame.value.configurationId)
       .then((response) => {
         configuration.value = response.data;
       })
@@ -126,7 +125,8 @@ function resetModal() {
           configuration.value.taskList = [];
           initializeTasks();
         }
-      });
+      });*/
+    console.log("GETTING UML CONFIG:" + minigame.value.configurationId);
     oldMinigame.value = minigame.value;
   } else {
     configuration.value.id = undefined;
@@ -140,9 +140,9 @@ function resetModal() {
 function handleOk() {
   console.log("@ok");
   const updateConfigurationRequest = configuration.value.id ?
-    putUmlgameConfig(configuration.value.id, new UmlgameConfiguration(taskList.value)) :
-    postUmlgameConfig(new UmlgameConfiguration(taskList.value));
-  updateConfigurationRequest.then((response) => {
+    /*putUmlgameConfig(configuration.value.id, new UmlgameConfiguration(taskList.value))*/ console.log("PUTTING UML CONFIG: " + configuration.value.id + " Config: " + new UmlgameConfiguration(taskList.value)):
+    /*postUmlgameConfig(new UmlgameConfiguration(taskList.value))*/console.log("POSTING UML CONFIG: " + new UmlgameConfiguration(taskList.value));
+  /*updateConfigurationRequest.then((response) => {
       minigame.value.configurationId = response.data.id;
       console.log("Submit Modal");
       console.log("id:" + response.data.id);
@@ -167,7 +167,7 @@ function handleOk() {
       }
     }).finally(() => {
     initializeTasks();
-    });
+    });*/
 }
 
 function handleSubmit() {
