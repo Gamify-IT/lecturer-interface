@@ -106,7 +106,6 @@ const emit = defineEmits<{
   (e: "closedModal"): void;
 }>();
 
-
 function checkFormValidity(): boolean {
   return form.value.checkValidity();
 }
@@ -138,9 +137,16 @@ function resetModal() {
 
 function handleOk() {
   console.log("@ok");
-  const updateConfigurationRequest = configuration.value.id ?
-    /*putUmlgameConfig(configuration.value.id, new UmlgameConfiguration(taskList.value))*/ console.log("PUTTING UML CONFIG: " + configuration.value.id + " Config: " + new UmlgameConfiguration(taskList.value)):
-    /*postUmlgameConfig(new UmlgameConfiguration(taskList.value))*/console.log("POSTING UML CONFIG: " + new UmlgameConfiguration(taskList.value));
+  const updateConfigurationRequest = configuration.value.id
+    ? /*putUmlgameConfig(configuration.value.id, new UmlgameConfiguration(taskList.value))*/ console.log(
+        "PUTTING UML CONFIG: " +
+          configuration.value.id +
+          " Config: " +
+          new UmlgameConfiguration(taskList.value)
+      )
+    : /*postUmlgameConfig(new UmlgameConfiguration(taskList.value))*/ console.log(
+        "POSTING UML CONFIG: " + new UmlgameConfiguration(taskList.value)
+      );
   /*updateConfigurationRequest.then((response) => {
       minigame.value.configurationId = response.data.id;
       console.log("Submit Modal");
@@ -201,7 +207,7 @@ function initializeTasks() {
   console.log("initializeTasks()");
   taskList.value = [];
   for (let index = 0; index < numberOfQuestions; index++) {
-    if(index == 0) {
+    if (index == 0) {
       taskList.value.push(
         new UmlTask((index + 1).toString(), "", "blabla", TaskType.COMPLETION)
       );
@@ -211,9 +217,8 @@ function initializeTasks() {
       );
     }
   }
-  console.log(taskList)
+  console.log(taskList);
 }
-
 
 function onEditClick(task: UmlTask) {
   console.log("onEditClick");
@@ -260,11 +265,10 @@ function setupEditorModal() {
   showModal.value = false;
   isEditorOpen.value = true;
   editorData.value = new GraphData(
-    editObject.value.graphAsJson,
-    editObject.value.graphDescription
+    editObject.value.graph,
+    editObject.value.text
   );
 }
-
 </script>
 <template>
   <b-modal
@@ -284,9 +288,7 @@ function setupEditorModal() {
     >
       <b-form-group>
         <b-table :fields="fields" :items="taskList">
-          <template #cell(task)="data">
-            Task {{ data.item.id }}:
-          </template>
+          <template #cell(task)="data"> Task {{ data.item.id }}: </template>
 
           <template #cell(selection)="data">
             <b-form-select
