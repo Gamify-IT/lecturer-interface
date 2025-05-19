@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { defineEmits, defineProps, ref, Ref, watch } from "vue";
+import { defineEmits, defineProps, ref, Ref, watch, nextTick } from "vue";
 import {
   GraphData,
   TaskType,
@@ -9,7 +9,6 @@ import {
 import { useToast } from "vue-toastification";
 import { useRoute } from "vue-router";
 import { ITask } from "@/ts/models/overworld-models";
-import ImportExportConfiguration from "@/components/ImportExportConfiguration.vue";
 import { BFormSelect, BTable } from "bootstrap-vue-3";
 import { putMinigame } from "@/ts/rest-clients/minigame-rest-client";
 import {
@@ -47,7 +46,6 @@ const toast = useToast();
 const minigame = ref(props.minigame);
 const form = ref();
 const showModal = ref(props.showModal);
-let configuration = ref(new UmlgameConfiguration([]));
 const oldMinigame = ref();
 // v models for different task edit modals
 const showCompletionTaskModal = ref(false);
@@ -56,10 +54,9 @@ const isEditorOpen = ref(false);
 
 const taskList = ref([]) as Ref<UmlTask[]>;
 initializeTasks();
-
-// TODO: adapt to available modes
+const configuration = ref(new UmlgameConfiguration(taskList.value));
 const openedIndex = ref();
-const editorData = ref() as Ref<GraphData>;
+const editorData = ref(new GraphData("","")) as Ref<GraphData>;
 const editObject = ref();
 
 // Here are the parameters you need to adapt when expanding the game
@@ -112,7 +109,7 @@ function checkFormValidity(): boolean {
 
 function resetModal() {
   if (minigame.value.configurationId != undefined) {
-    /*getUmlgameConfig(minigame.value.configurationId)
+    getUmlgameConfig(minigame.value.configurationId)
       .then((response) => {
         configuration.value = response.data;
       })
@@ -120,10 +117,11 @@ function resetModal() {
         console.log(error);
         if (error.response.status == 404) {
           minigame.value.configurationId = undefined;
+          configuration.value.id = undefined;
           configuration.value.taskList = [];
           initializeTasks();
         }
-      });*/
+      });
     console.log("GETTING UML CONFIG:" + minigame.value.configurationId);
     oldMinigame.value = minigame.value;
   } else {
@@ -138,16 +136,9 @@ function resetModal() {
 function handleOk() {
   console.log("@ok");
   const updateConfigurationRequest = configuration.value.id
-    ? /*putUmlgameConfig(configuration.value.id, new UmlgameConfiguration(taskList.value))*/ console.log(
-        "PUTTING UML CONFIG: " +
-          configuration.value.id +
-          " Config: " +
-          new UmlgameConfiguration(taskList.value)
-      )
-    : /*postUmlgameConfig(new UmlgameConfiguration(taskList.value))*/ console.log(
-        "POSTING UML CONFIG: " + new UmlgameConfiguration(taskList.value)
-      );
-  /*updateConfigurationRequest.then((response) => {
+    ? putUmlgameConfig(configuration.value.id, new UmlgameConfiguration(taskList.value))
+    : postUmlgameConfig(new UmlgameConfiguration(taskList.value));
+  updateConfigurationRequest.then((response) => {
       minigame.value.configurationId = response.data.id;
       console.log("Submit Modal");
       console.log("id:" + response.data.id);
@@ -172,7 +163,7 @@ function handleOk() {
       }
     }).finally(() => {
     initializeTasks();
-    });*/
+    });
 }
 
 function handleSubmit() {
@@ -224,30 +215,30 @@ function onEditClick(task: UmlTask) {
   console.log("onEditClick");
   let type = task.taskType;
   editObject.value = task;
+  editorData.value.graphAsJson = task.graph;
+  editorData.value.graphDescription = task.text;
   openedIndex.value = task.id;
-  switch (type) {
-    case TaskType.COMPLETION: {
-      showCompletionTaskModal.value = true;
-      break;
+  console.log(editorData.value.graphAsJson)
+  showCompletionTaskModal.value = false;
+  nextTick(() => {
+    switch (type) {
+      case TaskType.COMPLETION: {
+        showCompletionTaskModal.value = true;
+        break;
+      }
+      case TaskType.ERRORHUNT: {
+        showErrorhuntTaskModal.value = true;
+        break;
+      }
     }
-    case TaskType.ERRORHUNT: {
-      showErrorhuntTaskModal.value = true;
-      break;
-    }
-  }
+  });
 }
 
 function handleCompletionTaskOk(data: GraphData) {
-  configuration.value.taskList.push(
-    new UmlTask(
-      openedIndex.value,
-      data.graphAsJson,
-      data.graphDescription,
-      TaskType.COMPLETION
-    )
-  );
+  console.log(data)
+  editObject.value.graph = data.graphAsJson;
+  editObject.value.text = data.graphDescription;
   showCompletionTaskModal.value = false;
-  console.log(configuration.value.taskList);
   showModal.value = true;
 }
 
@@ -264,10 +255,6 @@ function setupEditorModal() {
   console.log("setting up editor");
   showModal.value = false;
   isEditorOpen.value = true;
-  editorData.value = new GraphData(
-    editObject.value.graph,
-    editObject.value.text
-  );
 }
 </script>
 <template>

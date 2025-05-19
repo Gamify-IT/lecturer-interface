@@ -258,20 +258,23 @@ function hideModalOk() {
 }
 
 function hideModalCancel() {
-  // TODO
   console.log("Editor cancel");
   emit("cancelModal");
 }
 
 function resetModal() {
-  // TODO
   console.log("Reset editor");
   let data = graphData.value;
   text.value = data.graphDescription;
   json.value = data.graphAsJson;
+  graph.fromJSON(json.value);
 }
 
 // uml
+
+function resetGraph() {
+  graph.clear();
+}
 
 function isLinkType(type: string): type is LinkType {
   return [
@@ -406,7 +409,7 @@ onMounted(() => {
         el: paperContainer.value,
         model: graph,
         width: 700,
-        height: 600,
+        height: 650,
         background: { color: "#F5F5F5" },
         cellViewNamespace: namespace,
       });
@@ -809,6 +812,7 @@ onMounted(() => {
   background: rgb(226, 220, 201);
   padding: 10px;
   border-radius: 5px;
+  margin-bottom: 20px;
 }
 
 .palette-item {
@@ -822,7 +826,7 @@ onMounted(() => {
 }
 
 .palette-group {
-  margin-bottom: 20px;
+  margin-bottom: 5px;
 }
 
 .palette-title {
@@ -836,7 +840,7 @@ onMounted(() => {
 .paper-container {
   flex: 1;
   width: 400px;
-  height: 400px;
+  height: 500px;
   border: 2px solid rgb(226, 220, 201);
   background: #f5f5f5;
   overflow: auto;
@@ -862,7 +866,7 @@ onMounted(() => {
   display: flex;
   flex-direction: column;
   gap: 10px;
-  font-size: 11px;
+  font-size: 16px;
 }
 
 .label {
