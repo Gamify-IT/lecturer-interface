@@ -13,16 +13,36 @@
         <div ref="paletteContainer" class="palette">
           <div class="palette-group">
             <div class="palette-title">Objects</div>
-            <div class="palette-item" data-type="class" draggable="true" :style="{ backgroundColor: classColors.class }">
+            <div
+              class="palette-item"
+              data-type="class"
+              draggable="true"
+              :style="{ backgroundColor: classColors.class }"
+            >
               Class
             </div>
-            <div class="palette-item" data-type="interface" draggable="true" :style="{ backgroundColor: classColors.interface }">
+            <div
+              class="palette-item"
+              data-type="interface"
+              draggable="true"
+              :style="{ backgroundColor: classColors.interface }"
+            >
               Interface
             </div>
-            <div class="palette-item" data-type="abstract" draggable="true" :style="{ backgroundColor: classColors.abstract }">
+            <div
+              class="palette-item"
+              data-type="abstract"
+              draggable="true"
+              :style="{ backgroundColor: classColors.abstract }"
+            >
               Abstract
             </div>
-            <div class="palette-item" data-type="enum" draggable="true" :style="{ backgroundColor: classColors.enum }">
+            <div
+              class="palette-item"
+              data-type="enum"
+              draggable="true"
+              :style="{ backgroundColor: classColors.enum }"
+            >
               Enum
             </div>
             <div
@@ -49,7 +69,11 @@
             <div class="palette-item" data-type="composition" draggable="true">
               ◆
             </div>
-            <div class="palette-item" data-type="generalization" draggable="true">
+            <div
+              class="palette-item"
+              data-type="generalization"
+              draggable="true"
+            >
               △
             </div>
             <div class="submit-reset-buttons">
