@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { defineEmits, defineProps, ref, Ref, watch } from "vue";
+import { defineEmits, defineProps, ref, Ref, watch, nextTick } from "vue";
 import {
   GraphData,
   TaskType,
@@ -9,7 +9,6 @@ import {
 import { useToast } from "vue-toastification";
 import { useRoute } from "vue-router";
 import { ITask } from "@/ts/models/overworld-models";
-import ImportExportConfiguration from "@/components/ImportExportConfiguration.vue";
 import { BFormSelect, BTable } from "bootstrap-vue-3";
 import { putMinigame } from "@/ts/rest-clients/minigame-rest-client";
 import {
@@ -18,7 +17,6 @@ import {
   putUmlgameConfig,
 } from "@/ts/rest-clients/umlgame-rest-client";
 import UmlEditorModal from "@/components/EditMinigameModals/UmlModals/UmlEditorModal.vue";
-import { getTowerDefenseConfig } from "@/ts/rest-clients/towerdefense-rest-client";
 
 const props = defineProps<{
   minigame: ITask;
@@ -48,7 +46,6 @@ const toast = useToast();
 const minigame = ref(props.minigame);
 const form = ref();
 const showModal = ref(props.showModal);
-let configuration = ref(new UmlgameConfiguration([]));
 const oldMinigame = ref();
 // v models for different task edit modals
 const showCompletionTaskModal = ref(false);
@@ -57,11 +54,9 @@ const isEditorOpen = ref(false);
 
 const taskList = ref([]) as Ref<UmlTask[]>;
 initializeTasks();
-
-// TODO: adapt to available modes
-const selected = null;
+const configuration = ref(new UmlgameConfiguration(taskList.value));
 const openedIndex = ref();
-const editorData = ref() as Ref<GraphData>;
+const editorData = ref(new GraphData("", "")) as Ref<GraphData>;
 const editObject = ref();
 
 // Here are the parameters you need to adapt when expanding the game
@@ -108,7 +103,6 @@ const emit = defineEmits<{
   (e: "closedModal"): void;
 }>();
 
-
 function checkFormValidity(): boolean {
   return form.value.checkValidity();
 }
@@ -123,10 +117,12 @@ function resetModal() {
         console.log(error);
         if (error.response.status == 404) {
           minigame.value.configurationId = undefined;
+          configuration.value.id = undefined;
           configuration.value.taskList = [];
           initializeTasks();
         }
       });
+    console.log("GETTING UML CONFIG:" + minigame.value.configurationId);
     oldMinigame.value = minigame.value;
   } else {
     configuration.value.id = undefined;
@@ -139,23 +135,30 @@ function resetModal() {
 
 function handleOk() {
   console.log("@ok");
-  const updateConfigurationRequest = configuration.value.id ?
-    putUmlgameConfig(configuration.value.id, new UmlgameConfiguration(taskList.value)) :
-    postUmlgameConfig(new UmlgameConfiguration(taskList.value));
-  updateConfigurationRequest.then((response) => {
+  const updateConfigurationRequest = configuration.value.id
+    ? putUmlgameConfig(
+        configuration.value.id,
+        new UmlgameConfiguration(taskList.value)
+      )
+    : postUmlgameConfig(new UmlgameConfiguration(taskList.value));
+  updateConfigurationRequest
+    .then((response) => {
       minigame.value.configurationId = response.data.id;
       console.log("Submit Modal");
       console.log("id:" + response.data.id);
       console.log("minigameId" + minigame.value.configurationId);
       oldMinigame.value = minigame.value;
       handleSubmit();
-    }).then(() => {
+    })
+    .then(() => {
       putMinigame(
         parseInt(courseId.value),
         parseInt(worldIndex.value),
         parseInt(dungeonIndex.value),
         minigame.value
-      );}).catch((error) => {
+      );
+    })
+    .catch((error) => {
       const statusCode = error.response.status;
       const errorMessages = error.response.data.errors;
       if (statusCode == 400) {
@@ -165,8 +168,9 @@ function handleOk() {
       } else {
         toast.error("There was an error saving the configuration!");
       }
-    }).finally(() => {
-    initializeTasks();
+    })
+    .finally(() => {
+      initializeTasks();
     });
 }
 
@@ -202,40 +206,47 @@ function initializeTasks() {
   console.log("initializeTasks()");
   taskList.value = [];
   for (let index = 0; index < numberOfQuestions; index++) {
-    taskList.value.push(
-      new UmlTask((index + 1).toString(), "", "", TaskType.COMPLETION)
-    );
+    if (index == 0) {
+      taskList.value.push(
+        new UmlTask((index + 1).toString(), "", "blabla", TaskType.COMPLETION)
+      );
+    } else {
+      taskList.value.push(
+        new UmlTask((index + 1).toString(), "", "", TaskType.COMPLETION)
+      );
+    }
   }
+  console.log(taskList);
 }
 
-
-function onEditClick(type: TaskType, edit: any) {
+function onEditClick(task: UmlTask) {
   console.log("onEditClick");
-  editObject.value = edit;
-  openedIndex.value = edit.id;
-  switch (type) {
-    case TaskType.COMPLETION: {
-      showCompletionTaskModal.value = true;
-      break;
+  let type = task.taskType;
+  editObject.value = task;
+  editorData.value.graphAsJson = task.graph;
+  editorData.value.graphDescription = task.text;
+  openedIndex.value = task.id;
+  console.log(editorData.value.graphAsJson);
+  showCompletionTaskModal.value = false;
+  nextTick(() => {
+    switch (type) {
+      case TaskType.COMPLETION: {
+        showCompletionTaskModal.value = true;
+        break;
+      }
+      case TaskType.ERRORHUNT: {
+        showErrorhuntTaskModal.value = true;
+        break;
+      }
     }
-    case TaskType.ERRORHUNT: {
-      showErrorhuntTaskModal.value = true;
-      break;
-    }
-  }
+  });
 }
 
 function handleCompletionTaskOk(data: GraphData) {
-  configuration.value.taskList.push(
-    new UmlTask(
-      openedIndex.value,
-      data.graphAsJson,
-      data.graphDescription,
-      TaskType.COMPLETION
-    )
-  );
+  console.log(data);
+  editObject.value.graph = data.graphAsJson;
+  editObject.value.text = data.graphDescription;
   showCompletionTaskModal.value = false;
-  console.log(configuration.value.taskList);
   showModal.value = true;
 }
 
@@ -252,12 +263,7 @@ function setupEditorModal() {
   console.log("setting up editor");
   showModal.value = false;
   isEditorOpen.value = true;
-  editorData.value = new GraphData(
-    editObject.value.graphAsJson,
-    editObject.value.graphDescription
-  );
 }
-
 </script>
 <template>
   <b-modal
@@ -279,9 +285,9 @@ function setupEditorModal() {
         <b-table :fields="fields" :items="taskList">
           <template #cell(task)="data"> Task {{ data.item.id }}: </template>
 
-          <template #cell(selection)="">
+          <template #cell(selection)="data">
             <b-form-select
-              v-model="selected"
+              v-model="data.item.taskType"
               :options="selectionOptions"
               text="Select an option"
               required
@@ -292,7 +298,7 @@ function setupEditorModal() {
             <b-button
               variant="outline-primary"
               :key="data.index"
-              @click="onEditClick(selected, data.item)"
+              @click="onEditClick(data.item)"
             >
               Edit Task
             </b-button>

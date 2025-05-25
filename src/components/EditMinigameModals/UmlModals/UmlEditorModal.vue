@@ -13,19 +13,44 @@
         <div ref="paletteContainer" class="palette">
           <div class="palette-group">
             <div class="palette-title">Objects</div>
-            <div class="palette-item" data-type="class" draggable="true" :style="{ backgroundColor: classColors.class }">
+            <div
+              class="palette-item"
+              data-type="class"
+              draggable="true"
+              :style="{ backgroundColor: classColors.class }"
+            >
               Class
             </div>
-            <div class="palette-item" data-type="interface" draggable="true" :style="{ backgroundColor: classColors.interface }">
+            <div
+              class="palette-item"
+              data-type="interface"
+              draggable="true"
+              :style="{ backgroundColor: classColors.interface }"
+            >
               Interface
             </div>
-            <div class="palette-item" data-type="abstract" draggable="true" :style="{ backgroundColor: classColors.abstract }">
+            <div
+              class="palette-item"
+              data-type="abstract"
+              draggable="true"
+              :style="{ backgroundColor: classColors.abstract }"
+            >
               Abstract
             </div>
-            <div class="palette-item" data-type="enum" draggable="true" :style="{ backgroundColor: classColors.enum }">
+            <div
+              class="palette-item"
+              data-type="enum"
+              draggable="true"
+              :style="{ backgroundColor: classColors.enum }"
+            >
               Enum
             </div>
-            <div class="palette-item" data-type="circle" draggable="true" :style="{ backgroundColor: classColors.circle }">
+            <div
+              class="palette-item"
+              data-type="circle"
+              draggable="true"
+              :style="{ backgroundColor: classColors.circle }"
+            >
               Circle
             </div>
           </div>
@@ -44,7 +69,11 @@
             <div class="palette-item" data-type="composition" draggable="true">
               ◆
             </div>
-            <div class="palette-item" data-type="generalization" draggable="true">
+            <div
+              class="palette-item"
+              data-type="generalization"
+              draggable="true"
+            >
               △
             </div>
             <div class="submit-reset-buttons">
@@ -53,57 +82,62 @@
           </div>
         </div>
         <div ref="paperContainer" class="paper-container">
-          <div ref="paperContainer" class="paper-inner"/>
+          <div ref="paperContainer" class="paper-inner" />
         </div>
       </div>
-        <div class="right" v-if="selectedElement">
-          <b-button size="sm" variant="warning" @click="deleteAllRelations">
-            Delete All Relations
-          </b-button>
+      <div class="right" v-if="selectedElement">
+        <b-button size="sm" variant="warning" @click="deleteAllRelations">
+          Delete All Relations
+        </b-button>
 
-          <b-button size="sm" variant="danger" @click="deleteSelectedElement">
-            Delete Object
-          </b-button>
-          <b-label class="label">
-            Classname:
-            <b-form-input v-model="labelText" @input="updateLabel" />
-          </b-label>
-          <label class="label">
-            Attributes:
-            <b-form-textarea v-model="stuff" @input="updateAttributes" />
-          </label>
-          <label class="label">
-            Methods:
-            <b-form-textarea v-model="stuff2" @input="updateMethods" />
-          </label>
-        </div>
-        <div class="right" v-if="selectedLink">
-          <b-button size="sm" variant="danger" @click="deleteRelation">
-            Delete Relation
-          </b-button>
-          <label>
-            Source Multiplicity:
-            <b-form-input v-model="linkSourceMultiplicity" @input="updateLinkLabels" />
-          </label>
-          <label>
-            Source Role:
-            <b-form-input v-model="linkSourceRole" @input="updateLinkLabels" />
-          </label>
-          <label>
-            Target Multiplicity:
-            <b-form-input v-model="linkTargetMultiplicity" @input="updateLinkLabels" />
-          </label>
-          <label>
-            Target Role:
-            <b-form-input v-model="linkTargetRole" @input="updateLinkLabels" />
-          </label>
-          <label>
-            Description:
-            <b-form-input v-model="linkArrowLabel" @input="updateLinkLabels" />
-          </label>
-        </div>
+        <b-button size="sm" variant="danger" @click="deleteSelectedElement">
+          Delete Object
+        </b-button>
+        <b-label class="label">
+          Classname:
+          <b-form-input v-model="labelText" @input="updateLabel" />
+        </b-label>
+        <label class="label">
+          Attributes:
+          <b-form-textarea v-model="stuff" @input="updateAttributes" />
+        </label>
+        <label class="label">
+          Methods:
+          <b-form-textarea v-model="stuff2" @input="updateMethods" />
+        </label>
       </div>
-
+      <div class="right" v-if="selectedLink">
+        <b-button size="sm" variant="danger" @click="deleteRelation">
+          Delete Relation
+        </b-button>
+        <label>
+          Source Multiplicity:
+          <b-form-input
+            v-model="linkSourceMultiplicity"
+            @input="updateLinkLabels"
+          />
+        </label>
+        <label>
+          Source Role:
+          <b-form-input v-model="linkSourceRole" @input="updateLinkLabels" />
+        </label>
+        <label>
+          Target Multiplicity:
+          <b-form-input
+            v-model="linkTargetMultiplicity"
+            @input="updateLinkLabels"
+          />
+        </label>
+        <label>
+          Target Role:
+          <b-form-input v-model="linkTargetRole" @input="updateLinkLabels" />
+        </label>
+        <label>
+          Description:
+          <b-form-input v-model="linkArrowLabel" @input="updateLinkLabels" />
+        </label>
+      </div>
+    </div>
     <!-- uml end -->
     <b-form-group>
       <b-form-textarea
@@ -169,11 +203,11 @@ const labelText = ref("");
 const stuff = ref("");
 const stuff2 = ref("");
 const deleteButtonPos = ref<{ x: number; y: number } | null>(null);
-const linkSourceMultiplicity = ref('');
-const linkSourceRole = ref('');
-const linkTargetMultiplicity = ref('');
-const linkTargetRole = ref('');
-const linkArrowLabel = ref('');
+const linkSourceMultiplicity = ref("");
+const linkSourceRole = ref("");
+const linkTargetMultiplicity = ref("");
+const linkTargetRole = ref("");
+const linkArrowLabel = ref("");
 
 let currentLinkType = ref<
   | "dependency"
@@ -223,21 +257,22 @@ function hideModalOk() {
 }
 
 function hideModalCancel() {
-  // TODO
   console.log("Editor cancel");
   emit("cancelModal");
 }
 
 function resetModal() {
-  // TODO
   console.log("Reset editor");
   let data = graphData.value;
   text.value = data.graphDescription;
   json.value = data.graphAsJson;
+  graph.fromJSON(json.value);
 }
 
 // uml
-
+function resetGraph() {
+  graph.clear();
+}
 
 function isLinkType(type: string): type is LinkType {
   return [
@@ -252,11 +287,11 @@ function isLinkType(type: string): type is LinkType {
 function handleLinkClick(linkView: dia.LinkView) {
   selectedLink.value = linkView.model;
   selectedElement.value = null;
-  const labels = linkView.model.get('labels') || [];
-  linkSourceMultiplicity.value = labels[0]?.attrs?.text?.text || '';
-  linkSourceRole.value = labels[1]?.attrs?.text?.text || '';
-  linkTargetMultiplicity.value = labels[3]?.attrs?.text?.text || '';
-  linkTargetRole.value = labels[4]?.attrs?.text?.text || '';
+  const labels = linkView.model.get("labels") || [];
+  linkSourceMultiplicity.value = labels[0]?.attrs?.text?.text || "";
+  linkSourceRole.value = labels[1]?.attrs?.text?.text || "";
+  linkTargetMultiplicity.value = labels[3]?.attrs?.text?.text || "";
+  linkTargetRole.value = labels[4]?.attrs?.text?.text || "";
 }
 
 function deleteRelation() {
@@ -333,19 +368,19 @@ function updateMethods() {
 function updateLinkLabels() {
   if (!selectedLink.value) return;
   selectedLink.value.label(0, {
-    attrs: { text: { text: linkSourceMultiplicity.value } }
+    attrs: { text: { text: linkSourceMultiplicity.value } },
   });
   selectedLink.value.label(1, {
-    attrs: { text: { text: linkSourceRole.value } }
+    attrs: { text: { text: linkSourceRole.value } },
   });
   selectedLink.value.label(2, {
-    attrs: { text: { text: linkTargetMultiplicity.value } }
+    attrs: { text: { text: linkTargetMultiplicity.value } },
   });
   selectedLink.value.label(3, {
-    attrs: { text: { text: linkTargetRole.value } }
+    attrs: { text: { text: linkTargetRole.value } },
   });
   selectedLink.value.label(4, {
-    attrs: { text: { text: linkArrowLabel.value } }
+    attrs: { text: { text: linkArrowLabel.value } },
   });
 }
 
@@ -372,7 +407,7 @@ onMounted(() => {
         el: paperContainer.value,
         model: graph,
         width: 700,
-        height: 600,
+        height: 650,
         background: { color: "#F5F5F5" },
         cellViewNamespace: namespace,
       });
@@ -453,17 +488,20 @@ onMounted(() => {
 
           if (targetElementView) {
             const targetElement = targetElementView.model;
-            if (linkSourceElement && linkSourceElement.id === targetElement.id) {
+            if (
+              linkSourceElement &&
+              linkSourceElement.id === targetElement.id
+            ) {
               const loopLink = new shapes.standard.Link({
                 source: { id: targetElement.id },
                 target: { id: targetElement.id },
-                router: { name: 'manhattan' },
-                connector: { name: 'rounded' },
+                router: { name: "manhattan" },
+                connector: { name: "rounded" },
                 attrs: {
                   line: {
-                    stroke: 'black',
+                    stroke: "black",
                     strokeWidth: 2,
-                    fill: 'none',
+                    fill: "none",
                   },
                 },
                 labels: [
@@ -472,7 +510,7 @@ onMounted(() => {
                     attrs: {
                       text: {
                         fontSize: 14,
-                        fill: 'black',
+                        fill: "black",
                       },
                     },
                   },
@@ -481,7 +519,7 @@ onMounted(() => {
                     attrs: {
                       text: {
                         fontSize: 14,
-                        fill: 'black',
+                        fill: "black",
                       },
                     },
                   },
@@ -490,7 +528,7 @@ onMounted(() => {
                     attrs: {
                       text: {
                         fontSize: 14,
-                        fill: 'black',
+                        fill: "black",
                         dx: 20,
                       },
                     },
@@ -500,7 +538,7 @@ onMounted(() => {
                     attrs: {
                       text: {
                         fontSize: 14,
-                        fill: 'black',
+                        fill: "black",
                         dx: 20,
                       },
                     },
@@ -509,15 +547,15 @@ onMounted(() => {
               });
               loopLink.attr({
                 line: {
-                  stroke: 'black',
+                  stroke: "black",
                   strokeWidth: 2,
                   targetMarker: {
-                    type: 'path',
-                    d: 'M 10 -5 0 0 10 5 z',
-                    fill: 'white',
-                    stroke: 'black'
-                  }
-                }
+                    type: "path",
+                    d: "M 10 -5 0 0 10 5 z",
+                    fill: "white",
+                    stroke: "black",
+                  },
+                },
               });
               graph.addCell(loopLink);
               link.remove();
@@ -646,71 +684,71 @@ onMounted(() => {
             link.appendLabel({
               attrs: {
                 text: {
-                  fill: 'black',
-                  fontSize: 12
-                }
+                  fill: "black",
+                  fontSize: 12,
+                },
               },
               position: {
                 distance: 0.2,
                 offset: { x: 0, y: -15 },
-                args: { keepDirection: true, keepAngle: true }
-              }
+                args: { keepDirection: true, keepAngle: true },
+              },
             });
 
             link.appendLabel({
               attrs: {
                 text: {
-                  fill: 'black',
-                  fontSize: 12
-                }
+                  fill: "black",
+                  fontSize: 12,
+                },
               },
               position: {
                 distance: 0.2,
                 offset: { x: 0, y: 10 },
-                args: { keepDirection: true, keepAngle: true }
-              }
+                args: { keepDirection: true, keepAngle: true },
+              },
             });
 
             link.appendLabel({
               attrs: {
                 text: {
-                  fill: 'black',
-                  fontSize: 12
-                }
+                  fill: "black",
+                  fontSize: 12,
+                },
               },
               position: {
                 distance: 0.8,
                 offset: { x: 0, y: -15 },
-                args: { keepDirection: true, keepAngle: true }
-              }
+                args: { keepDirection: true, keepAngle: true },
+              },
             });
 
             link.appendLabel({
               attrs: {
                 text: {
-                  fill: 'black',
-                  fontSize: 12
-                }
+                  fill: "black",
+                  fontSize: 12,
+                },
               },
               position: {
                 distance: 0.8,
                 offset: { x: 0, y: 10 },
-                args: { keepDirection: true, keepAngle: true }
-              }
+                args: { keepDirection: true, keepAngle: true },
+              },
             });
 
             link.appendLabel({
               attrs: {
                 text: {
-                  fill: 'black',
+                  fill: "black",
                   fontSize: 14,
                 },
               },
               position: {
                 distance: 0.5,
                 offset: { x: 0, y: 10 },
-                args: { keepDirection: true, keepAngle: true }
-              }
+                args: { keepDirection: true, keepAngle: true },
+              },
             });
 
             console.log(
@@ -772,6 +810,7 @@ onMounted(() => {
   background: rgb(226, 220, 201);
   padding: 10px;
   border-radius: 5px;
+  margin-bottom: 20px;
 }
 
 .palette-item {
@@ -785,7 +824,7 @@ onMounted(() => {
 }
 
 .palette-group {
-  margin-bottom: 20px;
+  margin-bottom: 5px;
 }
 
 .palette-title {
@@ -799,7 +838,7 @@ onMounted(() => {
 .paper-container {
   flex: 1;
   width: 400px;
-  height: 400px;
+  height: 500px;
   border: 2px solid rgb(226, 220, 201);
   background: #f5f5f5;
   overflow: auto;
@@ -825,7 +864,7 @@ onMounted(() => {
   display: flex;
   flex-direction: column;
   gap: 10px;
-  font-size: 11px;
+  font-size: 16px;
 }
 
 .label {
