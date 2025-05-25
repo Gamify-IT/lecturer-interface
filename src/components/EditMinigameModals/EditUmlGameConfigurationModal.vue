@@ -56,7 +56,7 @@ const taskList = ref([]) as Ref<UmlTask[]>;
 initializeTasks();
 const configuration = ref(new UmlgameConfiguration(taskList.value));
 const openedIndex = ref();
-const editorData = ref(new GraphData("","")) as Ref<GraphData>;
+const editorData = ref(new GraphData("", "")) as Ref<GraphData>;
 const editObject = ref();
 
 // Here are the parameters you need to adapt when expanding the game
@@ -136,22 +136,29 @@ function resetModal() {
 function handleOk() {
   console.log("@ok");
   const updateConfigurationRequest = configuration.value.id
-    ? putUmlgameConfig(configuration.value.id, new UmlgameConfiguration(taskList.value))
+    ? putUmlgameConfig(
+        configuration.value.id,
+        new UmlgameConfiguration(taskList.value)
+      )
     : postUmlgameConfig(new UmlgameConfiguration(taskList.value));
-  updateConfigurationRequest.then((response) => {
+  updateConfigurationRequest
+    .then((response) => {
       minigame.value.configurationId = response.data.id;
       console.log("Submit Modal");
       console.log("id:" + response.data.id);
       console.log("minigameId" + minigame.value.configurationId);
       oldMinigame.value = minigame.value;
       handleSubmit();
-    }).then(() => {
+    })
+    .then(() => {
       putMinigame(
         parseInt(courseId.value),
         parseInt(worldIndex.value),
         parseInt(dungeonIndex.value),
         minigame.value
-      );}).catch((error) => {
+      );
+    })
+    .catch((error) => {
       const statusCode = error.response.status;
       const errorMessages = error.response.data.errors;
       if (statusCode == 400) {
@@ -161,8 +168,9 @@ function handleOk() {
       } else {
         toast.error("There was an error saving the configuration!");
       }
-    }).finally(() => {
-    initializeTasks();
+    })
+    .finally(() => {
+      initializeTasks();
     });
 }
 
@@ -218,7 +226,7 @@ function onEditClick(task: UmlTask) {
   editorData.value.graphAsJson = task.graph;
   editorData.value.graphDescription = task.text;
   openedIndex.value = task.id;
-  console.log(editorData.value.graphAsJson)
+  console.log(editorData.value.graphAsJson);
   showCompletionTaskModal.value = false;
   nextTick(() => {
     switch (type) {
@@ -235,7 +243,7 @@ function onEditClick(task: UmlTask) {
 }
 
 function handleCompletionTaskOk(data: GraphData) {
-  console.log(data)
+  console.log(data);
   editObject.value.graph = data.graphAsJson;
   editObject.value.text = data.graphDescription;
   showCompletionTaskModal.value = false;
