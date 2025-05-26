@@ -151,14 +151,7 @@
 <script setup lang="ts">
 import { useToast } from "vue-toastification";
 import { dia, shapes } from "@joint/core";
-import {
-  onMounted,
-  ref,
-  defineProps,
-  nextTick,
-  defineEmits,
-  watch,
-} from "vue";
+import { onMounted, ref, defineProps, nextTick, defineEmits, watch } from "vue";
 import { BFormInput, BFormTextarea } from "bootstrap-vue-3";
 import {
   CustRect,
@@ -271,7 +264,6 @@ function resetModal() {
   json.value = data.graphAsJson;
   graph.fromJSON(JSON.parse(json.value));
 }
-
 
 // uml
 function resetGraph() {

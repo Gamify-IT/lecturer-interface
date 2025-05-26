@@ -60,9 +60,7 @@ const editorData = ref(new GraphData("", "")) as Ref<GraphData>;
 const editObject = ref();
 
 // Here are the parameters you need to adapt when expanding the game
-const selectionOptions = [
-  { value: TaskType.COMPLETION, text: "Completion" },
-];
+const selectionOptions = [{ value: TaskType.COMPLETION, text: "Completion" }];
 const numberOfQuestions = 6;
 
 watch(
