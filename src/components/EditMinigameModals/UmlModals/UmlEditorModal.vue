@@ -158,7 +158,6 @@ import {
   nextTick,
   defineEmits,
   watch,
-  Ref,
 } from "vue";
 import { BFormInput, BFormTextarea } from "bootstrap-vue-3";
 import {
@@ -194,6 +193,10 @@ const classColors = {
   enum: "#d3f3d3",
 };
 const namespace = shapes;
+shapes.EnumRect = EnumRect;
+shapes.AbstractRect = AbstractRect;
+shapes.InterfaceRect = InterfaceRect;
+shapes.Rect = CustRect;
 const graph = new dia.Graph({}, { cellNamespace: namespace });
 const paperContainer = ref<HTMLElement | null>(null);
 const paletteContainer = ref<HTMLElement | null>(null);
@@ -266,8 +269,9 @@ function resetModal() {
   let data = graphData.value;
   text.value = data.graphDescription;
   json.value = data.graphAsJson;
-  graph.fromJSON(json.value);
+  graph.fromJSON(JSON.parse(json.value));
 }
+
 
 // uml
 function resetGraph() {

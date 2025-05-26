@@ -62,11 +62,8 @@ const editObject = ref();
 // Here are the parameters you need to adapt when expanding the game
 const selectionOptions = [
   { value: TaskType.COMPLETION, text: "Completion" },
-  { value: TaskType.ERRORHUNT, text: "Error hunt" },
-  { value: TaskType.CODETOUML, text: "Code -> UML" },
-  { value: TaskType.UMLTOCODE, text: "UML -> Code" },
 ];
-const numberOfQuestions = 10;
+const numberOfQuestions = 6;
 
 watch(
   () => props.minigame,
