@@ -239,7 +239,7 @@ function onEditClick(task: UmlTask) {
 
 function handleCompletionTaskOk(data: GraphData) {
   console.log(data);
-  editObject.value.graph = data.graphAsJson;
+  editObject.value.graph = JSON.stringify(data.graphAsJson);
   editObject.value.text = data.graphDescription;
   showCompletionTaskModal.value = false;
   showModal.value = true;
