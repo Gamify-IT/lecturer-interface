@@ -12,18 +12,19 @@ export class UmlgameConfiguration implements IUmlgameConfiguration {
 }
 
 export class UmlTask {
-  id: string;
+  id?: string;
+  tasknumber: string;
   graph: string;
   text: string;
   taskType: TaskType;
 
   public constructor(
-    id: string,
+    tasknumber: string,
     graph: string,
     text: string,
     taskType: TaskType
   ) {
-    this.id = id;
+    this.tasknumber = tasknumber;
     this.graph = graph;
     this.text = text;
     this.taskType = taskType;
