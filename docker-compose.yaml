@@ -96,6 +96,16 @@ services:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
 
+  umlgame-db:
+    container_name: umlgame-db
+    image: postgres:14-alpine
+    restart: always
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+
   #backends
   keycloak:
     container_name: keycloak
@@ -241,6 +251,22 @@ services:
       - KEYCLOAK_ISSUER=http://localhost/keycloak/realms/Gamify-IT
       - KEYCLOAK_URL=http://keycloak/keycloak/realms/Gamify-IT
 
+  umlgame-backend:
+    container_name: umlgame-backend
+    image: ghcr.io/gamify-it/umlgame-backend:main
+    restart: always
+    expose:
+      - "80"
+    depends_on:
+      - umlgame-db
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_URL=postgresql://umlgame-db:5432/postgres
+      - OVERWORLD_URL=http://overworld-backend/api/v1
+      - KEYCLOAK_ISSUER=http://localhost/keycloak/realms/Gamify-IT
+      - KEYCLOAK_URL=http://keycloak/keycloak/realms/Gamify-IT
+
   #frontends
   landing-page:
     container_name: landing-page
@@ -309,6 +335,14 @@ services:
     image: ghcr.io/gamify-it/regexgame:main
     pull_policy: always
     restart: always
+    expose:
+      - "80"
+
+  umlgame:
+    container_name: umlgame
+    image: ghcr.io/gamify-it/umlgame:main
+    restart: always
+    pull_policy: always
     expose:
       - "80"
 
